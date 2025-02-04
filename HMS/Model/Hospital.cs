@@ -18,5 +18,7 @@
         public string Ownership { get; set; }
         public ICollection<Department> Departments { get; set; }
         public ICollection<Doctor> Doctors { get; set; }
+
+        public ICollection<Appointment> Appointments { get; set; }
     }
 }

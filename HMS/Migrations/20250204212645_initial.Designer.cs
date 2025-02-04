@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    [Migration("20250204162530_DBSeedingDone")]
-    partial class DBSeedingDone
+    [Migration("20250204212645_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,25 +27,49 @@ namespace HMS.Migrations
 
             modelBuilder.Entity("HMS.Model.Appointment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("AppointmentTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PatientId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("HospitalName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
 
                     b.HasIndex("PatientId");
 
@@ -716,6 +740,7 @@ namespace HMS.Migrations
                             Id = 1,
                             DepartmentId = 1,
                             FullName = "Dr. John Doe",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8000",
                             Specialization = "Emergency Medicine"
                         },
@@ -724,6 +749,7 @@ namespace HMS.Migrations
                             Id = 2,
                             DepartmentId = 2,
                             FullName = "Dr. Jane Smith",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8001",
                             Specialization = "General Medicine"
                         },
@@ -732,6 +758,7 @@ namespace HMS.Migrations
                             Id = 3,
                             DepartmentId = 3,
                             FullName = "Dr. Emily Johnson",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8002",
                             Specialization = "Surgery"
                         },
@@ -740,6 +767,7 @@ namespace HMS.Migrations
                             Id = 4,
                             DepartmentId = 4,
                             FullName = "Dr. Mark Brown",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8003",
                             Specialization = "Pediatrics"
                         },
@@ -748,6 +776,7 @@ namespace HMS.Migrations
                             Id = 5,
                             DepartmentId = 5,
                             FullName = "Dr. Sarah Lee",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8004",
                             Specialization = "Obstetrics and Gynecology"
                         },
@@ -756,6 +785,7 @@ namespace HMS.Migrations
                             Id = 6,
                             DepartmentId = 6,
                             FullName = "Dr. Michael Wang",
+                            HospitalId = 1,
                             PhoneNumber = "(415) 206-8005",
                             Specialization = "Orthopedic Surgery"
                         },
@@ -764,6 +794,7 @@ namespace HMS.Migrations
                             Id = 7,
                             DepartmentId = 11,
                             FullName = "Dr. William Harris",
+                            HospitalId = 2,
                             PhoneNumber = "(507) 284-2511",
                             Specialization = "Cardiovascular Medicine"
                         },
@@ -772,6 +803,7 @@ namespace HMS.Migrations
                             Id = 8,
                             DepartmentId = 12,
                             FullName = "Dr. Olivia White",
+                            HospitalId = 2,
                             PhoneNumber = "(507) 284-2512",
                             Specialization = "Neurology"
                         },
@@ -780,6 +812,7 @@ namespace HMS.Migrations
                             Id = 9,
                             DepartmentId = 13,
                             FullName = "Dr. David Green",
+                            HospitalId = 2,
                             PhoneNumber = "(507) 284-2513",
                             Specialization = "Orthopedic Surgery"
                         },
@@ -788,6 +821,7 @@ namespace HMS.Migrations
                             Id = 10,
                             DepartmentId = 14,
                             FullName = "Dr. Isabella Adams",
+                            HospitalId = 2,
                             PhoneNumber = "(507) 284-2514",
                             Specialization = "Gastroenterology and Hepatology"
                         },
@@ -796,6 +830,7 @@ namespace HMS.Migrations
                             Id = 11,
                             DepartmentId = 15,
                             FullName = "Dr. Joseph Clark",
+                            HospitalId = 2,
                             PhoneNumber = "(507) 284-2515",
                             Specialization = "Endocrinology"
                         },
@@ -804,6 +839,7 @@ namespace HMS.Migrations
                             Id = 12,
                             DepartmentId = 21,
                             FullName = "Dr. Thomas Scott",
+                            HospitalId = 3,
                             PhoneNumber = "(216) 444-2200",
                             Specialization = "Heart, Vascular & Thoracic Institute"
                         },
@@ -812,6 +848,7 @@ namespace HMS.Migrations
                             Id = 13,
                             DepartmentId = 22,
                             FullName = "Dr. Grace Martinez",
+                            HospitalId = 3,
                             PhoneNumber = "(216) 444-2201",
                             Specialization = "Neurological Institute"
                         },
@@ -820,6 +857,7 @@ namespace HMS.Migrations
                             Id = 14,
                             DepartmentId = 23,
                             FullName = "Dr. Ethan Robinson",
+                            HospitalId = 3,
                             PhoneNumber = "(216) 444-2202",
                             Specialization = "Orthopaedic & Rheumatologic Institute"
                         },
@@ -828,6 +866,7 @@ namespace HMS.Migrations
                             Id = 15,
                             DepartmentId = 24,
                             FullName = "Dr. Natalie Clark",
+                            HospitalId = 3,
                             PhoneNumber = "(216) 444-2203",
                             Specialization = "Digestive Disease & Surgery Institute"
                         },
@@ -836,6 +875,7 @@ namespace HMS.Migrations
                             Id = 16,
                             DepartmentId = 25,
                             FullName = "Dr. Henry Lewis",
+                            HospitalId = 3,
                             PhoneNumber = "(216) 444-2204",
                             Specialization = "Cancer Center / Taussig Cancer Institute"
                         },
@@ -844,6 +884,7 @@ namespace HMS.Migrations
                             Id = 17,
                             DepartmentId = 32,
                             FullName = "Dr. Alice Evans",
+                            HospitalId = 4,
                             PhoneNumber = "(410) 955-5000",
                             Specialization = "Cardiology"
                         },
@@ -852,6 +893,7 @@ namespace HMS.Migrations
                             Id = 18,
                             DepartmentId = 33,
                             FullName = "Dr. Robert King",
+                            HospitalId = 4,
                             PhoneNumber = "(410) 955-5001",
                             Specialization = "Neurology"
                         },
@@ -860,6 +902,7 @@ namespace HMS.Migrations
                             Id = 19,
                             DepartmentId = 38,
                             FullName = "Dr. Lily Moore",
+                            HospitalId = 4,
                             PhoneNumber = "(410) 955-5002",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -868,6 +911,7 @@ namespace HMS.Migrations
                             Id = 20,
                             DepartmentId = 35,
                             FullName = "Dr. Michael Taylor",
+                            HospitalId = 4,
                             PhoneNumber = "(410) 955-5003",
                             Specialization = "Hematology"
                         },
@@ -876,6 +920,7 @@ namespace HMS.Migrations
                             Id = 21,
                             DepartmentId = 41,
                             FullName = "Dr. Ava Harris",
+                            HospitalId = 5,
                             PhoneNumber = "(617) 726-2000",
                             Specialization = "Cardiology"
                         },
@@ -884,6 +929,7 @@ namespace HMS.Migrations
                             Id = 22,
                             DepartmentId = 42,
                             FullName = "Dr. James Hall",
+                            HospitalId = 5,
                             PhoneNumber = "(617) 726-2001",
                             Specialization = "Neurology"
                         },
@@ -892,6 +938,7 @@ namespace HMS.Migrations
                             Id = 23,
                             DepartmentId = 43,
                             FullName = "Dr. Mia Young",
+                            HospitalId = 5,
                             PhoneNumber = "(617) 726-2002",
                             Specialization = "Gastroenterology"
                         },
@@ -900,6 +947,7 @@ namespace HMS.Migrations
                             Id = 24,
                             DepartmentId = 44,
                             FullName = "Dr. Ethan Lopez",
+                            HospitalId = 5,
                             PhoneNumber = "(617) 726-2003",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -908,6 +956,7 @@ namespace HMS.Migrations
                             Id = 25,
                             DepartmentId = 46,
                             FullName = "Dr. Lucas Martin",
+                            HospitalId = 5,
                             PhoneNumber = "(617) 726-2004",
                             Specialization = "Oncology"
                         },
@@ -916,6 +965,7 @@ namespace HMS.Migrations
                             Id = 26,
                             DepartmentId = 51,
                             FullName = "Dr. Julia Ross",
+                            HospitalId = 6,
                             PhoneNumber = "(310) 825-9111",
                             Specialization = "Cardiology"
                         },
@@ -924,6 +974,7 @@ namespace HMS.Migrations
                             Id = 27,
                             DepartmentId = 52,
                             FullName = "Dr. Robert Williams",
+                            HospitalId = 6,
                             PhoneNumber = "(310) 825-9112",
                             Specialization = "Neurology"
                         },
@@ -932,6 +983,7 @@ namespace HMS.Migrations
                             Id = 28,
                             DepartmentId = 53,
                             FullName = "Dr. Samantha Bennett",
+                            HospitalId = 6,
                             PhoneNumber = "(310) 825-9113",
                             Specialization = "Gastroenterology"
                         },
@@ -940,6 +992,7 @@ namespace HMS.Migrations
                             Id = 29,
                             DepartmentId = 54,
                             FullName = "Dr. James White",
+                            HospitalId = 6,
                             PhoneNumber = "(310) 825-9114",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -948,6 +1001,7 @@ namespace HMS.Migrations
                             Id = 30,
                             DepartmentId = 61,
                             FullName = "Dr. Elizabeth Wright",
+                            HospitalId = 7,
                             PhoneNumber = "(713) 790-3311",
                             Specialization = "Cardiology"
                         },
@@ -956,6 +1010,7 @@ namespace HMS.Migrations
                             Id = 31,
                             DepartmentId = 62,
                             FullName = "Dr. Charles Moore",
+                            HospitalId = 7,
                             PhoneNumber = "(713) 790-3312",
                             Specialization = "Neurology"
                         },
@@ -964,6 +1019,7 @@ namespace HMS.Migrations
                             Id = 32,
                             DepartmentId = 63,
                             FullName = "Dr. Rachel Scott",
+                            HospitalId = 7,
                             PhoneNumber = "(713) 790-3313",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -972,6 +1028,7 @@ namespace HMS.Migrations
                             Id = 33,
                             DepartmentId = 71,
                             FullName = "Dr. Olivia Anderson",
+                            HospitalId = 8,
                             PhoneNumber = "(212) 746-5454",
                             Specialization = "Cardiology"
                         },
@@ -980,6 +1037,7 @@ namespace HMS.Migrations
                             Id = 34,
                             DepartmentId = 72,
                             FullName = "Dr. Kevin Parker",
+                            HospitalId = 8,
                             PhoneNumber = "(212) 746-5455",
                             Specialization = "Neurology"
                         },
@@ -988,6 +1046,7 @@ namespace HMS.Migrations
                             Id = 35,
                             DepartmentId = 73,
                             FullName = "Dr. Susan Moore",
+                            HospitalId = 8,
                             PhoneNumber = "(212) 746-5456",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -996,6 +1055,7 @@ namespace HMS.Migrations
                             Id = 36,
                             DepartmentId = 81,
                             FullName = "Dr. Daniel Brown",
+                            HospitalId = 9,
                             PhoneNumber = "(310) 423-3277",
                             Specialization = "Cardiology"
                         },
@@ -1004,6 +1064,7 @@ namespace HMS.Migrations
                             Id = 37,
                             DepartmentId = 82,
                             FullName = "Dr. Anna Robinson",
+                            HospitalId = 9,
                             PhoneNumber = "(310) 423-3278",
                             Specialization = "Neurology"
                         },
@@ -1012,6 +1073,7 @@ namespace HMS.Migrations
                             Id = 38,
                             DepartmentId = 83,
                             FullName = "Dr. Emily Harris",
+                            HospitalId = 9,
                             PhoneNumber = "(310) 423-3279",
                             Specialization = "Orthopaedic Surgery"
                         },
@@ -1020,6 +1082,7 @@ namespace HMS.Migrations
                             Id = 39,
                             DepartmentId = 91,
                             FullName = "Dr. David Carter",
+                            HospitalId = 10,
                             PhoneNumber = "(212) 241-6500",
                             Specialization = "Cardiology"
                         },
@@ -1028,6 +1091,7 @@ namespace HMS.Migrations
                             Id = 40,
                             DepartmentId = 92,
                             FullName = "Dr. Lily Baker",
+                            HospitalId = 10,
                             PhoneNumber = "(212) 241-6501",
                             Specialization = "Neurology"
                         },
@@ -1036,6 +1100,7 @@ namespace HMS.Migrations
                             Id = 41,
                             DepartmentId = 93,
                             FullName = "Dr. John Davis",
+                            HospitalId = 10,
                             PhoneNumber = "(212) 241-6502",
                             Specialization = "Orthopaedic Surgery"
                         });
@@ -1261,7 +1326,7 @@ namespace HMS.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HMS.Model.Patient", b =>
+            modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1269,21 +1334,31 @@ namespace HMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ContactNumber")
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MedicalHistory")
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Treatment")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patients");
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("MedicalHistories");
                 });
 
             modelBuilder.Entity("HMS.Model.User", b =>
@@ -1296,6 +1371,9 @@ namespace HMS.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -1492,7 +1570,11 @@ namespace HMS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HMS.Model.Patient", "Patient")
+                    b.HasOne("HMS.Model.Hospital", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("HospitalId");
+
+                    b.HasOne("HMS.Model.User", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1527,6 +1609,25 @@ namespace HMS.Migrations
                         .HasForeignKey("HospitalId");
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
+                {
+                    b.HasOne("HMS.Model.Appointment", "Appointment")
+                        .WithMany("MedicalHistories")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMS.Model.User", "Patient")
+                        .WithMany("MedicalHistory")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1580,6 +1681,11 @@ namespace HMS.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HMS.Model.Appointment", b =>
+                {
+                    b.Navigation("MedicalHistories");
+                });
+
             modelBuilder.Entity("HMS.Model.Department", b =>
                 {
                     b.Navigation("Doctors");
@@ -1592,14 +1698,18 @@ namespace HMS.Migrations
 
             modelBuilder.Entity("HMS.Model.Hospital", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Departments");
 
                     b.Navigation("Doctors");
                 });
 
-            modelBuilder.Entity("HMS.Model.Patient", b =>
+            modelBuilder.Entity("HMS.Model.User", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("MedicalHistory");
                 });
 #pragma warning restore 612, 618
         }

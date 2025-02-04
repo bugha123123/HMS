@@ -14,42 +14,70 @@
 </head>
 <body>
 
-    <nav class="bg-white shadow-md">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-[#0284c7]">HMS</h1>
-                </div>
-                <div class="hidden md:flex space-x-4">
-                    <a asp-action="dashboard" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Dashboard</a>
-                    <a asp-action="patients" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Patients</a>
-                    <a asp-action="appointments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Appointments</a>
-                    <a asp-action="doctors" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Doctors</a>
-                    <a asp-action="departments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Departments</a>
-                </div>
+@if (User.IsInRole("Admin"))
+    {
+        <nav class="bg-white shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-[#0284c7]">HMS</h1>
+                    </div>
+                    <div class="hidden md:flex space-x-4">
+                        <a asp-action="dashboard" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Dashboard</a>
+                        <a asp-action="patients" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Patients</a>
+                        <a asp-action="appointments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Appointments</a>
+                        <a asp-action="doctors" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Doctors</a>
+                        <a asp-action="departments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Departments</a>
+                    </div>
 
-                <div>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <form asp-controller="Auth" asp-action="SignoutUser" method="post" style="display:inline;">
-                            <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
-                                Log out
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a asp-action="signin" asp-controller="Auth">
-                            <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
-                                Sign in
-                            </button>
-                        </a>
-                    }
+                    <div>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Auth" asp-action="SignoutUser" method="post" style="display:inline;">
+                                <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                                    Log out
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="signin" asp-controller="Auth">
+                                <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                                    Sign in
+                                </button>
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
-
+        </nav>
+    }else{
+  <header class="bg-blue-600 text-white p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a class="text-2xl font-bold" asp-action="Index" asp-controller="Home">HMS Patient Portal</a>
+            <ul class="flex space-x-4">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a asp-action="bookappointment" asp-controller="Home" class="hover:underline">Book Appointment</a></li>
+                }
+                else
+                {
+                    <li><a asp-action="signin" asp-controller="Auth" class="hover:underline">Sign In</a></li>
+                }
+                <li><a  class="hover:underline" asp-action="medicalrecords" asp-controller="Home">Medical Records</a></li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a class="hover:underline" asp-action="SignOutUser" asp-controller="Auth">Log out</a></li>
+                }
+                else
+                {
+                    <li><a class="hover:underline" asp-action="signin" asp-controller="Auth">Sign in</a></li>
+                }
+            </ul>
+        </nav>
+    </header>
+    }
+  
     <div class="container mx-auto">
         <main role="main" class="pb-3">
             @RenderBody()

@@ -1,81 +1,116 @@
-﻿@{
-    Layout = null;
-}
+﻿@using HMS.Interface
+
+@inject IDoctorService _doctorService;
+@inject IHospitalService _hospitalService;
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
 <div class="container mx-auto px-4 py-8 mt-5">
-
     <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">Book an Appointment</h2>
-    <form class="max-w-4xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form class="max-w-4xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" asp-action="BookAnAppointment" asp-controller="Home" method="post">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Hospital Dropdown -->
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="hospital">
-                    Select Hospital
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="HospitalName">
+                    Hospital
                 </label>
-                <select id="hospital" name="hospital" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <select id="hospital" name="HospitalName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     <option value="">Choose a hospital</option>
-                    <option value="central-hospital">Central Hospital</option>
-                    <option value="north-medical-center">North Medical Center</option>
-                    <option value="east-community-hospital">East Community Hospital</option>
+                    @foreach (var hospital in await _hospitalService.GetAllHospitals())
+                    {
+                        <option value="@hospital.Name" data-hospital-id="@hospital.Id">@hospital.Name</option>
+                    }
                 </select>
             </div>
+
+            <!-- Doctor Dropdown -->
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="doctor">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="DoctorFullName">
                     Select Doctor
                 </label>
-                <select id="doctor" name="doctor" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <select id="doctor" name="DoctorFullName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     <option value="">Choose a doctor</option>
-                    <option value="dr-smith">Dr. Smith - Cardiologist</option>
-                    <option value="dr-johnson">Dr. Johnson - Pediatrician</option>
-                    <option value="dr-williams">Dr. Williams - Neurologist</option>
+                    @foreach (var doctor in await _doctorService.GetAllDoctors())
+                    {
+                        <option value="@doctor.FullName" data-hospital-id="@doctor.HospitalId">
+                            @doctor.FullName - @doctor.Specialization
+                        </option>
+                    }
                 </select>
             </div>
+
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="date">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="AppointmentDate">
                     Appointment Date
                 </label>
-                <input type="date" id="date" name="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="date" id="date" name="AppointmentDate" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" min="@DateTime.Now.ToString("yyyy-MM-dd")">
             </div>
+
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="time">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Appointmenttime">
                     Appointment Time
                 </label>
-                <input type="time" id="time" name="time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="time" id="time" name="Appointmenttime" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
+
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-                    Full Name
-                </label>
-                <input type="text" id="name" name="name" placeholder="John Doe" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                    Email
-                </label>
-                <input type="email" id="email" name="email" placeholder="johndoe@example.com" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-            <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="PhoneNumber">
                     Phone Number
                 </label>
-                <input type="tel" id="phone" name="phone" placeholder="123-456-7890" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="tel" id="phone" name="PhoneNumber" placeholder="123-456-7890" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
+
             <div class="md:col-span-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="reason">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="Reason">
                     Reason for Appointment
                 </label>
-                <textarea id="reason" name="reason" rows="3" placeholder="Briefly describe your reason for the appointment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                <textarea id="reason" name="Reason" rows="3" placeholder="Briefly describe your reason for the appointment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
             </div>
         </div>
+
         <div class="flex items-center justify-between mt-6">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Book Appointment
             </button>
-          <a asp-action="Index" asp-controller="Home" >
-                <button type="reset" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <a asp-action="Index" asp-controller="Home">
+                <button type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Go Back
                 </button>
-          </a>
+            </a>
         </div>
     </form>
 </div>
+
+<!-- JavaScript to Auto-Update Hospital based on Doctor Selection -->
+<script>
+    document.getElementById("doctor").addEventListener("change", function () {
+        var selectedDoctor = this.options[this.selectedIndex];
+        var hospitalId = selectedDoctor.getAttribute("data-hospital-id");
+
+        // Reset hospital dropdown and select the relevant one based on doctor's hospitalId
+        var hospitalSelect = document.getElementById("hospital");
+        var hospitalOptions = hospitalSelect.getElementsByTagName('option');
+
+        // Disable all hospitals first
+        for (var i = 0; i < hospitalOptions.length; i++) {
+            hospitalOptions[i].disabled = true;
+        }
+
+        // Enable and select the hospital related to the selected doctor
+        for (var i = 0; i < hospitalOptions.length; i++) {
+            if (hospitalOptions[i].getAttribute("data-hospital-id") === hospitalId) {
+                hospitalOptions[i].disabled = false;
+                hospitalSelect.value = hospitalOptions[i].value;  // Set the value of the hospital select
+                break;
+            }
+        }
+    });
+
+    document.getElementById('time').addEventListener('focus', function () {
+        var currentTime = new Date();
+        var currentHours = currentTime.getHours().toString().padStart(2, '0');
+        var currentMinutes = currentTime.getMinutes().toString().padStart(2, '0');
+        var currentTimeStr = currentHours + ':' + currentMinutes;
+        this.setAttribute('min', currentTimeStr);
+    });
+</script>

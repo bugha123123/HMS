@@ -18,7 +18,9 @@ builder.Services.AddDbContext<AppDbContextion>(options =>
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
+builder.Services.AddScoped<IHospitalService, HospitalService>();
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -78,10 +80,15 @@ app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await RoleSeeder.SeedRolesAsync(scope.ServiceProvider, roleManager);
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContextion>();
-  
+    var serviceProvider = scope.ServiceProvider;
+
+    // Get the RoleManager and UserManager for role and user management
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+
+    // Seed the roles and admin user
+    await RoleSeeder.SeedRolesAsync(serviceProvider, roleManager, userManager);
+
 }
 
 app.Run();

@@ -1,33 +1,7 @@
-﻿@{
-    Layout = null;
-}
-
+﻿
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-<header class="bg-blue-600 text-white p-4">
-    <nav class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold">HMS User Portal</h1>
-        <ul class="flex space-x-4">
-            @if (User.Identity.IsAuthenticated)
-            {
-                <li><a asp-action="bookappointment" asp-controller="Home" class="hover:underline">Book Appointment</a></li>
-            }
-            else
-            {
-                <li><a asp-action="signin" asp-controller="Auth" class="hover:underline">Sign In</a></li>
-            }
-            <li><a href="records.html" class="hover:underline">Medical Records</a></li>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <li><a class="hover:underline" asp-action="SignOutUser" asp-controller="Auth">Log out</a></li>
-            }
-            else
-            {
-                <li><a class="hover:underline" asp-action="signin" asp-controller="Auth">Sign in</a></li>
-            }
-        </ul>
-    </nav>
-</header>
+
 
 <main class="container mx-auto mt-8 p-4">
     <h2 class="text-3xl font-bold mb-4">Welcome to HMS User Portal</h2>
@@ -48,7 +22,7 @@
         <div class="bg-white p-6 rounded-lg shadow">
             <h3 class="text-xl font-semibold mb-2">View Medical Records</h3>
             <p>Access your medical history and test results securely.</p>
-            <a href="records.html" class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">View Records</a>
+            <a  class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" asp-action="medicalrecords" asp-controller="Home">View Records</a>
         </div>
     </div>
 </main>

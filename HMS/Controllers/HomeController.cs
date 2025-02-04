@@ -9,14 +9,11 @@ namespace HMS.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IAuthService _authService;
-        private readonly UserManager<User> _userManager;
-        public HomeController(ILogger<HomeController> logger, IAuthService authService, UserManager<User> userManager)
+      private readonly IPatientService _patientService;
+
+        public HomeController(IPatientService petientService)
         {
-            _logger = logger;
-            _authService = authService;
-            _userManager = userManager;
+            _patientService = petientService;
         }
 
         [Authorize]
@@ -24,13 +21,37 @@ namespace HMS.Controllers
         {
           return View();
         }
+        public async Task<IActionResult> medicalrecords()
+        {
+            var MedicalRecords = await _patientService.GetMedicalHistoryAsync();
+            return View(MedicalRecords);
+        }
 
+
+
+        public async Task<IActionResult> bookappointment()
+        {
+            return View();
+        }
         
-
-                public async Task<IActionResult> bookappointment()
+        public async Task<IActionResult> AppointmentBookingSuccess()
         {
             return View();
         }
 
+        public async Task<IActionResult> AppointmentBookingFailure()
+        {
+            return View();
+        }
+        public async Task<IActionResult> BookAnAppointment(string DoctorFullName, DateTime AppointmentDate, DateTime Appointmenttime, string PhoneNumber, string HospitalName,string Reason)
+        {
+            if (ModelState.IsValid)
+            {
+                await _patientService.BookAppointmentAsync(DoctorFullName, AppointmentDate, Appointmenttime, PhoneNumber, HospitalName, Reason);
+                return RedirectToAction("AppointmentBookingSuccess", "Home");
+            }
+            return RedirectToAction("AppointmentBookingFailure", "Home");
+
+        }
     }
 }

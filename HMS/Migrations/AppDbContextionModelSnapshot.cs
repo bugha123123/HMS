@@ -24,25 +24,49 @@ namespace HMS.Migrations
 
             modelBuilder.Entity("HMS.Model.Appointment", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("AppointmentTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PatientId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("HospitalName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
 
                     b.HasIndex("PatientId");
 
@@ -1299,7 +1323,7 @@ namespace HMS.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HMS.Model.Patient", b =>
+            modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1307,21 +1331,29 @@ namespace HMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ContactNumber")
-                        .IsRequired()
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Diagnosis")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MedicalHistory")
+                    b.Property<string>("PatientId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Treatment")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Patients");
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("MedicalHistories");
                 });
 
             modelBuilder.Entity("HMS.Model.User", b =>
@@ -1334,6 +1366,9 @@ namespace HMS.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -1530,7 +1565,11 @@ namespace HMS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HMS.Model.Patient", "Patient")
+                    b.HasOne("HMS.Model.Hospital", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("HospitalId");
+
+                    b.HasOne("HMS.Model.User", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1565,6 +1604,25 @@ namespace HMS.Migrations
                         .HasForeignKey("HospitalId");
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
+                {
+                    b.HasOne("HMS.Model.Appointment", "Appointment")
+                        .WithMany("MedicalHistories")
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HMS.Model.User", "Patient")
+                        .WithMany("MedicalHistory")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1618,6 +1676,11 @@ namespace HMS.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HMS.Model.Appointment", b =>
+                {
+                    b.Navigation("MedicalHistories");
+                });
+
             modelBuilder.Entity("HMS.Model.Department", b =>
                 {
                     b.Navigation("Doctors");
@@ -1630,14 +1693,18 @@ namespace HMS.Migrations
 
             modelBuilder.Entity("HMS.Model.Hospital", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Departments");
 
                     b.Navigation("Doctors");
                 });
 
-            modelBuilder.Entity("HMS.Model.Patient", b =>
+            modelBuilder.Entity("HMS.Model.User", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("MedicalHistory");
                 });
 #pragma warning restore 612, 618
         }
