@@ -1,5 +1,8 @@
 using System.Diagnostics;
-using HMS.Models;
+using HMS.Interface;
+using HMS.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Controllers
@@ -7,19 +10,27 @@ namespace HMS.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IAuthService _authService;
+        private readonly UserManager<User> _userManager;
+        public HomeController(ILogger<HomeController> logger, IAuthService authService, UserManager<User> userManager)
         {
             _logger = logger;
+            _authService = authService;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            return RedirectToAction("dashboard", "Admin");
+          return View();
         }
 
-     
+        
 
+                public async Task<IActionResult> bookappointment()
+        {
+            return View();
+        }
 
     }
 }

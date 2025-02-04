@@ -1,0 +1,48 @@
+﻿@using HMS.DTO
+@model RegisterDTO
+
+@{
+    Layout = null;
+}
+<script src="https://cdn.tailwindcss.com"></script>
+<div class="min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Hospital Management System</h2>
+        <h3 class="text-xl font-semibold mb-4 text-center">Sign Up</h3>
+        <form asp-action="SignupUser" asp-controller="Auth" method="post">
+         
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
+                <input asp-for="Email" type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                <input asp-for="Password" type="password" id="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="mb-4">
+                <label for="role" class="block text-gray-700 text-sm font-bold mb-2">Role</label>
+                <select id="role" name="Role" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="">Select a role</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="nurse">Nurse</option>
+                    <option value="admin">Administrator</option>
+                    <option value="patient">Patient</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="flex items-center">
+                    <input type="checkbox" class="form-checkbox text-blue-500" required>
+                    <span class="ml-2 text-sm text-gray-700">I agree to the <a href="#" class="text-blue-500 hover:underline">terms and conditions</a></span>
+                </label>
+            </div>
+            <div>
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Sign Up
+                </button>
+            </div>
+        </form>
+        <p class="mt-4 text-sm text-center text-gray-600">
+            Already have an account? <a href="#" class="text-blue-500 hover:underline">Log in</a>
+        </p>
+    </div>
+</div>

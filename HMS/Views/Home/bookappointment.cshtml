@@ -1,0 +1,81 @@
+﻿@{
+    Layout = null;
+}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<div class="container mx-auto px-4 py-8 mt-5">
+
+    <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">Book an Appointment</h2>
+    <form class="max-w-4xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="hospital">
+                    Select Hospital
+                </label>
+                <select id="hospital" name="hospital" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Choose a hospital</option>
+                    <option value="central-hospital">Central Hospital</option>
+                    <option value="north-medical-center">North Medical Center</option>
+                    <option value="east-community-hospital">East Community Hospital</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="doctor">
+                    Select Doctor
+                </label>
+                <select id="doctor" name="doctor" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">Choose a doctor</option>
+                    <option value="dr-smith">Dr. Smith - Cardiologist</option>
+                    <option value="dr-johnson">Dr. Johnson - Pediatrician</option>
+                    <option value="dr-williams">Dr. Williams - Neurologist</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="date">
+                    Appointment Date
+                </label>
+                <input type="date" id="date" name="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="time">
+                    Appointment Time
+                </label>
+                <input type="time" id="time" name="time" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                    Full Name
+                </label>
+                <input type="text" id="name" name="name" placeholder="John Doe" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    Email
+                </label>
+                <input type="email" id="email" name="email" placeholder="johndoe@example.com" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">
+                    Phone Number
+                </label>
+                <input type="tel" id="phone" name="phone" placeholder="123-456-7890" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="reason">
+                    Reason for Appointment
+                </label>
+                <textarea id="reason" name="reason" rows="3" placeholder="Briefly describe your reason for the appointment" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            </div>
+        </div>
+        <div class="flex items-center justify-between mt-6">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Book Appointment
+            </button>
+          <a asp-action="Index" asp-controller="Home" >
+                <button type="reset" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Go Back
+                </button>
+          </a>
+        </div>
+    </form>
+</div>

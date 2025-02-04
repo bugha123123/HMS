@@ -29,13 +29,28 @@
                 </div>
 
                 <div>
-                    <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">Login</button>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-controller="Auth" asp-action="SignoutUser" method="post" style="display:inline;">
+                            <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                                Log out
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-action="signin" asp-controller="Auth">
+                            <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                                Sign in
+                            </button>
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container mx-auto">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
