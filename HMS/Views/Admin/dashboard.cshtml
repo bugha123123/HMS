@@ -1,0 +1,164 @@
+﻿ 
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<main class="container mx-auto px-4 py-8">
+    <!-- Dashboard Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Total Patients</h3>
+            <p class="text-3xl font-bold text-[#0284c7]">1,234</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Today's Appointments</h3>
+            <p class="text-3xl font-bold text-[#0284c7]">42</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Available Doctors</h3>
+            <p class="text-3xl font-bold text-[#0284c7]">18</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Departments</h3>
+            <p class="text-3xl font-bold text-[#0284c7]">8</p>
+        </div>
+    </div>
+
+    <!-- Recent Patients -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-bold mb-4">Recent Patients</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 py-2 text-left">Patient ID</th>
+                        <th class="px-4 py-2 text-left">Name</th>
+                        <th class="px-4 py-2 text-left">Age</th>
+                        <th class="px-4 py-2 text-left">Department</th>
+                        <th class="px-4 py-2 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-t">
+                        <td class="px-4 py-2">P-001</td>
+                        <td class="px-4 py-2">John Doe</td>
+                        <td class="px-4 py-2">45</td>
+                        <td class="px-4 py-2">Cardiology</td>
+                        <td class="px-4 py-2"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Active</span></td>
+                    </tr>
+                    <tr class="border-t">
+                        <td class="px-4 py-2">P-002</td>
+                        <td class="px-4 py-2">Jane Smith</td>
+                        <td class="px-4 py-2">32</td>
+                        <td class="px-4 py-2">Neurology</td>
+                        <td class="px-4 py-2"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-bold mb-4">Upcoming Appointments</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 py-2 text-left">Time</th>
+                        <th class="px-4 py-2 text-left">Patient</th>
+                        <th class="px-4 py-2 text-left">Doctor</th>
+                        <th class="px-4 py-2 text-left">Department</th>
+                        <th class="px-4 py-2 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-t">
+                        <td class="px-4 py-2">09:00 AM</td>
+                        <td class="px-4 py-2">Robert Johnson</td>
+                        <td class="px-4 py-2">Dr. Sarah Wilson</td>
+                        <td class="px-4 py-2">Orthopedics</td>
+                        <td class="px-4 py-2"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Scheduled</span></td>
+                    </tr>
+                    <tr class="border-t">
+                        <td class="px-4 py-2">10:30 AM</td>
+                        <td class="px-4 py-2">Mary Brown</td>
+                        <td class="px-4 py-2">Dr. Michael Chen</td>
+                        <td class="px-4 py-2">Pediatrics</td>
+                        <td class="px-4 py-2"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Scheduled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-4">Add New Patient</h3>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                        Full Name
+                    </label>
+                    <input class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="name" type="text" placeholder="Enter patient name">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="age">
+                        Age
+                    </label>
+                    <input class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="age" type="number" placeholder="Enter age">
+                </div>
+                <button class="w-full bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" type="submit">Add Patient</button>
+            </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-4">Schedule Appointment</h3>
+            <form>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="patient">
+                        Patient
+                    </label>
+                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="patient">
+                        <option>Select Patient</option>
+                        <option>John Doe</option>
+                        <option>Jane Smith</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="doctor">
+                        Doctor
+                    </label>
+                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="doctor">
+                        <option>Select Doctor</option>
+                        <option>Dr. Sarah Wilson</option>
+                        <option>Dr. Michael Chen</option>
+                    </select>
+                </div>
+                <button class="w-full bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" type="submit">Schedule</button>
+            </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-4">Department Overview</h3>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span>Cardiology</span>
+                    <span class="text-[#0284c7] font-semibold">12 Doctors</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Neurology</span>
+                    <span class="text-[#0284c7] font-semibold">8 Doctors</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Pediatrics</span>
+                    <span class="text-[#0284c7] font-semibold">10 Doctors</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span>Orthopedics</span>
+                    <span class="text-[#0284c7] font-semibold">6 Doctors</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
