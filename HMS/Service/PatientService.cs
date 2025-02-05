@@ -44,7 +44,8 @@ namespace HMS.Service
                 Status = AppointmentStatus.Pending,
                 PhoneNumber = PhoneNumber,
                 HospitalName = FoundHospital.Name,
-                Reason = Reason
+                Reason = Reason,
+                IsAdminScheduled = false,
                 
 
             };

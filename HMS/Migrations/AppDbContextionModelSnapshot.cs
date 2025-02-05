@@ -22,58 +22,7 @@ namespace HMS.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HMS.Model.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("AppointmentTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("HospitalId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("HospitalName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PatientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorId");
-
-                    b.HasIndex("HospitalId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("HMS.Model.Department", b =>
+            modelBuilder.Entity("Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,6 +37,9 @@ namespace HMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HospitalId");
@@ -99,602 +51,200 @@ namespace HMS.Migrations
                         {
                             Id = 1,
                             HospitalId = 1,
-                            Name = "Emergency Medicine"
+                            Name = "Emergency Medicine",
+                            Type = 0
                         },
                         new
                         {
                             Id = 2,
                             HospitalId = 1,
-                            Name = "General Medicine"
+                            Name = "General Medicine",
+                            Type = 1
                         },
                         new
                         {
                             Id = 3,
                             HospitalId = 1,
-                            Name = "Surgery"
+                            Name = "Surgery",
+                            Type = 2
                         },
                         new
                         {
                             Id = 4,
                             HospitalId = 1,
-                            Name = "Pediatrics"
+                            Name = "Pediatrics",
+                            Type = 3
                         },
                         new
                         {
                             Id = 5,
                             HospitalId = 1,
-                            Name = "Obstetrics and Gynecology"
+                            Name = "Obstetrics and Gynecology",
+                            Type = 4
                         },
                         new
                         {
                             Id = 6,
                             HospitalId = 1,
-                            Name = "Orthopedic Surgery"
+                            Name = "Orthopedic Surgery",
+                            Type = 5
                         },
                         new
                         {
                             Id = 7,
                             HospitalId = 1,
-                            Name = "Neurology"
+                            Name = "Neurology",
+                            Type = 6
                         },
                         new
                         {
                             Id = 8,
                             HospitalId = 1,
-                            Name = "Cardiology"
+                            Name = "Cardiology",
+                            Type = 7
                         },
                         new
                         {
                             Id = 9,
                             HospitalId = 1,
-                            Name = "Psychiatry"
+                            Name = "Psychiatry",
+                            Type = 8
                         },
                         new
                         {
                             Id = 10,
                             HospitalId = 1,
-                            Name = "Radiology"
+                            Name = "Radiology",
+                            Type = 9
                         },
                         new
                         {
                             Id = 11,
                             HospitalId = 2,
-                            Name = "Cardiovascular Medicine"
+                            Name = "Cardiovascular Medicine",
+                            Type = 10
                         },
                         new
                         {
                             Id = 12,
                             HospitalId = 2,
-                            Name = "Neurology"
+                            Name = "Neurology",
+                            Type = 6
                         },
                         new
                         {
                             Id = 13,
                             HospitalId = 2,
-                            Name = "Orthopedic Surgery"
+                            Name = "Orthopedic Surgery",
+                            Type = 5
                         },
                         new
                         {
                             Id = 14,
                             HospitalId = 2,
-                            Name = "Gastroenterology and Hepatology"
+                            Name = "Gastroenterology and Hepatology",
+                            Type = 11
                         },
                         new
                         {
                             Id = 15,
                             HospitalId = 2,
-                            Name = "Endocrinology"
+                            Name = "Endocrinology",
+                            Type = 12
                         },
                         new
                         {
                             Id = 16,
                             HospitalId = 2,
-                            Name = "Oncology"
+                            Name = "Oncology",
+                            Type = 13
                         },
                         new
                         {
                             Id = 17,
                             HospitalId = 2,
-                            Name = "Pulmonary Medicine"
+                            Name = "Pulmonary Medicine",
+                            Type = 14
                         },
                         new
                         {
                             Id = 18,
                             HospitalId = 2,
-                            Name = "Nephrology and Hypertension"
+                            Name = "Nephrology and Hypertension",
+                            Type = 15
                         },
                         new
                         {
                             Id = 19,
                             HospitalId = 2,
-                            Name = "Rheumatology"
+                            Name = "Rheumatology",
+                            Type = 16
                         },
                         new
                         {
                             Id = 20,
                             HospitalId = 2,
-                            Name = "Dermatology"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            HospitalId = 3,
-                            Name = "Heart, Vascular & Thoracic Institute"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            HospitalId = 3,
-                            Name = "Neurological Institute"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            HospitalId = 3,
-                            Name = "Orthopaedic & Rheumatologic Institute"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            HospitalId = 3,
-                            Name = "Digestive Disease & Surgery Institute"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            HospitalId = 3,
-                            Name = "Cancer Center / Taussig Cancer Institute"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            HospitalId = 3,
-                            Name = "Pediatric Institute"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            HospitalId = 3,
-                            Name = "Endocrinology & Metabolism Institute"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            HospitalId = 3,
-                            Name = "Urology & Kidney Institute"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            HospitalId = 3,
-                            Name = "Respiratory Institute"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            HospitalId = 3,
-                            Name = "Anesthesiology & Pain Management"
-                        },
-                        new
-                        {
-                            Id = 31,
-                            HospitalId = 4,
-                            Name = "Anesthesiology and Critical Care Medicine"
-                        },
-                        new
-                        {
-                            Id = 32,
-                            HospitalId = 4,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 33,
-                            HospitalId = 4,
-                            Name = "Endocrinology, Diabetes and Metabolism"
-                        },
-                        new
-                        {
-                            Id = 34,
-                            HospitalId = 4,
-                            Name = "Gastroenterology and Hepatology"
-                        },
-                        new
-                        {
-                            Id = 35,
-                            HospitalId = 4,
-                            Name = "Hematology"
-                        },
-                        new
-                        {
-                            Id = 36,
-                            HospitalId = 4,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 37,
-                            HospitalId = 4,
-                            Name = "Obstetrics and Gynecology"
-                        },
-                        new
-                        {
-                            Id = 38,
-                            HospitalId = 4,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 39,
-                            HospitalId = 4,
-                            Name = "Otolaryngology – Head and Neck Surgery"
-                        },
-                        new
-                        {
-                            Id = 40,
-                            HospitalId = 4,
-                            Name = "Pediatrics"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            HospitalId = 5,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 42,
-                            HospitalId = 5,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 43,
-                            HospitalId = 5,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 44,
-                            HospitalId = 5,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 45,
-                            HospitalId = 5,
-                            Name = "Endocrinology, Diabetes and Metabolism"
-                        },
-                        new
-                        {
-                            Id = 46,
-                            HospitalId = 5,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 47,
-                            HospitalId = 5,
-                            Name = "Pediatric Neurology"
-                        },
-                        new
-                        {
-                            Id = 48,
-                            HospitalId = 5,
-                            Name = "Pulmonary Medicine"
-                        },
-                        new
-                        {
-                            Id = 49,
-                            HospitalId = 5,
-                            Name = "Transplant Surgery"
-                        },
-                        new
-                        {
-                            Id = 50,
-                            HospitalId = 5,
-                            Name = "Radiology"
-                        },
-                        new
-                        {
-                            Id = 51,
-                            HospitalId = 6,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 52,
-                            HospitalId = 6,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 53,
-                            HospitalId = 6,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 54,
-                            HospitalId = 6,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 55,
-                            HospitalId = 6,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 56,
-                            HospitalId = 6,
-                            Name = "Pediatric Surgery"
-                        },
-                        new
-                        {
-                            Id = 57,
-                            HospitalId = 6,
-                            Name = "Psychiatry"
-                        },
-                        new
-                        {
-                            Id = 58,
-                            HospitalId = 6,
-                            Name = "Pulmonary Medicine"
-                        },
-                        new
-                        {
-                            Id = 59,
-                            HospitalId = 6,
-                            Name = "Rheumatology"
-                        },
-                        new
-                        {
-                            Id = 60,
-                            HospitalId = 6,
-                            Name = "Surgery"
-                        },
-                        new
-                        {
-                            Id = 61,
-                            HospitalId = 7,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 62,
-                            HospitalId = 7,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 63,
-                            HospitalId = 7,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 64,
-                            HospitalId = 7,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 65,
-                            HospitalId = 7,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 66,
-                            HospitalId = 7,
-                            Name = "Pediatric Surgery"
-                        },
-                        new
-                        {
-                            Id = 67,
-                            HospitalId = 7,
-                            Name = "Pulmonary Medicine"
-                        },
-                        new
-                        {
-                            Id = 68,
-                            HospitalId = 7,
-                            Name = "Radiology"
-                        },
-                        new
-                        {
-                            Id = 69,
-                            HospitalId = 7,
-                            Name = "Rheumatology"
-                        },
-                        new
-                        {
-                            Id = 70,
-                            HospitalId = 7,
-                            Name = "Transplant Surgery"
-                        },
-                        new
-                        {
-                            Id = 71,
-                            HospitalId = 8,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 72,
-                            HospitalId = 8,
-                            Name = "Neurosurgery"
-                        },
-                        new
-                        {
-                            Id = 73,
-                            HospitalId = 8,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 74,
-                            HospitalId = 8,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 75,
-                            HospitalId = 8,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 76,
-                            HospitalId = 8,
-                            Name = "Pediatrics"
-                        },
-                        new
-                        {
-                            Id = 77,
-                            HospitalId = 8,
-                            Name = "Psychiatry"
-                        },
-                        new
-                        {
-                            Id = 78,
-                            HospitalId = 8,
-                            Name = "Pulmonary Medicine"
-                        },
-                        new
-                        {
-                            Id = 79,
-                            HospitalId = 8,
-                            Name = "Surgery"
-                        },
-                        new
-                        {
-                            Id = 80,
-                            HospitalId = 8,
-                            Name = "Radiology"
-                        },
-                        new
-                        {
-                            Id = 81,
-                            HospitalId = 9,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 82,
-                            HospitalId = 9,
-                            Name = "Endocrinology"
-                        },
-                        new
-                        {
-                            Id = 83,
-                            HospitalId = 9,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 84,
-                            HospitalId = 9,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 85,
-                            HospitalId = 9,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 86,
-                            HospitalId = 9,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 87,
-                            HospitalId = 9,
-                            Name = "Pediatrics"
-                        },
-                        new
-                        {
-                            Id = 88,
-                            HospitalId = 9,
-                            Name = "Radiology"
-                        },
-                        new
-                        {
-                            Id = 89,
-                            HospitalId = 9,
-                            Name = "Rheumatology"
-                        },
-                        new
-                        {
-                            Id = 90,
-                            HospitalId = 9,
-                            Name = "Surgery"
-                        },
-                        new
-                        {
-                            Id = 91,
-                            HospitalId = 10,
-                            Name = "Cardiology"
-                        },
-                        new
-                        {
-                            Id = 92,
-                            HospitalId = 10,
-                            Name = "Endocrinology"
-                        },
-                        new
-                        {
-                            Id = 93,
-                            HospitalId = 10,
-                            Name = "Gastroenterology"
-                        },
-                        new
-                        {
-                            Id = 94,
-                            HospitalId = 10,
-                            Name = "Neurology"
-                        },
-                        new
-                        {
-                            Id = 95,
-                            HospitalId = 10,
-                            Name = "Orthopaedic Surgery"
-                        },
-                        new
-                        {
-                            Id = 96,
-                            HospitalId = 10,
-                            Name = "Oncology"
-                        },
-                        new
-                        {
-                            Id = 97,
-                            HospitalId = 10,
-                            Name = "Pediatrics"
-                        },
-                        new
-                        {
-                            Id = 98,
-                            HospitalId = 10,
-                            Name = "Pulmonary Medicine"
-                        },
-                        new
-                        {
-                            Id = 99,
-                            HospitalId = 10,
-                            Name = "Radiology"
-                        },
-                        new
-                        {
-                            Id = 100,
-                            HospitalId = 10,
-                            Name = "Surgery"
+                            Name = "Dermatology",
+                            Type = 17
                         });
+                });
+
+            modelBuilder.Entity("HMS.Model.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("AppointmentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoctorNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HospitalName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PatientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("HospitalId");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("HMS.Model.Doctor", b =>
@@ -789,7 +339,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 7,
-                            DepartmentId = 11,
+                            DepartmentId = 8,
                             FullName = "Dr. William Harris",
                             HospitalId = 2,
                             PhoneNumber = "(507) 284-2511",
@@ -798,7 +348,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 8,
-                            DepartmentId = 12,
+                            DepartmentId = 7,
                             FullName = "Dr. Olivia White",
                             HospitalId = 2,
                             PhoneNumber = "(507) 284-2512",
@@ -834,7 +384,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 12,
-                            DepartmentId = 21,
+                            DepartmentId = 8,
                             FullName = "Dr. Thomas Scott",
                             HospitalId = 3,
                             PhoneNumber = "(216) 444-2200",
@@ -843,7 +393,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 13,
-                            DepartmentId = 22,
+                            DepartmentId = 9,
                             FullName = "Dr. Grace Martinez",
                             HospitalId = 3,
                             PhoneNumber = "(216) 444-2201",
@@ -852,7 +402,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 14,
-                            DepartmentId = 23,
+                            DepartmentId = 10,
                             FullName = "Dr. Ethan Robinson",
                             HospitalId = 3,
                             PhoneNumber = "(216) 444-2202",
@@ -861,7 +411,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 15,
-                            DepartmentId = 24,
+                            DepartmentId = 9,
                             FullName = "Dr. Natalie Clark",
                             HospitalId = 3,
                             PhoneNumber = "(216) 444-2203",
@@ -870,7 +420,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 16,
-                            DepartmentId = 25,
+                            DepartmentId = 8,
                             FullName = "Dr. Henry Lewis",
                             HospitalId = 3,
                             PhoneNumber = "(216) 444-2204",
@@ -879,7 +429,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 17,
-                            DepartmentId = 32,
+                            DepartmentId = 8,
                             FullName = "Dr. Alice Evans",
                             HospitalId = 4,
                             PhoneNumber = "(410) 955-5000",
@@ -888,7 +438,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 18,
-                            DepartmentId = 33,
+                            DepartmentId = 7,
                             FullName = "Dr. Robert King",
                             HospitalId = 4,
                             PhoneNumber = "(410) 955-5001",
@@ -897,7 +447,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 19,
-                            DepartmentId = 38,
+                            DepartmentId = 13,
                             FullName = "Dr. Lily Moore",
                             HospitalId = 4,
                             PhoneNumber = "(410) 955-5002",
@@ -906,7 +456,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 20,
-                            DepartmentId = 35,
+                            DepartmentId = 8,
                             FullName = "Dr. Michael Taylor",
                             HospitalId = 4,
                             PhoneNumber = "(410) 955-5003",
@@ -915,7 +465,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 21,
-                            DepartmentId = 41,
+                            DepartmentId = 8,
                             FullName = "Dr. Ava Harris",
                             HospitalId = 5,
                             PhoneNumber = "(617) 726-2000",
@@ -924,7 +474,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 22,
-                            DepartmentId = 42,
+                            DepartmentId = 7,
                             FullName = "Dr. James Hall",
                             HospitalId = 5,
                             PhoneNumber = "(617) 726-2001",
@@ -933,7 +483,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 23,
-                            DepartmentId = 43,
+                            DepartmentId = 13,
                             FullName = "Dr. Mia Young",
                             HospitalId = 5,
                             PhoneNumber = "(617) 726-2002",
@@ -942,7 +492,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 24,
-                            DepartmentId = 44,
+                            DepartmentId = 10,
                             FullName = "Dr. Ethan Lopez",
                             HospitalId = 5,
                             PhoneNumber = "(617) 726-2003",
@@ -951,7 +501,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 25,
-                            DepartmentId = 46,
+                            DepartmentId = 8,
                             FullName = "Dr. Lucas Martin",
                             HospitalId = 5,
                             PhoneNumber = "(617) 726-2004",
@@ -960,7 +510,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 26,
-                            DepartmentId = 51,
+                            DepartmentId = 8,
                             FullName = "Dr. Julia Ross",
                             HospitalId = 6,
                             PhoneNumber = "(310) 825-9111",
@@ -969,7 +519,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 27,
-                            DepartmentId = 52,
+                            DepartmentId = 7,
                             FullName = "Dr. Robert Williams",
                             HospitalId = 6,
                             PhoneNumber = "(310) 825-9112",
@@ -978,7 +528,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 28,
-                            DepartmentId = 53,
+                            DepartmentId = 13,
                             FullName = "Dr. Samantha Bennett",
                             HospitalId = 6,
                             PhoneNumber = "(310) 825-9113",
@@ -987,7 +537,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 29,
-                            DepartmentId = 54,
+                            DepartmentId = 10,
                             FullName = "Dr. James White",
                             HospitalId = 6,
                             PhoneNumber = "(310) 825-9114",
@@ -996,7 +546,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 30,
-                            DepartmentId = 61,
+                            DepartmentId = 8,
                             FullName = "Dr. Elizabeth Wright",
                             HospitalId = 7,
                             PhoneNumber = "(713) 790-3311",
@@ -1005,7 +555,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 31,
-                            DepartmentId = 62,
+                            DepartmentId = 7,
                             FullName = "Dr. Charles Moore",
                             HospitalId = 7,
                             PhoneNumber = "(713) 790-3312",
@@ -1014,7 +564,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 32,
-                            DepartmentId = 63,
+                            DepartmentId = 10,
                             FullName = "Dr. Rachel Scott",
                             HospitalId = 7,
                             PhoneNumber = "(713) 790-3313",
@@ -1023,7 +573,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 33,
-                            DepartmentId = 71,
+                            DepartmentId = 8,
                             FullName = "Dr. Olivia Anderson",
                             HospitalId = 8,
                             PhoneNumber = "(212) 746-5454",
@@ -1032,7 +582,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 34,
-                            DepartmentId = 72,
+                            DepartmentId = 7,
                             FullName = "Dr. Kevin Parker",
                             HospitalId = 8,
                             PhoneNumber = "(212) 746-5455",
@@ -1041,7 +591,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 35,
-                            DepartmentId = 73,
+                            DepartmentId = 10,
                             FullName = "Dr. Susan Moore",
                             HospitalId = 8,
                             PhoneNumber = "(212) 746-5456",
@@ -1050,7 +600,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 36,
-                            DepartmentId = 81,
+                            DepartmentId = 8,
                             FullName = "Dr. Daniel Brown",
                             HospitalId = 9,
                             PhoneNumber = "(310) 423-3277",
@@ -1059,7 +609,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 37,
-                            DepartmentId = 82,
+                            DepartmentId = 7,
                             FullName = "Dr. Anna Robinson",
                             HospitalId = 9,
                             PhoneNumber = "(310) 423-3278",
@@ -1068,7 +618,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 38,
-                            DepartmentId = 83,
+                            DepartmentId = 10,
                             FullName = "Dr. Emily Harris",
                             HospitalId = 9,
                             PhoneNumber = "(310) 423-3279",
@@ -1077,7 +627,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 39,
-                            DepartmentId = 91,
+                            DepartmentId = 8,
                             FullName = "Dr. David Carter",
                             HospitalId = 10,
                             PhoneNumber = "(212) 241-6500",
@@ -1086,7 +636,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 40,
-                            DepartmentId = 92,
+                            DepartmentId = 7,
                             FullName = "Dr. Lily Baker",
                             HospitalId = 10,
                             PhoneNumber = "(212) 241-6501",
@@ -1095,7 +645,7 @@ namespace HMS.Migrations
                         new
                         {
                             Id = 41,
-                            DepartmentId = 93,
+                            DepartmentId = 10,
                             FullName = "Dr. John Davis",
                             HospitalId = 10,
                             PhoneNumber = "(212) 241-6502",
@@ -1557,6 +1107,17 @@ namespace HMS.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Department", b =>
+                {
+                    b.HasOne("HMS.Model.Hospital", "Hospital")
+                        .WithMany("Departments")
+                        .HasForeignKey("HospitalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hospital");
+                });
+
             modelBuilder.Entity("HMS.Model.Appointment", b =>
                 {
                     b.HasOne("HMS.Model.Doctor", "Doctor")
@@ -1580,20 +1141,9 @@ namespace HMS.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HMS.Model.Department", b =>
-                {
-                    b.HasOne("HMS.Model.Hospital", "Hospital")
-                        .WithMany("Departments")
-                        .HasForeignKey("HospitalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hospital");
-                });
-
             modelBuilder.Entity("HMS.Model.Doctor", b =>
                 {
-                    b.HasOne("HMS.Model.Department", "Department")
+                    b.HasOne("Department", "Department")
                         .WithMany("Doctors")
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1676,14 +1226,14 @@ namespace HMS.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Department", b =>
+                {
+                    b.Navigation("Doctors");
+                });
+
             modelBuilder.Entity("HMS.Model.Appointment", b =>
                 {
                     b.Navigation("MedicalHistories");
-                });
-
-            modelBuilder.Entity("HMS.Model.Department", b =>
-                {
-                    b.Navigation("Doctors");
                 });
 
             modelBuilder.Entity("HMS.Model.Doctor", b =>

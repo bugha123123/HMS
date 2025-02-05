@@ -51,7 +51,9 @@
                 </div>
             </div>
         </nav>
-    }else{
+    }
+    else if (User.IsInRole("Patient"))
+    {
   <header class="bg-blue-600 text-white p-4">
         <nav class="container mx-auto flex justify-between items-center">
             <a class="text-2xl font-bold" asp-action="Index" asp-controller="Home">HMS Patient Portal</a>
@@ -76,6 +78,29 @@
             </ul>
         </nav>
     </header>
+    }
+    else if (User.IsInRole("Doctor"))
+    {
+        <header class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <i data-lucide="user" class="h-8 w-8 text-blue-600"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Dr. Sarah Wilson</h1>
+                        <p class="text-sm text-gray-500">Cardiologist</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100">
+                        <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
+                    </button>
+                    <button class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
+                        <i data-lucide="log-out" class="h-5 w-5"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
     }
   
     <div class="container mx-auto">

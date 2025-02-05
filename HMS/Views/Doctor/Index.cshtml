@@ -1,0 +1,157 @@
+﻿
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Search and Filter -->
+    <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+        <div class="relative">
+            <input type="text" placeholder="Search patients..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <i data-lucide="search" class="absolute left-3 top-2.5 h-5 w-5 text-gray-400"></i>
+        </div>
+        <div class="flex space-x-2">
+            <button class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">All</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Pending</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Accepted</button>
+            <button class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Rejected</button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Total Appointments</h3>
+                <i data-lucide="calendar" class="h-6 w-6 text-blue-600"></i>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-2">24</p>
+            <p class="text-sm text-gray-500 mt-1">Today</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Pending</h3>
+                <i data-lucide="clock" class="h-6 w-6 text-yellow-600"></i>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-2">8</p>
+            <p class="text-sm text-gray-500 mt-1">Needs attention</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Accepted</h3>
+                <i data-lucide="check-circle" class="h-6 w-6 text-green-600"></i>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-2">12</p>
+            <p class="text-sm text-gray-500 mt-1">Confirmed</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Completed</h3>
+                <i data-lucide="check-square" class="h-6 w-6 text-blue-600"></i>
+            </div>
+            <p class="text-3xl font-bold text-gray-900 mt-2">4</p>
+            <p class="text-sm text-gray-500 mt-1">Today</p>
+        </div>
+    </div>
+
+    <!-- Appointments List -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Today's Appointments</h2>
+        </div>
+        <div class="divide-y divide-gray-200">
+            <!-- Appointment Item -->
+            <div class="p-6 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
+                            <i data-lucide="user" class="h-6 w-6 text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">John Doe</h3>
+                            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                <i data-lucide="calendar" class="h-4 w-4"></i>
+                                <span>March 20, 2024</span>
+                                <i data-lucide="clock" class="h-4 w-4 ml-2"></i>
+                                <span>09:00 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">Pending</span>
+                        <button class="p-2 rounded-full hover:bg-green-100 text-green-600">
+                            <i data-lucide="check-circle" class="h-5 w-5"></i>
+                        </button>
+                        <button class="p-2 rounded-full hover:bg-red-100 text-red-600">
+                            <i data-lucide="x-circle" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-600">Reason: Regular Checkup</p>
+                </div>
+            </div>
+
+            <!-- More appointment items (similar structure) -->
+            <div class="p-6 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
+                            <i data-lucide="user" class="h-6 w-6 text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">Jane Smith</h3>
+                            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                <i data-lucide="calendar" class="h-4 w-4"></i>
+                                <span>March 20, 2024</span>
+                                <i data-lucide="clock" class="h-4 w-4 ml-2"></i>
+                                <span>10:30 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">Accepted</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-600">Reason: Follow-up Consultation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Add click event listeners to filter buttons
+    document.querySelectorAll('.flex.space-x-2 button').forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            document.querySelectorAll('.flex.space-x-2 button').forEach(btn => {
+                btn.className = 'px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100';
+            });
+            // Add active class to clicked button
+            this.className = 'px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white';
+        });
+    });
+
+    // Add click event listeners to accept/reject buttons
+    document.querySelectorAll('.hover\\:bg-green-100, .hover\\:bg-red-100').forEach(button => {
+        button.addEventListener('click', function() {
+            const appointmentItem = this.closest('.p-6');
+            const statusSpan = appointmentItem.querySelector('.rounded-full.text-sm');
+
+            if (this.classList.contains('hover:bg-green-100')) {
+                statusSpan.className = 'px-3 py-1 rounded-full text-sm bg-green-100 text-green-800';
+                statusSpan.textContent = 'Accepted';
+            } else {
+                statusSpan.className = 'px-3 py-1 rounded-full text-sm bg-red-100 text-red-800';
+                statusSpan.textContent = 'Rejected';
+            }
+
+            // Hide the action buttons after status change
+            const actionButtons = appointmentItem.querySelectorAll('.hover\\:bg-green-100, .hover\\:bg-red-100');
+            actionButtons.forEach(btn => btn.style.display = 'none');
+        });
+    });
+</script>

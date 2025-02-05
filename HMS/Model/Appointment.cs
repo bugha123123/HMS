@@ -34,17 +34,24 @@ namespace HMS.Model
         [Required]
         public DateTime AppointmentTime { get; set; }
 
-        [Required]
+     
         [StringLength(15, MinimumLength = 10, ErrorMessage = "Phone number must be between 10 and 15 characters.")]
         [RegularExpression(@"^\+?[0-9\s\-\(\)]{10,15}$", ErrorMessage = "Invalid phone number format.")]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
 
         public string HospitalName { get; set; }
 
-        public string Reason { get; set; }
+        public string? Reason { get; set; }
 
-        public ICollection<MedicalHistory> MedicalHistories { get; set; }
+        public ICollection<MedicalHistory>? MedicalHistories { get; set; }
+
+        public bool? IsAdminScheduled;
+
+        public string? Notes { get; set; } // patient notes
+        public string? DoctorNotes { get; set; } // doctorNotes
+
+        public string? AdminNotes { get; set; } // admin notes
 
     }
 }

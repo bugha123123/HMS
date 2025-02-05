@@ -21,6 +21,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {

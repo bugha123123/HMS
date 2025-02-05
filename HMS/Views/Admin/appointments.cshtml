@@ -1,7 +1,49 @@
-﻿<main class="container mx-auto px-4 py-8">
+﻿@using HMS.Interface
+@using HMS.Model
+@inject IAdminService _adminservice;
+@inject IHospitalService _hospitalservice;
+@{
+    // Extract query parameters from the URL
+    var query = Context.Request.Query["query"];
+    var departmentSpecStr = Context.Request.Query["DepartmentSpecilization"];
+    var status = Context.Request.Query["status"];
+
+    // Parse the department specialization if provided
+    DepartmentType? departmentSpec = string.IsNullOrEmpty(departmentSpecStr)
+        ? (DepartmentType?)null
+        : Enum.Parse<DepartmentType>(departmentSpecStr);
+
+    // Parse the appointment status if provided
+    AppointmentStatus? appointmentStatus = string.IsNullOrEmpty(status)
+        ? (AppointmentStatus?)null
+        : Enum.Parse<AppointmentStatus>(status);
+
+    // Fetch filtered appointments based on the query parameters
+    var appointments = await _adminservice.Admin_GetAppointments(query, departmentSpec, appointmentStatus);
+
+    // Get supporting data
+    var patients = await _adminservice.Admin_GetPatients();
+    var departments = await _adminservice.Admin_GetDepartments();
+    var doctors = await _adminservice.Admin_GetDoctors();
+    var hospitals = await _hospitalservice.GetAllHospitals();
+
+
+    var appointmentForToday = await _adminservice.Admin_GetTodaysAppointments();
+
+    var cancelledAppointments = await _adminservice.Admin_GetCanceledAppointments();
+
+    var completedAppointments = await _adminservice.Admin_GetCompletedAppointments();
+
+    var pendingAppointments = await _adminservice.Admin_GetPendingAppointments();
+
+
+
+}
+
+<main class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Appointment Management</h1>
-        <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" onclick="document.getElementById('addAppointmentModal').classList.remove('hidden')">
+        <button style="border:1px solid black" class="bg-[#0284c7] text-dark border-dark px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" onclick="document.getElementById('addAppointmentModal').classList.remove('hidden')">
             Schedule Appointment
         </button>
     </div>
@@ -10,191 +52,231 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Today's Appointments</h3>
-            <p class="text-3xl font-bold text-[#0284c7]">42</p>
+            <p class="text-3xl font-bold text-[#0284c7]">@appointmentForToday.Count()</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Completed</h3>
-            <p class="text-3xl font-bold text-green-600">28</p>
+            <p class="text-3xl font-bold text-green-600">@completedAppointments.Count()</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Pending</h3>
-            <p class="text-3xl font-bold text-yellow-600">12</p>
+            <p class="text-3xl font-bold text-yellow-600">@pendingAppointments.Count()</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Cancelled</h3>
-            <p class="text-3xl font-bold text-red-600">2</p>
+            <p class="text-3xl font-bold text-red-600">@cancelledAppointments.Count()</p>
         </div>
     </div>
 
-    <!-- Calendar View -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold">February 2024</h2>
-            <div class="flex gap-2">
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Previous</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Next</button>
-            </div>
-        </div>
-        <div class="grid grid-cols-7 gap-2">
-            <!-- Days of the week -->
-            <div class="text-center font-semibold py-2">Sun</div>
-            <div class="text-center font-semibold py-2">Mon</div>
-            <div class="text-center font-semibold py-2">Tue</div>
-            <div class="text-center font-semibold py-2">Wed</div>
-            <div class="text-center font-semibold py-2">Thu</div>
-            <div class="text-center font-semibold py-2">Fri</div>
-            <div class="text-center font-semibold py-2">Sat</div>
+    <!-- Search & Filter Form -->
+    <form asp-action="appointments" asp-controller="Admin" method="get" class="mb-6 bg-white p-4 rounded-lg shadow-md flex flex-wrap gap-4">
+        <!-- Search Input -->
+        <input type="text" name="query" value="@query" placeholder="Search appointments..." class="px-4 py-2 border rounded-lg flex-1 focus:ring-2 focus:ring-[#0284c7]">
 
-            <!-- Calendar days -->
-            <div class="text-center py-2 text-gray-400">28</div>
-            <div class="text-center py-2 text-gray-400">29</div>
-            <div class="text-center py-2 text-gray-400">30</div>
-            <div class="text-center py-2 text-gray-400">31</div>
-            <div class="text-center py-2">1</div>
-            <div class="text-center py-2">2</div>
-            <div class="text-center py-2">3</div>
-            <!-- More days... -->
-        </div>
-    </div>
+        <!-- Department Dropdown -->
+        <select name="DepartmentSpecilization" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0284c7]">
+            <option value="">All Departments</option>
+            @foreach (DepartmentType department in Enum.GetValues(typeof(DepartmentType)))
+            {
+                <option value="@department.ToString()" selected="@(departmentSpec == department)">@department</option>
+            }
+        </select>
+
+        <!-- Status Dropdown -->
+        <select name="status" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#0284c7]">
+            <option value="">All Status</option>
+            @foreach (var value in Enum.GetValues(typeof(AppointmentStatus)))
+            {
+                <option value="@value" selected="@(status == value.ToString())">@value</option>
+            }
+        </select>
+
+        <!-- Submit Button -->
+        <button type="submit" class="bg-[#0284c7] text-dark px-4 py-2 rounded-lg hover:bg-[#0ea5e9]" style="border:1px solid black">
+            Search
+        </button>
+    </form>
 
     <!-- Appointment List -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <div class="mb-4">
-            <div class="flex flex-wrap gap-4">
-                <div class="flex-1">
-                    <input type="text" placeholder="Search appointments..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                </div>
-                <div class="flex gap-4">
-                    <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                        <option>All Departments</option>
-                        <option>Cardiology</option>
-                        <option>Neurology</option>
-                        <option>Pediatrics</option>
-                    </select>
-                    <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                        <option>All Status</option>
-                        <option>Scheduled</option>
-                        <option>Completed</option>
-                        <option>Cancelled</option>
-                    </select>
-                </div>
+        @if (appointments.Any())
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left">Time</th>
+                            <th class="px-4 py-2 text-left">Patient</th>
+                            <th class="px-4 py-2 text-left">Doctor</th>
+                            <th class="px-4 py-2 text-left">Department</th>
+                            <th class="px-4 py-2 text-left">Status</th>
+                            <th class="px-4 py-2 text-left">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in appointments)
+                        {
+                            <tr class="border-t">
+                                <td class="px-4 py-2">@appointment.AppointmentTime.ToString("hh:mm tt")</td>
+                                <td class="px-4 py-2">@appointment.Patient.UserName</td>
+                                <td class="px-4 py-2">@appointment.Doctor.FullName</td>
+                                <td class="px-4 py-2">@appointment.Doctor.Department.Type</td>
+                                <td class="px-4 py-2">
+                                    <span class="px-2 py-1 rounded-full text-sm
+                                        @(appointment.Status == AppointmentStatus.Scheduled ? "bg-blue-100 text-blue-800" :
+                                          appointment.Status == AppointmentStatus.Completed ? "bg-green-100 text-green-800" :
+                                          "bg-red-100 text-red-800")">
+                                        @appointment.Status
+                                    </span>
+                                </td>
+                                <td class="px-4 py-2">
+                                    <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                    <button class="text-red-600 hover:text-red-800">Cancel</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-gray-50">
-                        <th class="px-4 py-2 text-left">Time</th>
-                        <th class="px-4 py-2 text-left">Patient</th>
-                        <th class="px Continuing with the appointments.html file exactly where we left off:
-
-                        <th class="px-4 py-2 text-left">Doctor</th>
-                        <th class="px-4 py-2 text-left">Department</th>
-                        <th class="px-4 py-2 text-left">Type</th>
-                        <th class="px-4 py-2 text-left">Status</th>
-                        <th class="px-4 py-2 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-t">
-                        <td class="px-4 py-2">09:00 AM</td>
-                        <td class="px-4 py-2">John Doe</td>
-                        <td class="px-4 py-2">Dr. Sarah Wilson</td>
-                        <td class="px-4 py-2">Cardiology</td>
-                        <td class="px-4 py-2">Check-up</td>
-                        <td class="px-4 py-2">
-                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Scheduled</span>
-                        </td>
-                        <td class="px-4 py-2">
-                            <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                            <button class="text-red-600 hover:text-red-800">Cancel</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="flex justify-between items-center mt-4">
-            <p class="text-gray-600">Showing 1-10 of 42 appointments</p>
-            <div class="flex gap-2">
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Previous</button>
-                <button class="px-3 py-1 bg-[#0284c7] text-white rounded">1</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">2</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">3</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Next</button>
-            </div>
-        </div>
+        }
+        else
+        {
+            <p class="text-gray-600 text-center py-4">No appointments found.</p>
+        }
     </div>
 </main>
 
-<!-- Add Appointment Modal -->
 <div id="addAppointmentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg w-full max-w-md">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold">Schedule Appointment</h2>
-            <button onclick="this.closest('#addAppointmentModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+            <button onclick="document.getElementById('addAppointmentModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
                 ✕
             </button>
         </div>
-        <form>
+        <form asp-action="Admin_ScheduleAppointmentAction" asp-controller="Admin" method="post">
             <div class="space-y-4">
+                <!-- Patient Dropdown -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Patient</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <select name="PatientUserName" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                         <option value="">Select Patient</option>
-                        <option>John Doe</option>
-                        <option>Jane Smith</option>
+                        @foreach (var patient in patients)
+                        {
+                            <option value="@patient.UserName">@patient.UserName</option>
+                        }
                     </select>
                 </div>
+                <!-- Hospital Dropdown -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Hospital</label>
+                    <select id="hospitalSelect" name="hospitalId" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                        <option value="">Select Hospital</option>
+                        @foreach (var hospital in hospitals)
+                        {
+                            <option value="@hospital.Id">@hospital.Name</option>
+                        }
+                    </select>
+                </div>
+                <!-- Department Dropdown -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <select id="departmentSelect" name="departmentId" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                         <option value="">Select Department</option>
-                        <option>Cardiology</option>
-                        <option>Neurology</option>
-                        <option>Pediatrics</option>
+                        @foreach (var department in departments)
+                        {
+                            <option value="@department.Id">@department.Name</option>
+                        }
                     </select>
                 </div>
+                <!-- Doctor Dropdown -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Doctor</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <select id="doctorSelect" name="DoctorId" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                         <option value="">Select Doctor</option>
-                        <option>Dr. Sarah Wilson</option>
-                        <option>Dr. Michael Chen</option>
+                        @foreach (var doctor in doctors)
+                        {
+                            <option value="@doctor.Id"
+                                    data-hospitalid="@doctor.HospitalId"
+                                    data-departmentid="@doctor.DepartmentId">
+                                @doctor.FullName
+                            </option>
+                        }
                     </select>
                 </div>
+                <!-- Date -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Date</label>
-                    <input type="date" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <input name="date" type="date" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                 </div>
+                <!-- Time -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Time</label>
-                    <input type="time" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <input name="time" type="time" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                 </div>
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Type</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                        <option>Check-up</option>
-                        <option>Follow-up</option>
-                        <option>Consultation</option>
-                        <option>Emergency</option>
-                    </select>
-                </div>
+                <!-- Notes -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Notes</label>
-                    <textarea class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" rows="3"></textarea>
+                    <textarea name="Notes" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" rows="3"></textarea>
                 </div>
             </div>
             <div class="mt-6 flex justify-end gap-4">
-                <button type="button" onclick="this.closest('#addAppointmentModal').classList.add('hidden')" class="px-4 py-2 border rounded hover:bg-gray-100">
+                <button type="button" onclick="document.getElementById('addAppointmentModal').classList.add('hidden')" class="px-4 py-2 border rounded hover:bg-gray-100">
                     Cancel
                 </button>
-                <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                <button type="submit" class="bg-[#0284c7] text-dark px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
                     Schedule
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- JavaScript to update Hospital/Doctor based on selections -->
+<script>
+    // Cache the original doctor options for filtering by department
+    var doctorSelect = document.getElementById('doctorSelect');
+    // Create a copy of all doctor options (as an array)
+    var originalDoctorOptions = Array.from(doctorSelect.options);
+
+    // When the department selection changes, filter the doctor dropdown
+    document.getElementById('departmentSelect').addEventListener('change', function () {
+        var selectedDepartment = this.value;
+
+        // Reset the doctor dropdown to the default placeholder option
+        doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+
+        // Filter the original doctor options to only those matching the selected department
+        var filteredOptions = originalDoctorOptions.filter(function (opt) {
+            // Skip the placeholder option
+            if (opt.value === "") return false;
+            return opt.getAttribute('data-departmentid') === selectedDepartment;
+        });
+
+        // Append the filtered options to the doctor dropdown
+        filteredOptions.forEach(function (opt) {
+            doctorSelect.appendChild(opt);
+        });
+
+        // If there is at least one doctor, select the first one and update the hospital dropdown
+        if (filteredOptions.length > 0) {
+            doctorSelect.selectedIndex = 0;
+            var firstOption = doctorSelect.options[doctorSelect.selectedIndex];
+            var hospitalId = firstOption.getAttribute('data-hospitalid');
+            if (hospitalId) {
+                document.getElementById('hospitalSelect').value = hospitalId;
+            }
+        } else {
+            // If no doctors match, clear the hospital dropdown selection as well
+            document.getElementById('hospitalSelect').value = "";
+        }
+    });
+
+    // When the doctor selection changes (whether via department filtering or manual change), update the hospital dropdown
+    document.getElementById('doctorSelect').addEventListener('change', function () {
+        var selectedOption = this.options[this.selectedIndex];
+        var hospitalId = selectedOption ? selectedOption.getAttribute('data-hospitalid') : "";
+        document.getElementById('hospitalSelect').value = hospitalId || "";
+    });
+</script>
+

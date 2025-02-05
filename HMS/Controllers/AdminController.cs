@@ -1,9 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HMS.Interface;
+using HMS.Model;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Controllers
 {
     public class AdminController : Controller
     {
+        private readonly IAdminService _adminService;
+
+        public AdminController(IAdminService adminService)
+        {
+            _adminService = adminService;
+        }
+
         public IActionResult dashboard()
         {
             return View();
@@ -16,14 +25,37 @@ namespace HMS.Controllers
         {
             return View();
         }
-        public IActionResult appointments()
+        public async Task<IActionResult> appointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
         {
-            return View();
+            // Get the filtered list of appointments from the service
+            var appointments = await _adminService.Admin_GetAppointments(query, DepartmentSpecialization, status);
+
+            // Return the filtered appointments to the view
+            return View(appointments);
         }
 
         public IActionResult departments()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Admin_ScheduleAppointmentAction(string PatientUserName, int departmentId, int DoctorId, DateTime date, DateTime time, string Notes, int hospitalId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _adminService.Admin_ScheduleAppointment(PatientUserName, departmentId, DoctorId, date, time, Notes, hospitalId);
+                    return RedirectToAction("Appointments", "Admin");
+                }
+                return RedirectToAction("Appointments", "Admin");
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
