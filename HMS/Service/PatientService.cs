@@ -120,5 +120,10 @@ namespace HMS.Service
 
             return await _db.MedicalHistories.Include(x => x.Patient).Include(x => x.Appointment).ThenInclude(x => x.Doctor).Where(m => m.Patient.Id == LoggedInPatient.Id).ToListAsync();
         }
+
+        public async Task<List<User>> GetUsers()
+        {
+            return await _db.Users.ToListAsync();
+        }
     }
 }

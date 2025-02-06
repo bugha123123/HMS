@@ -7,5 +7,7 @@ namespace HMS.Interface
         Task BookAppointmentAsync(string DoctorFullName, DateTime AppointmentDate, DateTime Appointmenttime, string PhoneNumber, string HospitalName, string Reason);
 
         Task<List<MedicalHistory>> GetMedicalHistoryAsync();
+
+        Task<List<User>> GetUsers();
     }
 }

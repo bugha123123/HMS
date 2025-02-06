@@ -25,6 +25,11 @@ namespace HMS.Controllers
         {
             return View();
         }
+        
+        public IActionResult requests()
+        {
+            return View();
+        }
         public async Task<IActionResult> appointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
         {
             // Get the filtered list of appointments from the service
@@ -57,5 +62,29 @@ namespace HMS.Controllers
                 throw;
             }
         }
+
+
+        public async Task<IActionResult> Admin_CancelAppointment(int AppointmentId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.Admin_CancelAppointment(AppointmentId);
+                return RedirectToAction("appointments", "Admin");
+            }
+            return RedirectToAction("appointments", "Admin");
+
+        }
+
+        public async Task<IActionResult> Admin_ApproveDoctorApplication(int ApplicationId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.ApproveApplication(ApplicationId);
+                return RedirectToAction("requests", "Admin");
+            }
+            return RedirectToAction("requests", "Admin");
+
+        }
+
     }
 }

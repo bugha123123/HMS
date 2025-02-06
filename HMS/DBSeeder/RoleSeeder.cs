@@ -31,7 +31,8 @@ public class RoleSeeder
                 Email = "irakliberdzena333@gmail.com",  // Make sure to update this email with the actual admin email you want
                 PhoneNumber = "123-456-7890",
                 EmailConfirmed = true,
-                PhoneNumberConfirmed = true
+                PhoneNumberConfirmed = true,
+                Age = 19
             };
 
             // Set a password for the Admin user

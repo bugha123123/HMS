@@ -1,7 +1,10 @@
-﻿using HMS.DTO;
+﻿using HMS.DB;
+using HMS.DTO;
 using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace HMS.Service
 {
@@ -11,13 +14,15 @@ namespace HMS.Service
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailService emailService;
+        private readonly AppDbContextion _db;
 
-        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService)
+        public AuthService(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, SignInManager<User> signInManager, IEmailService emailService, AppDbContextion db)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _signInManager = signInManager;
             this.emailService = emailService;
+            _db = db;
         }
 
         public async Task<User?> GetLoggedInUserAsync()
@@ -45,30 +50,40 @@ namespace HMS.Service
 
 
 
-        public async Task RegisterUser(RegisterDTO registerViewModel, string Role)
+        public async Task RegisterUser(RegisterDTO registerViewModel, string role)
         {
+        
             // Create the new user object and map the properties
             var user = new User
             {
                 UserName = registerViewModel.Email,
                 Email = registerViewModel.Email,
-                
+               
             };
 
             // Create the user
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, Role);
-
-                // Sign the user in
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                // Send the welcome email
-                await SendWelcomeEmailToUser(registerViewModel.Email);
+                return;
             }
+
+     
+            // Add user to the role (Doctor, User, Admin, etc.)
+            await _userManager.AddToRoleAsync(user, role);
+
+            // Sign the user in
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            // Send the welcome email
+            await SendWelcomeEmailToUser(registerViewModel.Email);
+
         }
+
+     
+
+
 
 
         public async Task LogInUser(LogInDTO logInViewModel)

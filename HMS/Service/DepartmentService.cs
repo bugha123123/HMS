@@ -19,6 +19,9 @@ namespace HMS.Service
             return await _db.Departments.FirstOrDefaultAsync(x => x.Id == Id);
         }
 
-     
+        public async Task<List<Department>> GetDepartments()
+        {
+            return await _db.Departments.ToListAsync();
+        }
     }
 }

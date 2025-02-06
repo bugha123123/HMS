@@ -22,6 +22,7 @@ namespace HMS.Controllers
         {
             return View();
         }
+   
 
         public async Task<IActionResult> SigninUser(LogInDTO logInViewModel)
         {
@@ -33,10 +34,11 @@ namespace HMS.Controllers
             return View("signin", logInViewModel);
         }
 
-        public async Task<IActionResult> SignupUser(RegisterDTO RegisterViewModel,string Role)
+        public async Task<IActionResult> SignupUser(RegisterDTO RegisterViewModel,string Role = "Patient")
         {
             if (ModelState.IsValid)
             {
+              
                 await _authService.RegisterUser(RegisterViewModel, Role);
                 return RedirectToAction("Index", "Home");
             }
@@ -51,5 +53,6 @@ namespace HMS.Controllers
 
 
         }
+
     }
 }

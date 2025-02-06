@@ -1,0 +1,125 @@
+﻿@model HMS.Model.DoctorApplication
+
+@{
+    ViewData["Title"] = "Doctor Application";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<main class="container mx-auto mt-8 p-4">
+    <h2 class="text-3xl font-bold mb-4">Doctor Application Form</h2>
+    <p class="mb-4">Fill out the form below to apply to become a doctor with our healthcare system.</p>
+
+    <form method="post" class="space-y-4" asp-action="SaveDoctorApplication" asp-controller="Doctor">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Personal Information</h3>
+
+            <div class="mb-4">
+                <label for="FirstName" class="block text-gray-700">First Name</label>
+                <input type="text" asp-for="FirstName" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="FirstName" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="LastName" class="block text-gray-700">Last Name</label>
+                <input type="text" asp-for="LastName" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="LastName" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="Email" class="block text-gray-700">Email</label>
+                <input type="email" asp-for="Email" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="PhoneNumber" class="block text-gray-700">Phone Number</label>
+                <input type="text" asp-for="PhoneNumber" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Professional Information</h3>
+
+            <div class="mb-4">
+                <label for="MedicalLicenseNumber" class="block text-gray-700">Medical License Number</label>
+                <input type="text" asp-for="MedicalLicenseNumber" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="MedicalLicenseNumber" class="text-red-500 text-sm"></span>
+            </div>
+            <div class="mb-4">
+                <label for="Specialization" class="block text-gray-700">Specialization</label>
+                <select asp-for="Specialization" class="mt-1 p-2 w-full border border-gray-300 rounded">
+                    @foreach (var specialization in Enum.GetValues(typeof(DepartmentType)).Cast<DepartmentType>())
+                    {
+                        <option value="@specialization">@specialization</option>
+                    }
+                </select>
+                <span asp-validation-for="Specialization" class="text-red-500 text-sm"></span>
+            </div>
+
+
+            <div class="mb-4">
+                <label for="YearsOfExperience" class="block text-gray-700">Years of Experience</label>
+                <input type="number" asp-for="YearsOfExperience" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="YearsOfExperience" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="PracticeDescription" class="block text-gray-700">Practice Description</label>
+                <textarea asp-for="PracticeDescription" class="mt-1 p-2 w-full border border-gray-300 rounded"></textarea>
+                <span asp-validation-for="PracticeDescription" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Education</h3>
+
+            <div class="mb-4">
+                <label for="MedicalSchool" class="block text-gray-700">Medical School</label>
+                <input type="text" asp-for="MedicalSchool" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="MedicalSchool" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="DegreeOrCertification" class="block text-gray-700">Degree/Certification</label>
+                <input type="text" asp-for="DegreeOrCertification" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="DegreeOrCertification" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="GraduationYear" class="block text-gray-700">Graduation Year</label>
+                <input type="number" asp-for="GraduationYear" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="GraduationYear" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="BoardCertification" class="block text-gray-700">Board Certification</label>
+                <input type="text" asp-for="BoardCertification" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="BoardCertification" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Hospital Affiliations</h3>
+
+            <div class="mb-4">
+                <label for="PrimaryHospitalAffiliation" class="block text-gray-700">Primary Hospital Affiliation</label>
+                <input type="text" asp-for="PrimaryHospitalAffiliation" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="PrimaryHospitalAffiliation" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-4">
+                <label for="SecondaryHospitalAffiliation" class="block text-gray-700">Secondary Hospital Affiliation</label>
+                <input type="text" asp-for="SecondaryHospitalAffiliation" class="mt-1 p-2 w-full border border-gray-300 rounded" />
+                <span asp-validation-for="SecondaryHospitalAffiliation" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="flex justify-center">
+            <button type="submit" class="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600">
+                Submit Application
+            </button>
+        </div>
+    </form>
+</main>

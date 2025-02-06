@@ -11,5 +11,11 @@ namespace HMS.Model
 
         // Navigation property to appointments
         public ICollection<Appointment>? Appointments { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public int? Age { get; set; }
+
+        public bool IsApproved { get; set; } = false;
     }
 }

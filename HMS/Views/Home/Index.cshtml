@@ -1,12 +1,10 @@
-﻿
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-
+﻿<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
 <main class="container mx-auto mt-8 p-4">
     <h2 class="text-3xl font-bold mb-4">Welcome to HMS User Portal</h2>
     <p class="mb-4">Access your medical information, book appointments, and manage your healthcare needs all in one place.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Book an Appointment Section -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h3 class="text-xl font-semibold mb-2">Book an Appointment</h3>
             <p>Schedule your next visit with just a few clicks.</p>
@@ -19,10 +17,19 @@
                 <a class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" asp-action="signin" asp-controller="Auth">Sign In to Book</a>
             }
         </div>
+
+        <!-- View Medical Records Section -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h3 class="text-xl font-semibold mb-2">View Medical Records</h3>
             <p>Access your medical history and test results securely.</p>
-            <a  class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" asp-action="medicalrecords" asp-controller="Home">View Records</a>
+            <a class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" asp-action="medicalrecords" asp-controller="Home">View Records</a>
+        </div>
+
+        <!-- Want to Become a Doctor Poster Section -->
+        <div class="bg-white p-6 rounded-lg shadow col-span-1 md:col-span-2">
+            <h3 class="text-xl font-semibold mb-2">Want to Become a Doctor?</h3>
+            <p class="mb-4">Do you have what it takes to be part of our healthcare team? Apply today and start your journey with us.</p>
+            <a href="@Url.Action("doctorapplication", "Doctor")" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Apply Now</a>
         </div>
     </div>
 </main>

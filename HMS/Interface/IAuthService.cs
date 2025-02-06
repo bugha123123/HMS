@@ -11,5 +11,8 @@ namespace HMS.Interface
         Task LogOutUser();
 
         Task SendWelcomeEmailToUser(string email);
+
+
+        // for users that are trying to register as a DOCTOR
     }
 }

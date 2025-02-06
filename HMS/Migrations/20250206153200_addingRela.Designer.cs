@@ -4,6 +4,7 @@ using HMS.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    partial class AppDbContextionModelSnapshot : ModelSnapshot
+    [Migration("20250206153200_addingRela")]
+    partial class addingRela
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,9 +191,6 @@ namespace HMS.Migrations
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DoctorApplicationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -212,8 +212,6 @@ namespace HMS.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("DoctorApplicationId");
 
                     b.HasIndex("HospitalId");
 
@@ -757,6 +755,31 @@ namespace HMS.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WaitingList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("DoctorApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorApplicationId");
+
+                    b.ToTable("WaitingLists");
+                });
+
             modelBuilder.Entity("Department", b =>
                 {
                     b.HasOne("HMS.Model.Hospital", "Hospital")
@@ -799,17 +822,11 @@ namespace HMS.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HMS.Model.DoctorApplication", "DoctorApplication")
-                        .WithMany()
-                        .HasForeignKey("DoctorApplicationId");
-
                     b.HasOne("HMS.Model.Hospital", null)
                         .WithMany("Doctors")
                         .HasForeignKey("HospitalId");
 
                     b.Navigation("Department");
-
-                    b.Navigation("DoctorApplication");
                 });
 
             modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
@@ -886,6 +903,13 @@ namespace HMS.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WaitingList", b =>
+                {
+                    b.HasOne("HMS.Model.DoctorApplication", null)
+                        .WithMany("WaitingLists")
+                        .HasForeignKey("DoctorApplicationId");
+                });
+
             modelBuilder.Entity("Department", b =>
                 {
                     b.Navigation("Doctors");
@@ -899,6 +923,11 @@ namespace HMS.Migrations
             modelBuilder.Entity("HMS.Model.Doctor", b =>
                 {
                     b.Navigation("Appointments");
+                });
+
+            modelBuilder.Entity("HMS.Model.DoctorApplication", b =>
+                {
+                    b.Navigation("WaitingLists");
                 });
 
             modelBuilder.Entity("HMS.Model.Hospital", b =>

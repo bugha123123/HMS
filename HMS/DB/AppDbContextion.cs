@@ -14,6 +14,10 @@ namespace HMS.DB
         public DbSet<Appointment> Appointments { get; set; }
 
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
+
+
+        public DbSet<DoctorApplication> doctorApplications  { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -25,8 +29,14 @@ namespace HMS.DB
                     .HasForeignKey(mh => mh.PatientId)
                     .OnDelete(DeleteBehavior.Restrict); // No cascade delete for PatientId
 
-            // Prevent cascade delete for AppointmentId
-          
+           
+
+            modelBuilder.Entity<MedicalHistory>()
+        .HasOne(mh => mh.Appointment)
+        .WithMany()
+        .HasForeignKey(mh => mh.AppointmentId)
+        .OnDelete(DeleteBehavior.Restrict);
+
         }
 
     

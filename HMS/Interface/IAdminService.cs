@@ -18,5 +18,19 @@ namespace HMS.Interface
         Task<List<Appointment>> Admin_GetCompletedAppointments();
         Task<List<Appointment>> Admin_GetPendingAppointments();
         Task<List<Appointment>> Admin_GetCanceledAppointments();
+
+        Task<List<DoctorApplication>> Admin_GetDoctorApplications();
+        Task Admin_CancelAppointment(int AppointmentId);
+
+        Task<List<User>> GetRecentPatients();
+
+        Task<List<Appointment>> GetUpcomingAppointments();
+
+        Task ApproveApplication(int ApplicationId);
+
+
+        Task<DoctorApplication> GetApplicationById(int ApplicationId);
+
+
     }
 }

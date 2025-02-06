@@ -159,5 +159,106 @@ namespace HMS.Service
                 .Where(a => a.Status == AppointmentStatus.Cancelled)
                 .ToListAsync();
         }
+
+        public async Task Admin_CancelAppointment(int AppointmentId)
+        {
+            var AppointmentToDelete = await _db.Appointments.Include(u => u.Patient).FirstOrDefaultAsync(a => a.Id == AppointmentId);
+
+            if (AppointmentToDelete is null)
+                return;
+
+             _db.Appointments.Remove(AppointmentToDelete);
+            await _db.SaveChangesAsync();
+
+            await _emailService.SendEmailAsync(
+    AppointmentToDelete.Patient.Email,
+    "Appointment Cancellation", 
+    @$"
+      
+        <body>
+            <div class='container'>
+                <h2>Appointment Cancellation</h2>
+                $<p>Dear {AppointmentToDelete.Patient.UserName},</p>
+                <p>We regret to inform you that your appointment scheduled on <strong>{AppointmentToDelete.AppointmentDate}</strong> has been cancelled.</p>
+                <p>If you have any questions, please contact our support team.</p>
+                <p>Thank you for understanding.</p>
+                <div class='footer'>Best Regards, <br> Your Clinic Team</div>
+            </div>
+        </body>
+   "
+);
+
+        }
+
+        public async Task<List<User>> GetRecentPatients()
+        {
+            var recentPatients = await _db.Users
+                                                 .Where(u => u.CreatedAt >= DateTime.Now.AddDays(-7))  // last seven days
+                                                 .OrderByDescending(u => u.CreatedAt) 
+                                                 .ToListAsync();  
+
+            return recentPatients;
+        }
+        public async Task<List<Appointment>> GetUpcomingAppointments()
+        {
+            var upcomingAppointments = await _db.Appointments
+                                                         .Include(u => u.Patient)
+                                                         .Include(d => d.Doctor)
+                                                        .Where(a => a.AppointmentDate > DateTime.Now && a.AppointmentDate <= DateTime.Now.AddDays(14))  // Appointments within the next 7 days
+                                                        .OrderBy(a => a.AppointmentDate)  
+                                                        .ToListAsync();  
+
+            return upcomingAppointments;
+        }
+
+        public async Task<List<DoctorApplication>> Admin_GetDoctorApplications()
+        {
+            return await _db.doctorApplications.ToListAsync();
+        }
+        public async Task<DoctorApplication> GetApplicationById(int ApplicationId)
+        {
+            return await _db.doctorApplications.FirstOrDefaultAsync(x => x.Id == ApplicationId);
+        }
+        public async Task ApproveApplication(int ApplicationId)
+        {
+            var FoundApplication = await GetApplicationById(ApplicationId);
+
+            if (FoundApplication == null)
+                return;
+
+            // Randomly assign fields
+            var random = new Random();
+
+            var departmentTypes = Enum.GetValues(typeof(DepartmentType)).Cast<DepartmentType>().ToArray();
+            var hospitals = await _db.Hospitals.ToListAsync();  // List of all hospitals from the DB
+            var departments = await _db.Departments.ToListAsync();  // List of all departments from the DB
+
+            var randomDepartment = departments[random.Next(departments.Count)];
+            var randomHospital = hospitals[random.Next(hospitals.Count)];
+
+            var DoctorToApprove = new Doctor()
+            {
+                Specialization = FoundApplication.Specialization,  
+                Status = DoctorStatus.Available,
+                Appointments = null, 
+                Department = randomDepartment,  
+                DepartmentId = randomDepartment.Id,  
+                DoctorApplication = FoundApplication,  
+                DoctorApplicationId = FoundApplication.Id,
+                FullName = FoundApplication.FirstName + " " + FoundApplication.LastName,
+                HospitalId = randomHospital.Id,  
+                PhoneNumber = "555-" + random.Next(1000000, 9999999),  
+            };
+
+
+            
+         await   _db.Doctors.AddAsync(DoctorToApprove);
+             _db.doctorApplications.Remove(FoundApplication);
+
+            await _db.SaveChangesAsync();
+        }
+
+
+
     }
 }

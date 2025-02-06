@@ -9,5 +9,10 @@ namespace HMS.Interface
         Task<Doctor> GetDoctorByName(string Name);
 
         Task<List<Doctor>> GetAllDoctors();
+
+        Task<List<Doctor>> GetAvailableDoctors();
+
+        Task SaveDoctorApplicationAsync(DoctorApplication doctorApplication);
+
     }
 }

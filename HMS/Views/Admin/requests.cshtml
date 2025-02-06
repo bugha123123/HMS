@@ -1,0 +1,269 @@
+﻿@using HMS.Interface
+@inject IAdminService _adminservice;
+
+@{
+    var doctorApplications = await _adminservice.Admin_GetDoctorApplications();
+}
+
+<main class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Staff Registration Requests</h1>
+        <div class="flex gap-4">
+            <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+                <option>All Staff Types</option>
+                <option>Doctors</option>
+                <option>Nurses</option>
+                <option>Other Staff</option>
+            </select>
+            <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+                <option>All Status</option>
+                <option>Pending</option>
+                <option>Approved</option>
+                <option>Rejected</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Request Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Total Requests</h3>
+            <p class="text-3xl font-bold text-[#0284c7]">42</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Doctor Requests</h3>
+            <p class="text-3xl font-bold text-blue-600">24</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Nurse Requests</h3>
+            <p class="text-3xl font-bold text-green-600">12</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-2">Other Requests</h3>
+            <p class="text-3xl font-bold text-purple-600">6</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mb-8">
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8">
+                <button onclick="showTab('doctors')" class="tab-btn active border-[#0284c7] text-[#0284c7] whitespace-nowrap py-4 px-1 border-b-2 font-medium">
+                    Doctor Requests (@doctorApplications.Count())
+                </button>
+                <button onclick="showTab('nurses')" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium">
+                    Nurse Requests (12)
+                </button>
+                <button onclick="showTab('others')" class="tab-btn text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium">
+                    Other Staff Requests (6)
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <input type="text" placeholder="Search requests..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+    </div>
+
+<div id="doctors-tab" class="tab-content">
+    <div class="space-y-6">
+        <div class="border rounded-lg p-6">
+            @if (doctorApplications == null || !doctorApplications.Any())
+            {
+                <p class="text-red-500 text-lg">No doctor applications found.</p>
+            }
+            else
+            {
+                @foreach (var doctor in doctorApplications)
+                {
+                    <form asp-action="Admin_ApproveDoctorApplication" asp-controller="Admin" method="post" class="mb-4">
+                        <!-- Hidden input to pass the ApplicationId -->
+                        <input type="hidden" name="ApplicationId" value="@doctor.Id" />
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex gap-4">
+                                <img src="https://placehold.co/80x80" alt="Doctor" class="w-20 h-20 rounded-lg">
+                                <div>
+                                    <h3 class="text-xl font-semibold">@doctor.FirstName</h3>
+                                    <p class="text-gray-600">Specialization: @doctor.Specialization</p>
+                                    <div class="mt-2 space-y-1">
+                                        <p class="text-sm text-gray-600">Experience: @doctor.YearsOfExperience</p>
+                                        <p class="text-sm text-gray-600">License: @doctor.MedicalLicenseNumber</p>
+                                        <p class="text-sm text-gray-600">Email: @doctor.Email</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                <!-- Approve button inside the form -->
+                                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                                    Approve
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- TODO Reject button inside a separate form TODO -->
+                    <form asp-action="Admin_RejectDoctorApplication" asp-controller="Admin" method="post">
+                        <input type="hidden" name="ApplicationId" value="@doctor.Id" />
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                            Reject
+                        </button>
+                    </form>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Nurse Requests Section -->
+    <div id="nurses-tab" class="tab-content hidden">
+        <div class="space-y-6">
+            <div class="border rounded-lg p-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex gap-4">
+                        <img src="https://placehold.co/80x80" alt="Nurse" class="w-20 h-20 rounded-lg">
+                        <div>
+                            <h3 class="text-xl font-semibold">Sarah Johnson, RN</h3>
+                            <p class="text-gray-600">Specialization: Critical Care</p>
+                            <div class="mt-2 space-y-1">
+                                <p class="text-sm text-gray-600">Experience: 5 years</p>
+                                <p class="text-sm text-gray-600">License: RN-2024-5678</p>
+                                <p class="text-sm text-gray-600">Email: s.johnson@email.com</p>
+                            </div>
+                            <span class="inline-block mt-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending Review</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="showApplicationDetails('nurse')" class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded transition-colors">View Details</button>
+                        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">Approve</button>
+                        <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Staff Requests Section -->
+    <div id="others-tab" class="tab-content hidden">
+        <div class="space-y-6">
+            <div class="border rounded-lg p-6">
+                <div class="flex items-start justify-between">
+                    <div class="flex gap-4">
+                        <img src="https://placehold.co/80x80" alt="Staff" class="w-20 h-20 rounded-lg">
+                        <div>
+                            <h3 class="text-xl font-semibold">John Smith</h3>
+                            <p class="text-gray-600">Position: Laboratory Technician</p>
+                            <div class="mt-2 space-y-1">
+                                <p class="text-sm text-gray-600">Experience: 3 years</p>
+                                <p class="text-sm text-gray-600">Certification: LAB-2024-9012</p>
+                                <p class="text-sm text-gray-600">Email: j.smith@email.com</p>
+                            </div>
+                            <span class="inline-block mt-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Pending Review</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="showApplicationDetails('other')" class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded transition-colors">View Details</button>
+                        <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">Approve</button>
+                        <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Details Modal -->
+    <div id="applicationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg w-full max-w-4xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Application Details</h2>
+                <button onclick="this.closest('#applicationModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+                    ✕
+                </button>
+            </div>
+            <div class="grid grid-cols-2 gap-8">
+                <div>
+                    <h3 class="font-semibold mb-4">Personal Information</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-semibold">Full Name:</span> Dr. Michael Anderson</p>
+                        <p><span class="font-semibold">Date of Birth:</span> 15 March 1985</p>
+                        <p><span class="font-semibold">Email:</span> m.anderson@email.com</p>
+                        <p><span class="font-semibold">Phone:</span> +1 234 567 8900</p>
+                        <p><span class="font-semibold">Address:</span> 123 Medical Center Dr, City, State</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">Professional Information</h3>
+                    <div class="space-y-2">
+                        <p><span class="font-semibold">Position:</span> <span id="modal-position">Doctor - Cardiology</span></p>
+                        <p><span class="font-semibold">Experience:</span> <span id="modal-experience">10 years</span></p>
+                        <p><span class="font-semibold">License/Certification:</span> <span id="modal-license">MED-2024-1234</span></p>
+                        <p><span class="font-semibold">Current Workplace:</span> <span id="modal-workplace">City General Hospital</span></p>
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <h3 class="font-semibold mb-4">Education & Certifications</h3>
+                    <div class="space-y-2" id="modal-education">
+                        <p><span class="font-semibold">Education:</span> University Medical School (2005-2011)</p>
+                        <p><span class="font-semibold">Additional Training:</span> State Hospital (2011-2014)</p>
+                        <p><span class="font-semibold">Certifications:</span> Board Certified in Cardiology, Advanced Cardiac Life Support</p>
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <h3 class="font-semibold mb-4">Additional Information</h3>
+                    <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+            </div>
+            <div class="mt-8 flex justify-end gap-4">
+                <button onclick="this.closest('#applicationModal').classList.add('hidden')" class="px-4 py-2 border rounded hover:bg-gray-100">
+                    Close
+                </button>
+                <button class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+                    Approve Application
+                </button>
+                <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                    Reject Application
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.remove('hidden');
+
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('border-[#0284c7]', 'text-[#0284c7]');
+            btn.classList.add('text-gray-500', 'border-transparent');
+        });
+
+        // Highlight active tab
+        event.target.classList.remove('text-gray-500', 'border-transparent');
+        event.target.classList.add('border-[#0284c7]', 'text-[#0284c7]');
+    }
+
+    function showApplicationDetails(type) {
+        // Simply show/hide the modal
+        const modal = document.getElementById('applicationModal');
+        modal.classList.remove('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('applicationModal');
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+</script>
