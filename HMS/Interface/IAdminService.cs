@@ -31,6 +31,8 @@ namespace HMS.Interface
 
         Task<DoctorApplication> GetApplicationById(int ApplicationId);
 
+        Task RejectDoctorApplication(int ApplicationId);
+
 
     }
 }

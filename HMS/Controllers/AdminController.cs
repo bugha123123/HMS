@@ -7,20 +7,32 @@ namespace HMS.Controllers
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
-
-        public AdminController(IAdminService adminService)
+        private readonly IPatientService _patientService;
+        public AdminController(IAdminService adminService, IPatientService patientService)
         {
             _adminService = adminService;
+            _patientService = patientService;
         }
 
         public IActionResult dashboard()
         {
             return View();
         }
-        public IActionResult patients()
+        public async Task<IActionResult> patients(string? query, int page = 1, int pageSize = 5)
         {
-            return View();
+          
+            var patients = await _patientService.FilterUsers(query, page, pageSize);
+
+            // Get total count for pagination calculation
+            var totalPatients = await _patientService.FilterUsers(query, 1, int.MaxValue);
+            var totalPages = (int)Math.Ceiling((double)totalPatients.Count() / pageSize);
+
+            ViewData["TotalPages"] = totalPages;
+            ViewData["CurrentPage"] = page;
+
+            return View(patients);
         }
+
         public IActionResult doctors()
         {
             return View();
@@ -30,6 +42,7 @@ namespace HMS.Controllers
         {
             return View();
         }
+
         public async Task<IActionResult> appointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
         {
             // Get the filtered list of appointments from the service
@@ -85,6 +98,15 @@ namespace HMS.Controllers
             return RedirectToAction("requests", "Admin");
 
         }
+        public async Task<IActionResult> Admin_RejectDoctorApplication(int ApplicationId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminService.RejectDoctorApplication(ApplicationId);
+                return RedirectToAction("requests", "Admin");
+            }
+            return RedirectToAction("requests", "Admin");
 
+        }
     }
 }

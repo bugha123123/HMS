@@ -28,7 +28,8 @@ namespace HMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _authService.LogInUser(logInViewModel);
+               await _authService.LogInUser(logInViewModel);
+
                 return RedirectToAction("Index", "Home");
             }
             return View("signin", logInViewModel);

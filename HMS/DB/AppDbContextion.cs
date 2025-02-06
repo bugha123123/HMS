@@ -37,6 +37,20 @@ namespace HMS.DB
         .HasForeignKey(mh => mh.AppointmentId)
         .OnDelete(DeleteBehavior.Restrict);
 
+
+            modelBuilder.Entity<Doctor>()
+            .HasOne(d => d.User)  // A Doctor has one User
+            .WithOne(u => u.Doctor)  // A User has one Doctor (optional)
+            .HasForeignKey<Doctor>(d => d.UserId)  // Doctor holds the foreign key
+            .OnDelete(DeleteBehavior.SetNull);  // Optional: set to null if Doctor is deleted
+
+            // Alternatively, configure the User entity's relationship to Doctor
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Doctor)  // A User has one Doctor
+                .WithOne(d => d.User)   // A Doctor has one User
+                .HasForeignKey<User>(u => u.DoctorId)  // User holds the foreign key (optional)
+                .OnDelete(DeleteBehavior.SetNull);
+
         }
 
     

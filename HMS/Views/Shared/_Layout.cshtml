@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using HMS.Interface
+
+@inject IAuthService _authservice;
+
+@{
+    var loggedInUser = await _authservice.GetLoggedInUserAsync();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -87,8 +95,8 @@
                 <div class="flex items-center space-x-4">
                     <i data-lucide="user" class="h-8 w-8 text-blue-600"></i>
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Dr. Sarah Wilson</h1>
-                        <p class="text-sm text-gray-500">Cardiologist</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Dr. @User.Identity.Name.Substring(0,7)</h1>
+                        <p class="text-sm text-gray-500">@loggedInUser.Doctor.Specialization</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -97,7 +105,7 @@
                     </button>
                     <button class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
                         <i data-lucide="log-out" class="h-5 w-5"></i>
-                        <span>Logout</span>
+                        <span><a asp-action="SignOutUser" asp-controller="Auth">Logout</a></span>
                     </button>
                 </div>
             </div>

@@ -11,6 +11,7 @@
     var Patients = await _patientservice.GetUsers();
     var RecentPatients = await _adminservice.GetRecentPatients();
     var UpcomingAppointments = await _adminservice.GetUpcomingAppointments();
+    var departmentsOverview = await _departmentservice.GetDepartmentOverviewAsync();
 }
 
 <main class="container mx-auto px-4 py-8">
@@ -101,47 +102,20 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-4">Add New Patient</h3>
-            <form>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-                        Full Name
-                    </label>
-                    <input class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="name" type="text" placeholder="Enter patient name">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="age">
-                        Age
-                    </label>
-                    <input class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" id="age" type="number" placeholder="Enter age">
-                </div>
-                <button class="w-full bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" type="submit">Add Patient</button>
-            </form>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-6">
+      
 
-    
 
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-xl w-full ">
             <h3 class="text-lg font-semibold mb-4">Department Overview</h3>
             <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <span>Cardiology</span>
-                    <span class="text-[#0284c7] font-semibold">12 Doctors</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span>Neurology</span>
-                    <span class="text-[#0284c7] font-semibold">8 Doctors</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span>Pediatrics</span>
-                    <span class="text-[#0284c7] font-semibold">10 Doctors</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span>Orthopedics</span>
-                    <span class="text-[#0284c7] font-semibold">6 Doctors</span>
-                </div>
+                @foreach (var departmentOverview in departmentsOverview)
+                {
+                    <div class="flex justify-between items-center">
+                        <span>@departmentOverview.Name</span>
+                        <span class="text-[#0284c7] font-semibold">@departmentOverview.Doctors.Count Doctors</span>
+                    </div>
+                }
             </div>
         </div>
     </div>

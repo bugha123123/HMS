@@ -213,7 +213,7 @@ namespace HMS.Service
 
         public async Task<List<DoctorApplication>> Admin_GetDoctorApplications()
         {
-            return await _db.doctorApplications.ToListAsync();
+            return await _db.doctorApplications.Where(x => x.Status == DoctorApplication.ApplicationStatus.Pending).ToListAsync();
         }
         public async Task<DoctorApplication> GetApplicationById(int ApplicationId)
         {
@@ -226,6 +226,21 @@ namespace HMS.Service
             if (FoundApplication == null)
                 return;
 
+            var user = await _userManager.FindByEmailAsync(FoundApplication.Email);
+            if (user != null)
+            {
+                // Check if the user is not already in the "Doctor" role
+                if (!await _userManager.IsInRoleAsync(user, "Doctor"))
+                {
+                    // Remove the "Patient" role if assigned, and then assign the "Doctor" role
+                    if (await _userManager.IsInRoleAsync(user, "Patient"))
+                    {
+                        await _userManager.RemoveFromRoleAsync(user, "Patient");
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Doctor");
+                }
+            }
             // Randomly assign fields
             var random = new Random();
 
@@ -238,27 +253,44 @@ namespace HMS.Service
 
             var DoctorToApprove = new Doctor()
             {
-                Specialization = FoundApplication.Specialization,  
+                Specialization = FoundApplication.Specialization,
                 Status = DoctorStatus.Available,
-                Appointments = null, 
-                Department = randomDepartment,  
-                DepartmentId = randomDepartment.Id,  
-                DoctorApplication = FoundApplication,  
+                Appointments = null,
+                Department = randomDepartment,
+                DepartmentId = randomDepartment.Id,
+                DoctorApplication = FoundApplication,
                 DoctorApplicationId = FoundApplication.Id,
                 FullName = FoundApplication.FirstName + " " + FoundApplication.LastName,
-                HospitalId = randomHospital.Id,  
-                PhoneNumber = "555-" + random.Next(1000000, 9999999),  
+                HospitalId = randomHospital.Id,
+                PhoneNumber = "555-" + random.Next(1000000, 9999999),
+                User = user,
+                UserId = user.Id
             };
 
+            await _db.Doctors.AddAsync(DoctorToApprove);
 
-            
-         await   _db.Doctors.AddAsync(DoctorToApprove);
-             _db.doctorApplications.Remove(FoundApplication);
+            // Update the application status to Approved
+            FoundApplication.Status = DoctorApplication.ApplicationStatus.Approved;
+
+            // Assign "Doctor" role to the user in Identity
+          
 
             await _db.SaveChangesAsync();
         }
 
 
 
+        public async Task RejectDoctorApplication(int ApplicationId)
+        {
+            var FoundApplication = await GetApplicationById(ApplicationId);
+
+            if (FoundApplication == null)
+                return;
+
+            FoundApplication.Status = DoctorApplication.ApplicationStatus.Rejected;
+            await _db.SaveChangesAsync();
+
+
+        }
     }
 }

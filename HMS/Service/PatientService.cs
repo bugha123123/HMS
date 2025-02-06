@@ -110,6 +110,29 @@ namespace HMS.Service
             await _emailService.SendEmailAsync(LoggedInPatient.Email,"Appointment", HTML_BODY);
         }
 
+        public async Task<List<User>> FilterUsers(string query, int page = 1, int pageSize = 5)
+        {
+            var LoggedInUser = await _authService.GetLoggedInUserAsync();
+            if (LoggedInUser is null)
+                return new List<User>();
+
+            var queryable = _db.Users.Where(u => u.Id != LoggedInUser.Id).AsQueryable();
+
+            // If the query is not null or empty, filter by UserName or Email
+            if (!string.IsNullOrEmpty(query))
+            {
+                queryable = queryable.Where(u => u.UserName.Contains(query) || u.Email.Contains(query));
+            }
+
+            // Implement pagination
+            var skip = (page - 1) * pageSize;
+            var users = await queryable.Skip(skip).Take(pageSize).ToListAsync();
+
+            return users;
+        }
+
+
+
         public async Task<List<MedicalHistory>> GetMedicalHistoryAsync()
         {
             var LoggedInPatient = await _authService.GetLoggedInUserAsync();
@@ -123,6 +146,7 @@ namespace HMS.Service
 
         public async Task<List<User>> GetUsers()
         {
+           
             return await _db.Users.ToListAsync();
         }
     }

@@ -5,7 +5,6 @@ namespace HMS.Model
 {
     public class User : IdentityUser
     {
-        
         public List<MedicalHistory>? MedicalHistory { get; set; }
         public string? ContactNumber { get; set; }
 
@@ -14,8 +13,12 @@ namespace HMS.Model
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public int? Age { get; set; }
+        public int Age { get; set; }
 
-        public bool IsApproved { get; set; } = false;
+        public string Gender { get; set; }
+
+        // Foreign key for Doctor, allowing User to be linked to a Doctor if necessary
+        public int? DoctorId { get; set; }  // Nullable DoctorId
+        public Doctor? Doctor { get; set; }  // Navigation property for Doctor
     }
 }

@@ -37,15 +37,31 @@ namespace HMS.Service
 
             if (userName == null)
             {
-
                 return null;
             }
 
             // Find the user by username
             var user = await _userManager.FindByNameAsync(userName);
 
+            if (user == null)
+            {
+                return null;
+            }
+
+            // Include the Doctor model if the user is a doctor
+            var doctor = await _db.Doctors
+                .Where(d => d.UserId == user.Id) // Assuming UserId is a foreign key in Doctor model
+                .FirstOrDefaultAsync();
+
+            // If a Doctor exists for this user, assign it to the User object
+            if (doctor != null)
+            {
+                user.Doctor = doctor; // Assuming you've added a Doctor navigation property in your User model
+            }
+
             return user;
         }
+
 
 
 
@@ -56,8 +72,11 @@ namespace HMS.Service
             // Create the new user object and map the properties
             var user = new User
             {
+                
                 UserName = registerViewModel.Email,
                 Email = registerViewModel.Email,
+               Gender = registerViewModel.Gender,
+               Age = registerViewModel.Age
                
             };
 

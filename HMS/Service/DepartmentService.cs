@@ -23,5 +23,13 @@ namespace HMS.Service
         {
             return await _db.Departments.ToListAsync();
         }
+
+
+        public async Task<List<Department>> GetDepartmentOverviewAsync()
+        {
+            return await _db.Departments
+                .Include(d => d.Doctors)
+                .ToListAsync();
+        }
     }
 }

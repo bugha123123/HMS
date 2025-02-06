@@ -15,6 +15,10 @@ namespace HMS.DTO
         [Display(Name = "Password")]
         public string Password { get; set; }
 
+        [Required]
+        public int Age { get; set; }
 
+        [Required]
+        public string Gender { get; set; }
     }
 }

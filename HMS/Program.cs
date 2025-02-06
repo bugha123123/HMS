@@ -77,6 +77,12 @@ app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
         return;
     }
 
+    if (await userManager.IsInRoleAsync(loggedInUser, "DOCTOR"))
+    {
+        // Redirect to Admin Dashboard
+        context.Response.Redirect("/Doctor/Index");
+        return;
+    }
     // Default redirection, if no role matched
     context.Response.Redirect("/Auth/signup");
 });

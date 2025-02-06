@@ -59,7 +59,15 @@ namespace HMS.Model
 
         public string? SecondaryHospitalAffiliation { get; set; } // Optional
 
-       
-   
+
+        [Required]
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
+
+        public enum ApplicationStatus
+        {
+            Pending,   // Default when a doctor applies
+            Approved,  // When the admin approves the application
+            Rejected   // If the application is rejected
+        }
     }
 }

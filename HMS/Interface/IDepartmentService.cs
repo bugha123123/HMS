@@ -7,5 +7,7 @@ namespace HMS.Interface
         Task<Department> GetDepartmentById(int Id);
 
         Task<List<Department>> GetDepartments();
+
+        Task<List<Department>> GetDepartmentOverviewAsync();
     }
 }

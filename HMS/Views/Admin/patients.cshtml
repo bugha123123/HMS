@@ -1,4 +1,17 @@
-﻿<main class="container mx-auto px-4 py-8">
+﻿@using HMS.Interface
+@model List<User>
+@inject IPatientService _patientservice;
+<script src="https://cdn.tailwindcss.com"></script>
+@{
+    var query = Context.Request.Query["query"];
+    var totalPages = (int)ViewData["TotalPages"];
+    var currentPage = (int)ViewData["CurrentPage"];
+
+    var Patients = await _patientservice.GetUsers();
+    
+}
+
+<main class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Patient Management</h1>
         <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" onclick="document.getElementById('addPatientModal').classList.remove('hidden')">
@@ -10,11 +23,14 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Total Patients</h3>
-            <p class="text-3xl font-bold text-[#0284c7]">1,234</p>
+            <p class="text-3xl font-bold text-[#0284c7]">@Patients.Count()</p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Active Cases</h3>
-            <p class="text-3xl font-bold text-green-600">856</p>
+            <p class="text-3xl font-bold text-green-600">
+                @Patients.Where(x => x.Appointments != null && x.Appointments.Any(a => a.Status == AppointmentStatus.Scheduled)).Count()
+
+            </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Critical Cases</h3>
@@ -24,25 +40,23 @@
 
     <!-- Patient Search and Filter -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div class="flex flex-wrap gap-4">
-            <div class="flex-1">
-                <input type="text" placeholder="Search patients..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+        <form asp-action="patients" asp-controller="Admin" method="get">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex-1">
+                    <input type="text" value="@query" name="query" placeholder="Search patients..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+                </div>
+                <div class="flex gap-4">
+
+                    <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+                        <option>All Status</option>
+                        <option>Active</option>
+                        <option>Discharged</option>
+                        <option>Critical</option>
+                    </select>
+                </div>
             </div>
-            <div class="flex gap-4">
-                <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                    <option>All Departments</option>
-                    <option>Cardiology</option>
-                    <option>Neurology</option>
-                    <option>Pediatrics</option>
-                </select>
-                <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                    <option>All Status</option>
-                    <option>Active</option>
-                    <option>Discharged</option>
-                    <option>Critical</option>
-                </select>
-            </div>
-        </div>
+        </form>
+       
     </div>
 
     <!-- Patient List -->
@@ -55,41 +69,62 @@
                         <th class="px-4 py-2 text-left">Name</th>
                         <th class="px-4 py-2 text-left">Age</th>
                         <th class="px-4 py-2 text-left">Gender</th>
-                        <th class="px-4 py-2 text-left">Department</th>
-                        <th class="px-4 py-2 text-left">Doctor</th>
                         <th class="px-4 py-2 text-left">Status</th>
                         <th class="px-4 py-2 text-left">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="border-t">
-                        <td class="px-4 py-2">P-001</td>
-                        <td class="px-4 py-2">John Doe</td>
-                        <td class="px-4 py-2">45</td>
-                        <td class="px-4 py-2">Male</td>
-                        <td class="px-4 py-2">Cardiology</td>
-                        <td class="px-4 py-2">Dr. Sarah Wilson</td>
-                        <td class="px-4 py-2">
-                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Active</span>
-                        </td>
-                        <td class="px-4 py-2">
-                            <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                            <button class="text-green-600 hover:text-green-800 mr-2">Edit</button>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-t">
+                            <td class="px-4 py-2">P-@item.Id.Substring(0, 5)</td>
+                            <td class="px-4 py-2">@item.UserName</td>
+                            <td class="px-4 py-2">@item.Age</td>
+                            <td class="px-4 py-2">@item.Gender</td>
+                            <td class="px-4 py-2">
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">@item.Gender</span>
+                            </td>
+                            <td class="px-4 py-2">
+                                <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                <button class="text-green-600 hover:text-green-800 mr-2">Edit</button>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
         <div class="flex justify-between items-center mt-4">
-            <p class="text-gray-600">Showing 1-10 of 1,234 patients</p>
+            <p class="text-gray-600">Showing @((currentPage - 1) * 5 + 1) to @Math.Min(currentPage * 5, Model.Count()) of @Model.Count() patients</p>
             <div class="flex gap-2">
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Previous</button>
-                <button class="px-3 py-1 bg-[#0284c7] text-white rounded">1</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">2</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">3</button>
-                <button class="px-3 py-1 border rounded hover:bg-gray-100">Next</button>
+                <!-- Previous Button -->
+                @if (currentPage > 1)
+                {
+                    <a href="@Url.Action("patients", new { query = query, page = currentPage - 1 })" class="px-3 py-1 border rounded hover:bg-gray-100">Previous</a>
+                }
+                else
+                {
+                    <button class="px-3 py-1 border rounded cursor-not-allowed">Previous</button>
+                }
+
+                <!-- Page Numbers -->
+                @for (var pageNumber = 1; pageNumber <= totalPages; pageNumber++)
+                {
+                    <a href="@Url.Action("patients", new { query = query, page = pageNumber })" class="px-3 py-1 @(pageNumber == currentPage ? "bg-[#0284c7] text-white" : "border rounded hover:bg-gray-100")">
+                        @pageNumber
+                    </a>
+                }
+
+                <!-- Next Button -->
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("patients", new { query = query, page = currentPage + 1 })" class="px-3 py-1 border rounded hover:bg-gray-100">Next</a>
+                }
+                else
+                {
+                    <button class="px-3 py-1 border rounded cursor-not-allowed">Next</button>
+                }
             </div>
         </div>
     </div>
@@ -104,7 +139,8 @@
                 ✕
             </button>
         </div>
-        <form>
+        <form >
+
             <div class="grid grid-cols-2 gap-4">
                 <div class="col-span-2">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
