@@ -14,5 +14,7 @@ namespace HMS.Interface
 
         Task SaveDoctorApplicationAsync(DoctorApplication doctorApplication);
 
+        // New method to filter doctors by query, department, and specialization
+        Task<List<Doctor>> FilterDoctors(string? query, Department department);
     }
 }

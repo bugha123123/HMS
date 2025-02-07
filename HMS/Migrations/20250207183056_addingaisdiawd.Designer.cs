@@ -4,6 +4,7 @@ using HMS.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    partial class AppDbContextionModelSnapshot : ModelSnapshot
+    [Migration("20250207183056_addingaisdiawd")]
+    partial class addingaisdiawd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace HMS.Migrations
 
                     b.HasIndex("HospitalId");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
 
                     b.HasData(
                         new
@@ -174,7 +177,7 @@ namespace HMS.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Appointments", (string)null);
+                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("HMS.Model.Doctor", b =>
@@ -221,7 +224,7 @@ namespace HMS.Migrations
 
                     b.HasIndex("HospitalId");
 
-                    b.ToTable("Doctors", (string)null);
+                    b.ToTable("Doctors");
                 });
 
             modelBuilder.Entity("HMS.Model.DoctorApplication", b =>
@@ -293,7 +296,7 @@ namespace HMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("doctorApplications", (string)null);
+                    b.ToTable("doctorApplications");
                 });
 
             modelBuilder.Entity("HMS.Model.Hospital", b =>
@@ -351,7 +354,7 @@ namespace HMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hospitals", (string)null);
+                    b.ToTable("Hospitals");
 
                     b.HasData(
                         new
@@ -527,6 +530,9 @@ namespace HMS.Migrations
                     b.Property<int?>("AppointmentId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AppointmentId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Diagnosis")
                         .HasColumnType("nvarchar(max)");
 
@@ -544,9 +550,11 @@ namespace HMS.Migrations
 
                     b.HasIndex("AppointmentId");
 
+                    b.HasIndex("AppointmentId1");
+
                     b.HasIndex("PatientId");
 
-                    b.ToTable("MedicalHistories", (string)null);
+                    b.ToTable("MedicalHistories");
                 });
 
             modelBuilder.Entity("HMS.Model.User", b =>
@@ -825,8 +833,13 @@ namespace HMS.Migrations
             modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
                 {
                     b.HasOne("HMS.Model.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HMS.Model.Appointment", null)
                         .WithMany("MedicalHistories")
-                        .HasForeignKey("AppointmentId");
+                        .HasForeignKey("AppointmentId1");
 
                     b.HasOne("HMS.Model.User", "Patient")
                         .WithMany("MedicalHistory")

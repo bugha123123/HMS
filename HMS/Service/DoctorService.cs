@@ -21,7 +21,7 @@ namespace HMS.Service
 
         public async Task<List<Doctor>> GetAllDoctors()
         {
-            return await _db.Doctors.ToListAsync();
+            return await _db.Doctors.Include(x => x.DoctorApplication).ToListAsync();
         }
 
         public async Task<Doctor> GetDoctorById(int doctorId)
@@ -65,6 +65,33 @@ namespace HMS.Service
             await _db.doctorApplications.AddAsync(doctorApplication);
             await _db.SaveChangesAsync();
         }
+        public async Task<List<Doctor>> FilterDoctors(string? query, Department? department)
+        {
+            var doctors = _db.Doctors.AsQueryable();
+
+            // Filter by department if specified
+            if (department is null)
+            {
+                doctors = doctors.Where(d => d.Department == department);
+            }
+
+            // Apply search query if provided
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                var queryLower = query.ToLower();  // Convert the query to lower case for case-insensitive comparison
+
+                doctors = doctors.Where(d =>
+                    EF.Functions.Like(d.DoctorApplication.FirstName.ToLower(), $"%{queryLower}%") ||
+                    EF.Functions.Like(d.Specialization.ToLower(), $"%{queryLower}%") ||
+                    EF.Functions.Like(d.DoctorApplication.LastName.ToLower(), $"%{queryLower}%")
+                );
+            }
+
+            return await doctors.ToListAsync();
+        }
+
+
+
 
 
     }

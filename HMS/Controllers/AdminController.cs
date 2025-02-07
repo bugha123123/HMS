@@ -1,5 +1,6 @@
 ﻿using HMS.Interface;
 using HMS.Model;
+using HMS.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Controllers
@@ -8,15 +9,23 @@ namespace HMS.Controllers
     {
         private readonly IAdminService _adminService;
         private readonly IPatientService _patientService;
-        public AdminController(IAdminService adminService, IPatientService patientService)
+        private readonly IDoctorService _doctorService;
+        public AdminController(IAdminService adminService, IPatientService patientService, IDoctorService doctorService)
         {
             _adminService = adminService;
             _patientService = patientService;
+            _doctorService = doctorService;
         }
 
         public IActionResult dashboard()
         {
             return View();
+        }
+        
+      public async Task<IActionResult> appointmentdetails(int AppointmentId)
+        {
+            var Appointment = await _adminService.GetAppointmentById(AppointmentId);
+            return View(Appointment);
         }
         public async Task<IActionResult> patients(string? query, int page = 1, int pageSize = 5)
         {
@@ -32,12 +41,17 @@ namespace HMS.Controllers
 
             return View(patients);
         }
-
-        public IActionResult doctors()
+        public async Task<IActionResult> doctors(string? query, Department? department)
         {
-            return View();
+            // Call FilterDoctors to get the filtered list of doctors
+            var FilteredDoctors = await _doctorService.FilterDoctors(query, department);
+            var Doctors = await _doctorService.GetAllDoctors();
+
+            if (query is null || department is null) {
+                return View(Doctors);
+            }
+            return View(FilteredDoctors);
         }
-        
         public IActionResult requests()
         {
             return View();
@@ -61,12 +75,10 @@ namespace HMS.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
+              
                     await _adminService.Admin_ScheduleAppointment(PatientUserName, departmentId, DoctorId, date, time, Notes, hospitalId);
                     return RedirectToAction("Appointments", "Admin");
-                }
-                return RedirectToAction("Appointments", "Admin");
+           
 
             }
             catch (Exception)

@@ -1,167 +1,72 @@
-﻿<main class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Doctor Management</h1>
-        <button class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" onclick="document.getElementById('addDoctorModal').classList.remove('hidden')">
-            Add New Doctor
-        </button>
-    </div>
-
-    <!-- Doctor Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-2">Total Doctors</h3>
-            <p class="text-3xl font-bold text-[#0284c7]">36</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-2">Available Today</h3>
-            <p class="text-3xl font-bold text-green-600">28</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-2">On Leave</h3>
-            <p class="text-3xl font-bold text-yellow-600">5</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold mb-2">New This Month</h3>
-            <p class="text-3xl font-bold text-blue-600">3</p>
-        </div>
-    </div>
-
-    <!-- Doctor Search and Filter -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-        <div class="flex flex-wrap gap-4">
-            <div class="flex-1">
-                <input type="text" placeholder="Search doctors..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-            </div>
-            <div class="flex gap-4">
-                <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                    <option>All Departments</option>
-                    <option>Cardiology</option>
-                    <option>Neurology</option>
-                    <option>Pediatrics</option>
-                </select>
-                <select class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                    <option>All Status</option>
-                    <option>Available</option>
-                    <option>On Leave</option>
-                    <option>Off Duty</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <!-- Doctor Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Doctor Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex items-start">
-                <img src="https://placehold.co/100x100" alt="Doctor" class="w-20 h-20 rounded-full mr-4">
-                <div class="flex-1">
-                    <h3 class="text-lg font-semibold">Dr. Sarah Wilson</h3>
-                    <p class="text-gray-600">Cardiology</p>
-                    <div class="mt-2">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Available</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4 border-t pt-4">
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p class="text-gray-600">Experience</p>
-                        <p class="font-semibold">15 years</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Patients</p>
-                        <p class="font-semibold">1,234</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Rating</p>
-                        <p class="font-semibold">4.8/5</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Success Rate</p>
-                        <p class="font-semibold">98%</p>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4 flex justify-end gap-2">
-                <button class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded">View Profile</button>
-                <button class="px-3 py-1 text-green-600 hover:bg-green-50 rounded">Schedule</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    <div class="flex justify-center mt-8">
-        <div class="flex gap-2">
-            <button class="px-3 py-1 border rounded hover:bg-gray-100">Previous</button>
-            <button class="px-3 py-1 bg-[#0284c7] text-white rounded">1</button>
-            <button class="px-3 py-1 border rounded hover:bg-gray-100">2</button>
-            <button class="px-3 py-1 border rounded hover:bg-gray-100">3</button>
-            <button class="px-3 py-1 border rounded hover:bg-gray-100">Next</button>
-        </div>
-    </div>
-</main>
-
-<!-- Add Doctor Modal -->
-<div id="addDoctorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg w-full max-w-md">
+﻿@model List<Doctor> 
+@{
+    var query = Context.Request.Query["query"];
+}
+<form asp-action="doctors" asp-controller="Admin" method="get">
+    <main class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold">Add New Doctor</h2>
-            <button onclick="this.closest('#addDoctorModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
-                ✕
+            <h1 class="text-2xl font-bold text-gray-800">Doctor Management</h1>
+            <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
+                Filter Doctors
             </button>
         </div>
-        <form>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                    <input type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+
+        <!-- Doctor Search and Filter -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="flex flex-wrap gap-4">
+                <!-- Search Input -->
+                <div class="flex-1">
+                    <input type="text" name="query" id="searchQuery" value="@query" placeholder="Search doctors..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]" />
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Specialization</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                        <option>Cardiology</option>
-                        <option>Neurology</option>
-                        <option>Pediatrics</option>
-                        <option>Orthopedics</option>
+                <div class="flex gap-4">
+                    <!-- Department Dropdown -->
+                    <select name="department" id="departmentDropdown" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
+                        <option value="">All Departments</option>
+                        @foreach (var department in Enum.GetValues(typeof(DepartmentType)).Cast<DepartmentType>())
+                        {
+                            <option value="@department">@department</option>
+                        }
                     </select>
                 </div>
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Experience (years)</label>
-                    <input type="number" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                </div>
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2">License Number</label>
-                    <input type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                    <input type="email" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Phone</label>
-                    <input type="tel" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Address</label>
-                    <textarea class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" rows="3" required></textarea>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Consultation Hours</label>
-                    <div class="grid grid-cols-2 gap-4">
-                        <input type="time" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                        <input type="time" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+            </div>
+        </div>
+
+        <!-- Doctor Grid -->
+        <div id="doctorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var doctor in Model)
+            {
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-start">
+                        <img src="https://placehold.co/100x100" alt="Doctor" class="w-20 h-20 rounded-full mr-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold">@doctor.FullName</h3>
+                            <p class="text-gray-600">@doctor.Specialization</p>
+                            <div class="mt-2">
+                                <span class="px-2 py-1 @(doctor.Status == DoctorStatus.Available ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800") rounded-full text-sm">@doctor.Status</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 border-t pt-4">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">Experience</p>
+                                <p class="font-semibold">@doctor.DoctorApplication.YearsOfExperience years</p>
+                            </div>
+
+                            <div>
+                                <p class="text-gray-600">Hospital</p>
+                                <p class="font-semibold">@doctor.HospitalId</p>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mt-6 flex justify-end gap-4">
-                <button type="button" onclick="this.closest('#addDoctorModal').classList.add('hidden')" class="px-4 py-2 border rounded hover:bg-gray-100">
-                    Cancel
-                </button>
-                <button type="submit" class="bg-[#0284c7] text-white px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors">
-                    Add Doctor
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+            }
+        </div>
+    </main>
+</form>
+
+ 
+
+
+

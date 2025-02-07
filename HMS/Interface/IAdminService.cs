@@ -33,6 +33,7 @@ namespace HMS.Interface
 
         Task RejectDoctorApplication(int ApplicationId);
 
+        Task<Appointment> GetAppointmentById(int AppointmentId);
 
     }
 }

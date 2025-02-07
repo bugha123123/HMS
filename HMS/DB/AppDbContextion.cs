@@ -31,11 +31,7 @@ namespace HMS.DB
 
            
 
-            modelBuilder.Entity<MedicalHistory>()
-        .HasOne(mh => mh.Appointment)
-        .WithMany()
-        .HasForeignKey(mh => mh.AppointmentId)
-        .OnDelete(DeleteBehavior.Restrict);
+            
 
 
             modelBuilder.Entity<Doctor>()

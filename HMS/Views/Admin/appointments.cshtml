@@ -130,7 +130,10 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 flex">
-                                    <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+                                    <a asp-action="appointmentdetails" asp-controller="Admin" asp-route-AppointmentId="@appointment.Id">
+                                        <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
+
+                                    </a>
                                     <form asp-action="Admin_CancelAppointment" asp-controller="Admin" method="post">
                                         <input hidden value="@appointment.Id" name="AppointmentId" />
                                         <button class="text-red-600 hover:text-red-800" type="submit">Cancel</button>
@@ -183,16 +186,18 @@
                     </select>
                 </div>
                 <!-- Department Dropdown -->
+                <!-- Department Dropdown -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Department</label>
                     <select id="departmentSelect" name="departmentId" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                         <option value="">Select Department</option>
-                        @foreach (var department in departments)
+                        @foreach (var Department in departments)
                         {
-                            <option value="@department.Id">@department.Name</option>
+                            <option value="@Department.Id">@Department.Name</option>
                         }
                     </select>
                 </div>
+
                 <!-- Doctor Dropdown -->
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Doctor</label>
@@ -201,8 +206,8 @@
                         @foreach (var doctor in doctors)
                         {
                             <option value="@doctor.Id"
-                                    data-hospitalid="@doctor.HospitalId"
-                                    data-departmentid="@doctor.DepartmentId">
+                                    
+                                    >
                                 @doctor.FullName
                             </option>
                         }
@@ -236,51 +241,5 @@
     </div>
 </div>
 
-<!-- JavaScript to update Hospital/Doctor based on selections -->
-<script>
-    // Cache the original doctor options for filtering by department
-    var doctorSelect = document.getElementById('doctorSelect');
-    // Create a copy of all doctor options (as an array)
-    var originalDoctorOptions = Array.from(doctorSelect.options);
 
-    // When the department selection changes, filter the doctor dropdown
-    document.getElementById('departmentSelect').addEventListener('change', function () {
-        var selectedDepartment = this.value;
-
-        // Reset the doctor dropdown to the default placeholder option
-        doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
-
-        // Filter the original doctor options to only those matching the selected department
-        var filteredOptions = originalDoctorOptions.filter(function (opt) {
-            // Skip the placeholder option
-            if (opt.value === "") return false;
-            return opt.getAttribute('data-departmentid') === selectedDepartment;
-        });
-
-        // Append the filtered options to the doctor dropdown
-        filteredOptions.forEach(function (opt) {
-            doctorSelect.appendChild(opt);
-        });
-
-        // If there is at least one doctor, select the first one and update the hospital dropdown
-        if (filteredOptions.length > 0) {
-            doctorSelect.selectedIndex = 0;
-            var firstOption = doctorSelect.options[doctorSelect.selectedIndex];
-            var hospitalId = firstOption.getAttribute('data-hospitalid');
-            if (hospitalId) {
-                document.getElementById('hospitalSelect').value = hospitalId;
-            }
-        } else {
-            // If no doctors match, clear the hospital dropdown selection as well
-            document.getElementById('hospitalSelect').value = "";
-        }
-    });
-
-    // When the doctor selection changes (whether via department filtering or manual change), update the hospital dropdown
-    document.getElementById('doctorSelect').addEventListener('change', function () {
-        var selectedOption = this.options[this.selectedIndex];
-        var hospitalId = selectedOption ? selectedOption.getAttribute('data-hospitalid') : "";
-        document.getElementById('hospitalSelect').value = hospitalId || "";
-    });
-</script>
 

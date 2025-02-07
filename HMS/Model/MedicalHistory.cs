@@ -10,8 +10,8 @@ namespace HMS.Model
         public string PatientId { get; set; }
         public User Patient { get; set; }
 
-        public int AppointmentId { get; set; }
-        public Appointment Appointment { get; set; }
+        public int? AppointmentId { get; set; }
+        public Appointment? Appointment { get; set; }
 
         public string? Notes { get; set; }
 

@@ -117,8 +117,22 @@ namespace HMS.Service
 
         public async Task<List<User>> Admin_GetPatients()
         {
-           return await _db.Users.ToListAsync();
+            var allUsers = await _userManager.Users.ToListAsync(); // Get all users
+            var patients = new List<User>();
+
+            foreach (var user in allUsers)
+            {
+                var roles = await _userManager.GetRolesAsync(user); // Get roles for the user
+                if (!roles.Contains("Doctor")) // Check if the user does not have 'Doctor' role
+                {
+                    patients.Add(user); // Add user to the list if not in 'Doctor' role
+                }
+            }
+
+            return patients;
         }
+
+
 
         public async Task<List<Doctor>> Admin_GetDoctors()
         {
@@ -162,33 +176,46 @@ namespace HMS.Service
 
         public async Task Admin_CancelAppointment(int AppointmentId)
         {
-            var AppointmentToDelete = await _db.Appointments.Include(u => u.Patient).FirstOrDefaultAsync(a => a.Id == AppointmentId);
+            var AppointmentToDelete = await _db.Appointments
+                                                .Include(u => u.Patient)
+                                                .Include(a => a.MedicalHistories) // Include related MedicalHistories
+                                                .FirstOrDefaultAsync(a => a.Id == AppointmentId);
 
             if (AppointmentToDelete is null)
                 return;
 
-             _db.Appointments.Remove(AppointmentToDelete);
+            // Set related MedicalHistories' AppointmentId to null (disassociate from the appointment)
+            foreach (var medicalHistory in AppointmentToDelete.MedicalHistories)
+            {
+                medicalHistory.AppointmentId = null;  // Disassociate by setting AppointmentId to null
+            }
+
+            // Save changes for MedicalHistories
             await _db.SaveChangesAsync();
 
+            // Remove the appointment itself
+            _db.Appointments.Remove(AppointmentToDelete);
+            await _db.SaveChangesAsync();
+
+            // Send cancellation email
             await _emailService.SendEmailAsync(
-    AppointmentToDelete.Patient.Email,
-    "Appointment Cancellation", 
-    @$"
-      
+                AppointmentToDelete.Patient.Email,
+                "Appointment Cancellation",
+                @$"
         <body>
             <div class='container'>
                 <h2>Appointment Cancellation</h2>
-                $<p>Dear {AppointmentToDelete.Patient.UserName},</p>
+                <p>Dear {AppointmentToDelete.Patient.UserName},</p>
                 <p>We regret to inform you that your appointment scheduled on <strong>{AppointmentToDelete.AppointmentDate}</strong> has been cancelled.</p>
                 <p>If you have any questions, please contact our support team.</p>
                 <p>Thank you for understanding.</p>
                 <div class='footer'>Best Regards, <br> Your Clinic Team</div>
             </div>
         </body>
-   "
-);
-
+    "
+            );
         }
+
 
         public async Task<List<User>> GetRecentPatients()
         {
@@ -297,6 +324,11 @@ namespace HMS.Service
             await _db.SaveChangesAsync();
 
 
+        }
+
+        public async Task<Appointment> GetAppointmentById(int AppointmentId)
+        {
+            return await _db.Appointments.FirstOrDefaultAsync(a => a.Id == AppointmentId);
         }
     }
 }
