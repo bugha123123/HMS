@@ -11,10 +11,12 @@ namespace HMS.Service
     public class DoctorService : IDoctorService
     {
         private readonly AppDbContextion _db;
+        private readonly IEmailService emailService;
 
-        public DoctorService(AppDbContextion db)
+        public DoctorService(AppDbContextion db, IEmailService emailService)
         {
             _db = db;
+            this.emailService = emailService;
         }
 
         public async Task<List<Doctor>> GetAllDoctors()
@@ -52,7 +54,13 @@ namespace HMS.Service
                 return;
             }
 
-            
+            string subject = "Doctor Application Received";
+            string htmlBody = $"<p>Dear {doctorApplication.FirstName},</p>" +
+                              "<p>Thank you for applying. Your application is under review.</p>" +
+                              "<p>We will notify you once it has been processed.</p>" +
+                              "<p>Best regards,<br>Hospital Management Team</p>";
+
+            await emailService.SendEmailAsync(doctorApplication.Email, subject, htmlBody);
             // Save the new doctor application to the database
             await _db.doctorApplications.AddAsync(doctorApplication);
             await _db.SaveChangesAsync();

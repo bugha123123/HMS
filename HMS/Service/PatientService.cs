@@ -1,6 +1,7 @@
 ﻿using HMS.DB;
 using HMS.Interface;
 using HMS.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Service
@@ -12,14 +13,16 @@ namespace HMS.Service
         private readonly AppDbContextion _db;
         private readonly IHospitalService _hospitalService;
         private readonly IEmailService _emailService;
+        private readonly UserManager<User> _userManager;
 
-        public PatientService(IAuthService authService, IDoctorService octorService, AppDbContextion db, IHospitalService hospitalService, IEmailService emailService)
+        public PatientService(IAuthService authService, IDoctorService octorService, AppDbContextion db, IHospitalService hospitalService, IEmailService emailService, UserManager<User> userManager)
         {
             _authService = authService;
             _doctorService = octorService;
             _db = db;
             _hospitalService = hospitalService;
             _emailService = emailService;
+            _userManager = userManager;
         }
 
         public async Task BookAppointmentAsync(string DoctorFullName,DateTime AppointmentDate,DateTime Appointmenttime, string PhoneNumber, string HospitalName, string Reason)
@@ -144,10 +147,13 @@ namespace HMS.Service
             return await _db.MedicalHistories.Include(x => x.Patient).Include(x => x.Appointment).ThenInclude(x => x.Doctor).Where(m => m.Patient.Id == LoggedInPatient.Id).ToListAsync();
         }
 
+
         public async Task<List<User>> GetUsers()
         {
-           
+
             return await _db.Users.ToListAsync();
         }
+
     }
+
 }

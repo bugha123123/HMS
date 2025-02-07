@@ -273,8 +273,14 @@ namespace HMS.Service
             FoundApplication.Status = DoctorApplication.ApplicationStatus.Approved;
 
             // Assign "Doctor" role to the user in Identity
-          
 
+            string subject = "Doctor Application Approved";
+            string htmlBody = $"<p>Dear {FoundApplication.FirstName},</p>" +
+                              "<p>Your application has been approved.</p>" +
+                              "<p>Thank you for your patience.</p>" +
+                              "<p>Best regards,<br>Hospital Management Team</p>";
+
+            await _emailService.SendEmailAsync(FoundApplication.Email, subject, htmlBody);
             await _db.SaveChangesAsync();
         }
 
