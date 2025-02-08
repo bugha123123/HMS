@@ -23,11 +23,7 @@ namespace HMS.DB
             base.OnModelCreating(modelBuilder);
             DBSeeder.DBSeeder.SeedData(modelBuilder);
 
-            modelBuilder.Entity<MedicalHistory>()
-                    .HasOne(mh => mh.Patient)
-                    .WithMany(p => p.MedicalHistory) // Make sure the Patient has the collection of MedicalHistories
-                    .HasForeignKey(mh => mh.PatientId)
-                    .OnDelete(DeleteBehavior.Restrict); // No cascade delete for PatientId
+      
 
            
 
@@ -40,12 +36,7 @@ namespace HMS.DB
             .HasForeignKey<Doctor>(d => d.UserId)  // Doctor holds the foreign key
             .OnDelete(DeleteBehavior.SetNull);  // Optional: set to null if Doctor is deleted
 
-            // Alternatively, configure the User entity's relationship to Doctor
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Doctor)  // A User has one Doctor
-                .WithOne(d => d.User)   // A Doctor has one User
-                .HasForeignKey<User>(u => u.DoctorId)  // User holds the foreign key (optional)
-                .OnDelete(DeleteBehavior.SetNull);
+         
 
         }
 

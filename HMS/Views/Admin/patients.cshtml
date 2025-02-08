@@ -74,8 +74,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                  
                     @foreach (var item in Model)
+
                     {
+                        <form asp-action="Admin_DeletePatient" asp-controller="Admin" method="post">
+                            <input  hidden value="@item.Id" name="PatientId"/>
                         <tr class="border-t">
                             <td class="px-4 py-2">P-@item.Id.Substring(0, 5)</td>
                             <td class="px-4 py-2">@item.UserName</td>
@@ -84,12 +88,20 @@
                             <td class="px-4 py-2">
                                 <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">@item.Gender</span>
                             </td>
+                         
                             <td class="px-4 py-2">
-                                <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
-                                <button class="text-green-600 hover:text-green-800 mr-2">Edit</button>
+
+                                <button onclick="openModal()" class="text-blue-600 hover:text-blue-800 mr-2">Delete</button>
                             </td>
-                        </tr>
+
+
+
+
+
+                        </tr> 
+                        </form>
                     }
+                    
                 </tbody>
             </table>
         </div>
@@ -130,6 +142,7 @@
     </div>
 </main>
 
+
 <!-- Add Patient Modal -->
 <div id="addPatientModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg w-full max-w-md">
@@ -139,37 +152,31 @@
                 ✕
             </button>
         </div>
-        <form >
+        <form asp-action="Admin_AddNewPatient" asp-controller="Admin" method="post" >
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                    <input type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
-                </div>
+              
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Age</label>
-                    <input type="number" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <input name="age" type="number" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
-                    <select class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <select name="gender" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                         <option>Male</option>
                         <option>Female</option>
-                        <option>Other</option>
+                        
                     </select>
                 </div>
                 <div class="col-span-2">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Contact Number</label>
-                    <input type="tel" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <input type="tel" name="contactNumber" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                 </div>
                 <div class="col-span-2">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-                    <input type="email" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
+                    <input type="email" name="email" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" required>
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">Address</label>
-                    <textarea class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#0284c7]" rows="3" required></textarea>
-                </div>
+            
             </div>
             <div class="mt-6 flex justify-end gap-4">
                 <button type="button" onclick="this.closest('#addPatientModal').classList.add('hidden')" class="px-4 py-2 border rounded hover:bg-gray-100">
@@ -182,3 +189,15 @@
         </form>
     </div>
 </div>
+
+
+            <script>
+                function openModal() {
+        document.getElementById('confirmationModal').classList.remove('hidden');
+    }
+
+    // Close the modal
+    function closeModal() {
+        document.getElementById('confirmationModal').classList.add('hidden');
+    }
+</script>

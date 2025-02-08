@@ -1,4 +1,6 @@
-﻿using HMS.Model;
+﻿using HMS.DTO;
+using HMS.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace HMS.Interface
 {
@@ -34,6 +36,12 @@ namespace HMS.Interface
         Task RejectDoctorApplication(int ApplicationId);
 
         Task<Appointment> GetAppointmentById(int AppointmentId);
+
+        Task<IdentityResult> AddNewPatient(string email, string contactNumber, int age,string gender);
+
+        Task SendPasswordSetupEmail(string email, User user);
+
+        Task DeletePatient(string PatientId);
 
     }
 }

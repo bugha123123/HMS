@@ -19,6 +19,8 @@ namespace HMS.Model
 
         // Foreign key for Doctor, allowing User to be linked to a Doctor if necessary
         public int? DoctorId { get; set; }  // Nullable DoctorId
-        public Doctor? Doctor { get; set; }  // Navigation property for Doctor
+        public Doctor? Doctor { get; set; }
+
+        public string? SetPasswordToken { get; set; }
     }
 }

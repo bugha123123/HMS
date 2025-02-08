@@ -20,8 +20,8 @@
         public DoctorStatus Status { get; set; } = DoctorStatus.Available;
 
         // Navigation property to User
-        public string UserId { get; set; }  // Foreign key for the associated User
-        public User User { get; set; }  // Navigation property for the associated User
+        public string? UserId { get; set; }  // Foreign key for the associated User
+        public User? User { get; set; }  // Navigation property for the associated User
     }
 
     public enum DoctorStatus

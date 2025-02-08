@@ -7,8 +7,8 @@ namespace HMS.Model
         [Key]
         public int Id { get; set; } 
 
-        public string PatientId { get; set; }
-        public User Patient { get; set; }
+        public string? PatientId { get; set; }
+        public User? Patient { get; set; }
 
         public int? AppointmentId { get; set; }
         public Appointment? Appointment { get; set; }

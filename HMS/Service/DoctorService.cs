@@ -45,6 +45,9 @@ namespace HMS.Service
             if (doctorApplication is null)
                 return;
 
+            // Set status to 0 (pending) by default
+            doctorApplication.Status = DoctorApplication.ApplicationStatus.Pending;  
+
             // Check if the email already exists in the database
             var existingApplication = await _db.doctorApplications
                                                  .FirstOrDefaultAsync(d => d.Email == doctorApplication.Email);
@@ -60,17 +63,20 @@ namespace HMS.Service
                               "<p>We will notify you once it has been processed.</p>" +
                               "<p>Best regards,<br>Hospital Management Team</p>";
 
-            await emailService.SendEmailAsync(doctorApplication.Email, subject, htmlBody);
             // Save the new doctor application to the database
             await _db.doctorApplications.AddAsync(doctorApplication);
             await _db.SaveChangesAsync();
+
+            // Send email confirmation
+            await emailService.SendEmailAsync(doctorApplication.Email, subject, htmlBody);
         }
+
         public async Task<List<Doctor>> FilterDoctors(string? query, Department? department)
         {
             var doctors = _db.Doctors.AsQueryable();
 
             // Filter by department if specified
-            if (department is null)
+            if (department is not null)
             {
                 doctors = doctors.Where(d => d.Department == department);
             }
@@ -78,7 +84,7 @@ namespace HMS.Service
             // Apply search query if provided
             if (!string.IsNullOrWhiteSpace(query))
             {
-                var queryLower = query.ToLower();  // Convert the query to lower case for case-insensitive comparison
+                var queryLower = query.ToLower();
 
                 doctors = doctors.Where(d =>
                     EF.Functions.Like(d.DoctorApplication.FirstName.ToLower(), $"%{queryLower}%") ||
@@ -90,9 +96,21 @@ namespace HMS.Service
             return await doctors.ToListAsync();
         }
 
+        public async Task<List<Appointment>> FilterAppointment(DateTime? when)
+        {
+            if (when.HasValue)
+            {
+                // If a valid DateTime is provided, filter by the specified date
+                return await _db.Appointments.Include(x => x.Patient).Include(x => x.Doctor).Include(x => x.MedicalHistories).Where(x => x.AppointmentDate == when.Value.Date).ToListAsync();
+            }
 
+            // If 'when' is null, return all appointments
+            return await _db.Appointments.Include(x => x.Patient).ToListAsync();
+        }
 
-
-
+        public async Task<List<Appointment>> GetAppointments()
+        {
+            return await _db.Appointments.ToListAsync();   
+        }
     }
 }

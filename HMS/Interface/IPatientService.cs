@@ -1,4 +1,5 @@
 ﻿using HMS.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace HMS.Interface
 {
@@ -10,6 +11,8 @@ namespace HMS.Interface
 
         Task<List<User>> GetUsers();
 
-        Task<List<User>> FilterUsers(string query, int page = 1, int pageSize = 5); 
+        Task<List<User>> FilterUsers(string query, int page = 1, int pageSize = 5);
+
+        Task<IdentityResult> SetPassword(string email,string newPassword);
     }
 }

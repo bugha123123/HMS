@@ -60,8 +60,8 @@ namespace HMS.Model
         public string? SecondaryHospitalAffiliation { get; set; } // Optional
 
 
-        [Required]
-        public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
+
+        public ApplicationStatus? Status { get; set; } = null;
 
         public enum ApplicationStatus
         {

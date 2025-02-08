@@ -1,35 +1,53 @@
 ﻿<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <main class="container mx-auto mt-8 p-4">
-    <h2 class="text-3xl font-bold mb-4">Welcome to HMS User Portal</h2>
-    <p class="mb-4">Access your medical information, book appointments, and manage your healthcare needs all in one place.</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <h2 class="text-4xl font-bold mb-6 text-gray-800 text-center">Welcome to HMS User Portal</h2>
+    <p class="mb-8 text-gray-600 text-lg text-center max-w-2xl mx-auto">Access your medical information, book appointments, and manage your healthcare needs all in one place.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Book an Appointment Section -->
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-xl font-semibold mb-2">Book an Appointment</h3>
-            <p>Schedule your next visit with just a few clicks.</p>
+        <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                <i data-lucide="calendar-days" class="w-6 h-6 text-blue-600"></i>
+            </div>
+            <h3 class="text-2xl font-semibold mb-3 text-gray-800">Book an Appointment</h3>
+            <p class="text-gray-600 mb-6">Schedule your next visit with just a few clicks.</p>
             @if (User.Identity.IsAuthenticated)
             {
-                <a class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" asp-action="bookappointment" asp-controller="Home">Book Now</a>
+                <a class="inline-block w-full bg-blue-500 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-600 transition-colors" asp-action="bookappointment" asp-controller="Home">Book Now</a>
             }
             else
             {
-                <a class="mt-4 inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" asp-action="signin" asp-controller="Auth">Sign In to Book</a>
+                <a class="inline-block w-full bg-blue-500 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-blue-600 transition-colors" asp-action="signin" asp-controller="Auth">Sign In to Book</a>
             }
         </div>
 
         <!-- View Medical Records Section -->
-        <div class="bg-white p-6 rounded-lg shadow">
-            <h3 class="text-xl font-semibold mb-2">View Medical Records</h3>
-            <p>Access your medical history and test results securely.</p>
-            <a class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" asp-action="medicalrecords" asp-controller="Home">View Records</a>
+        <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+            <div class="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-4">
+                <i data-lucide="clipboard-list" class="w-6 h-6 text-green-600"></i>
+            </div>
+            <h3 class="text-2xl font-semibold mb-3 text-gray-800">View Medical Records</h3>
+            <p class="text-gray-600 mb-6">Access your medical history and test results securely.</p>
+            <a class="inline-block w-full bg-green-500 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-green-600 transition-colors" asp-action="medicalrecords" asp-controller="Home">View Records</a>
         </div>
 
         <!-- Want to Become a Doctor Poster Section -->
-        <div class="bg-white p-6 rounded-lg shadow col-span-1 md:col-span-2">
-            <h3 class="text-xl font-semibold mb-2">Want to Become a Doctor?</h3>
-            <p class="mb-4">Do you have what it takes to be part of our healthcare team? Apply today and start your journey with us.</p>
-            <a href="@Url.Action("doctorapplication", "Doctor")" class="mt-4 inline-block bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Apply Now</a>
+        <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow col-span-1 md:col-span-2">
+            <div class="w-12 h-12 rounded-full bg-yellow-50 flex items-center justify-center mb-4">
+                <i data-lucide="stethoscope" class="w-6 h-6 text-yellow-600"></i>
+            </div>
+            <h3 class="text-2xl font-semibold mb-3 text-gray-800">Want to Become a Doctor?</h3>
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <p class="text-gray-600 flex-1">Do you have what it takes to be part of our healthcare team? Apply today and start your journey with us.</p>
+                <a href="@Url.Action("doctorapplication", "Doctor")" class="inline-block bg-yellow-500 text-white px-6 py-3 rounded-lg text-center font-medium hover:bg-yellow-600 transition-colors min-w-[140px]">Apply Now</a>
+            </div>
         </div>
     </div>
 </main>
+
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>

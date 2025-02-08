@@ -127,11 +127,23 @@ namespace HMS.Service
                 queryable = queryable.Where(u => u.UserName.Contains(query) || u.Email.Contains(query));
             }
 
-            // Implement pagination
-            var skip = (page - 1) * pageSize;
-            var users = await queryable.Skip(skip).Take(pageSize).ToListAsync();
+            // Fetch users from the database (before filtering roles)
+            var users = await queryable.ToListAsync();
 
-            return users;
+            // Filter users who are NOT "DOCTOR" or "ADMIN"
+            var filteredUsers = new List<User>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                if (!roles.Contains("Doctor") && !roles.Contains("Admin"))
+                {
+                    filteredUsers.Add(user);
+                }
+            }
+
+            // Implement pagination after filtering
+            var skip = (page - 1) * pageSize;
+            return filteredUsers.Skip(skip).Take(pageSize).ToList();
         }
 
 
@@ -147,11 +159,43 @@ namespace HMS.Service
             return await _db.MedicalHistories.Include(x => x.Patient).Include(x => x.Appointment).ThenInclude(x => x.Doctor).Where(m => m.Patient.Id == LoggedInPatient.Id).ToListAsync();
         }
 
+      
 
-        public async Task<List<User>> GetUsers()
+            public async Task<List<User>> GetUsers()
+            {
+                var users = await _userManager.Users.ToListAsync(); // Get all users
+                var filteredUsers = new List<User>();
+
+                foreach (var user in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(user); // Get user's roles
+                    if (!roles.Contains("Doctor") && !roles.Contains("Admin"))
+                    {
+                        filteredUsers.Add(user); // Only add users who are NOT DOCTOR or ADMIN
+                    }
+                }
+
+                return filteredUsers;
+            }
+
+        public async Task<IdentityResult> SetPassword(string email, string newPassword)
         {
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            }
 
-            return await _db.Users.ToListAsync();
+            // Use the token to validate the password reset (token is valid for setting the password)
+            var result = await _userManager.ResetPasswordAsync(user, user.SetPasswordToken, newPassword);
+
+            if (result.Succeeded)
+            {
+                return IdentityResult.Success; 
+            }
+
+            return result; 
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using HMS.Interface;
+﻿using HMS.DTO;
+using HMS.Interface;
 using HMS.Model;
 using HMS.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -66,11 +67,12 @@ namespace HMS.Controllers
             return View(appointments);
         }
 
-        public IActionResult departments()
+
+        public IActionResult setpassword()
         {
+            
             return View();
         }
-
         public async Task<IActionResult> Admin_ScheduleAppointmentAction(string PatientUserName, int departmentId, int DoctorId, DateTime date, DateTime time, string Notes, int hospitalId)
         {
             try
@@ -120,5 +122,57 @@ namespace HMS.Controllers
             return RedirectToAction("requests", "Admin");
 
         }
+        public async Task<IActionResult> Admin_AddNewPatient(string email, string contactNumber, int age, string gender)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("patients", "Admin"); // failed validation
+            }
+
+            var result = await _adminService.AddNewPatient(email, contactNumber, age, gender);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Patient registered successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+
+            return RedirectToAction("patients", "Admin");
+        }
+
+        public async Task<IActionResult> Patient_SetPassword(string email, string newPassword)
+        {
+            
+                var result = await _patientService.SetPassword(email, newPassword);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Your password has been set successfully!";
+                    return RedirectToAction("signin", "Auth");
+                }
+            return RedirectToAction("setpassword", "Admin");
+
+
+        }
+
+
+        public async Task<IActionResult> Admin_DeletePatient(string PatientId)
+        {
+            if (ModelState.IsValid)
+            {
+  await _adminService.DeletePatient(PatientId);   
+
+          
+            return RedirectToAction("patients", "Admin");
+            }
+            return RedirectToAction("patients", "Admin");
+
+
+
+        }
+
     }
 }

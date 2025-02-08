@@ -16,5 +16,12 @@ namespace HMS.Interface
 
         // New method to filter doctors by query, department, and specialization
         Task<List<Doctor>> FilterDoctors(string? query, Department department);
+
+        Task<List<Appointment>> FilterAppointment(DateTime? when);
+
+        Task<List<Appointment>> GetAppointments();
+
+
+
     }
 }

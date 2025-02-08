@@ -4,6 +4,7 @@ using HMS.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    partial class AppDbContextionModelSnapshot : ModelSnapshot
+    [Migration("20250208210042_asjgdgawdawydawdadaw")]
+    partial class asjgdgawdawydawdadaw
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -210,7 +213,8 @@ namespace HMS.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -219,10 +223,6 @@ namespace HMS.Migrations
                     b.HasIndex("DoctorApplicationId");
 
                     b.HasIndex("HospitalId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Doctors");
                 });
@@ -537,6 +537,7 @@ namespace HMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PatientId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Treatment")
@@ -623,6 +624,10 @@ namespace HMS.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId")
+                        .IsUnique()
+                        .HasFilter("[DoctorId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -818,16 +823,9 @@ namespace HMS.Migrations
                         .WithMany("Doctors")
                         .HasForeignKey("HospitalId");
 
-                    b.HasOne("HMS.Model.User", "User")
-                        .WithOne("Doctor")
-                        .HasForeignKey("HMS.Model.Doctor", "UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Department");
 
                     b.Navigation("DoctorApplication");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HMS.Model.MedicalHistory", b =>
@@ -838,11 +836,23 @@ namespace HMS.Migrations
 
                     b.HasOne("HMS.Model.User", "Patient")
                         .WithMany("MedicalHistory")
-                        .HasForeignKey("PatientId");
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Appointment");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("HMS.Model.User", b =>
+                {
+                    b.HasOne("HMS.Model.Doctor", "Doctor")
+                        .WithOne("User")
+                        .HasForeignKey("HMS.Model.User", "DoctorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -909,6 +919,9 @@ namespace HMS.Migrations
             modelBuilder.Entity("HMS.Model.Doctor", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HMS.Model.Hospital", b =>
@@ -923,8 +936,6 @@ namespace HMS.Migrations
             modelBuilder.Entity("HMS.Model.User", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("Doctor");
 
                     b.Navigation("MedicalHistory");
                 });

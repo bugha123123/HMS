@@ -32,7 +32,8 @@ public class RoleSeeder
                 PhoneNumber = "123-456-7890",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
-                Age = 19
+                Age = 19,
+                Gender = "Male"
             };
 
             // Set a password for the Admin user

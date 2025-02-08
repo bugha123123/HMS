@@ -55,7 +55,7 @@ app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
     // Check if user is signed in
     var loggedInUser = await userManager.GetUserAsync(context.User);
 
-    if (loggedInUser == null)
+    if (loggedInUser is null)
     {
         // If user is not logged in, redirect to signin page
         context.Response.Redirect("/Auth/signin");
@@ -77,7 +77,7 @@ app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
         return;
     }
 
-    if (await userManager.IsInRoleAsync(loggedInUser, "DOCTOR"))
+    if (await userManager.IsInRoleAsync(loggedInUser, "Doctor"))
     {
         // Redirect to Admin Dashboard
         context.Response.Redirect("/Doctor/Index");

@@ -3,7 +3,7 @@
 @inject IDoctorService _doctorService;
 @inject IHospitalService _hospitalService;
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
+<script src="https://unpkg.com/lucide@latest"></script>
 <div class="container mx-auto px-4 py-8 mt-5">
     <h2 class="text-3xl font-bold text-center text-blue-600 mb-8">Book an Appointment</h2>
     <form class="max-w-4xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" asp-action="BookAnAppointment" asp-controller="Home" method="post">
@@ -83,6 +83,10 @@
 
 <!-- JavaScript to Auto-Update Hospital based on Doctor Selection -->
 <script>
+
+        lucide.createIcons();
+
+
     document.getElementById("doctor").addEventListener("change", function () {
         var selectedDoctor = this.options[this.selectedIndex];
         var hospitalId = selectedDoctor.getAttribute("data-hospital-id");

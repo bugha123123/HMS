@@ -35,7 +35,7 @@
                         <a asp-action="patients" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Patients</a>
                         <a asp-action="appointments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Appointments</a>
                         <a asp-action="doctors" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Doctors</a>
-                        <a asp-action="departments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Departments</a>
+                        
                         <a asp-action="requests" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Requests</a>
                     </div>
 
@@ -63,30 +63,66 @@
     }
     else if (User.IsInRole("Patient"))
     {
-  <header class="bg-blue-600 text-white p-4">
-        <nav class="container mx-auto flex justify-between items-center">
-            <a class="text-2xl font-bold" asp-action="Index" asp-controller="Home">HMS Patient Portal</a>
-            <ul class="flex space-x-4">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li><a asp-action="bookappointment" asp-controller="Home" class="hover:underline">Book Appointment</a></li>
-                }
-                else
-                {
-                    <li><a asp-action="signin" asp-controller="Auth" class="hover:underline">Sign In</a></li>
-                }
-                <li><a  class="hover:underline" asp-action="medicalrecords" asp-controller="Home">Medical Records</a></li>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li><a class="hover:underline" asp-action="SignOutUser" asp-controller="Auth">Log out</a></li>
-                }
-                else
-                {
-                    <li><a class="hover:underline" asp-action="signin" asp-controller="Auth">Sign in</a></li>
-                }
-            </ul>
-        </nav>
-    </header>
+        <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
+            <nav class="container mx-auto px-4 py-4">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <a class="text-2xl font-bold tracking-tight hover:text-blue-100 transition-colors flex items-center gap-2" asp-action="Index" asp-controller="Home">
+                        <i data-lucide="heart-pulse" class="w-8 h-8"></i>
+                        <span>HMS Patient Portal</span>
+                    </a>
+
+                    <ul class="flex flex-wrap items-center gap-2 md:gap-6">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li>
+                                <a asp-action="bookappointment" asp-controller="Home"
+                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                    <i data-lucide="calendar-plus" class="w-4 h-4"></i>
+                                    <span>Book Appointment</span>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-action="signin" asp-controller="Auth"
+                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                                    <span>Sign In</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a asp-action="medicalrecords" asp-controller="Home"
+                               class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                                <span>Medical Records</span>
+                            </a>
+                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li>
+                                <a asp-action="SignOutUser" asp-controller="Auth"
+                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                                    <span>Log out</span>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a asp-action="signin" asp-controller="Auth"
+                                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition-colors">
+                                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                                    <span>Sign in</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </nav>
+        </header>
     }
     else if (User.IsInRole("Doctor"))
     {

@@ -1,8 +1,12 @@
-﻿using HMS.DB;
+﻿using Azure.Core;
+using HMS.DB;
+using HMS.DTO;
 using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace HMS.Service
 {
@@ -14,7 +18,8 @@ namespace HMS.Service
         private readonly IHospitalService _hospitalService;
         private readonly IDoctorService _doctorService;
         private readonly IEmailService _emailService;
-        public AdminService(AppDbContextion db, UserManager<User> userManager, IDepartmentService departmentService, IHospitalService hospitalService, IDoctorService doctorService, IEmailService emailService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AdminService(AppDbContextion db, UserManager<User> userManager, IDepartmentService departmentService, IHospitalService hospitalService, IDoctorService doctorService, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _userManager = userManager;
@@ -22,6 +27,7 @@ namespace HMS.Service
             _hospitalService = hospitalService;
             _doctorService = doctorService;
             _emailService = emailService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<List<Appointment>> Admin_GetAppointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
         {
@@ -53,9 +59,9 @@ namespace HMS.Service
             return await queryable.ToListAsync();
         }
 
- 
 
-        public async Task Admin_ScheduleAppointment(string PatientUserName, int departmentId, int DoctorId, DateTime date, DateTime time, string Notes,int hospitalId)
+
+        public async Task Admin_ScheduleAppointment(string PatientUserName, int departmentId, int DoctorId, DateTime date, DateTime time, string Notes, int hospitalId)
         {
             var FoundPatient = await _userManager.FindByNameAsync(PatientUserName);
 
@@ -65,7 +71,7 @@ namespace HMS.Service
 
             var FoundDoctor = await _doctorService.GetDoctorById(DoctorId);
 
-            if (FoundPatient is  null || FoundDepartment is null || FoundHospital is null || FoundDoctor is null)
+            if (FoundPatient is null || FoundDepartment is null || FoundHospital is null || FoundDoctor is null)
                 return;
 
             var Appointment = new Appointment()
@@ -79,11 +85,11 @@ namespace HMS.Service
                 MedicalHistories = FoundPatient.MedicalHistory,
                 Patient = FoundPatient,
                 PatientId = FoundPatient.Id,
-             
+
                 Reason = null,
                 IsAdminScheduled = true,
                 AdminNotes = Notes
-               
+
 
             };
 
@@ -107,7 +113,7 @@ namespace HMS.Service
         <p>Best regards, <br> The Admin Team</p>";
 
 
-            await _emailService.SendEmailAsync(FoundPatient.Email, "Your Appointment Has Been Scheduled",emailBody);
+            await _emailService.SendEmailAsync(FoundPatient.Email, "Your Appointment Has Been Scheduled", emailBody);
 
 
 
@@ -221,8 +227,8 @@ namespace HMS.Service
         {
             var recentPatients = await _db.Users
                                                  .Where(u => u.CreatedAt >= DateTime.Now.AddDays(-7))  // last seven days
-                                                 .OrderByDescending(u => u.CreatedAt) 
-                                                 .ToListAsync();  
+                                                 .OrderByDescending(u => u.CreatedAt)
+                                                 .ToListAsync();
 
             return recentPatients;
         }
@@ -232,8 +238,8 @@ namespace HMS.Service
                                                          .Include(u => u.Patient)
                                                          .Include(d => d.Doctor)
                                                         .Where(a => a.AppointmentDate > DateTime.Now && a.AppointmentDate <= DateTime.Now.AddDays(14))  // Appointments within the next 7 days
-                                                        .OrderBy(a => a.AppointmentDate)  
-                                                        .ToListAsync();  
+                                                        .OrderBy(a => a.AppointmentDate)
+                                                        .ToListAsync();
 
             return upcomingAppointments;
         }
@@ -330,5 +336,86 @@ namespace HMS.Service
         {
             return await _db.Appointments.FirstOrDefaultAsync(a => a.Id == AppointmentId);
         }
+        public async Task<IdentityResult> AddNewPatient(string email, string contactNumber, int age, string gender)
+        {
+            // Check if the user already exists
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Email already registered" });
+            }
+
+            // Create a new Identity user without a password
+            var user = new User
+            {
+                UserName = email,
+                Email = email,
+                Gender = gender,
+                ContactNumber = contactNumber,
+                Age = age
+            };
+
+            // Create the user without setting the password
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                return result; // Return error if creation fails
+            }
+
+            // Generate the password reset token
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Set the generated token in the user's SetPasswordToken property (if it exists in your User class)
+            user.SetPasswordToken = resetToken;
+
+            await _db.SaveChangesAsync();
+
+            await _userManager.AddToRoleAsync(user, "PATIENT");
+
+            // Send the password setup email
+            await SendPasswordSetupEmail(user.Email, user);
+
+            return IdentityResult.Success;
+        }
+
+        public async Task SendPasswordSetupEmail(string email, User user)
+        {
+            // Generate the password reset link manually by combining the parts
+            var resetLink = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/Admin/setpassword?email={email}&token={user.SetPasswordToken}";
+
+            // Send the reset link to the user via email
+            await _emailService.SendEmailAsync(user.Email, "Complete Your Registration",
+                $"Hello, <br><br> You have been registered. Please <a href='{resetLink}'>click here</a> to set your password.");
+        }
+
+        public async Task DeletePatient(string PatientId)
+        {
+            var foundPatient = await _userManager.FindByIdAsync(PatientId);
+
+            if (foundPatient == null)
+            {
+                // Patient not found, return early
+                return;
+            }
+
+            // Find the related MedicalHistories and set their AppointmentId to null
+            var medicalHistories = await _db.MedicalHistories
+                .Include(x => x.Patient)
+                .Where(mh => mh.Appointment.Patient.Id == foundPatient.Id)
+                .ToListAsync();
+
+            foreach (var history in medicalHistories)
+            {
+                history.AppointmentId = null;  // Remove the reference to the appointment
+            }
+
+          
+            await _db.SaveChangesAsync();
+
+           
+            _db.Users.Remove(foundPatient);
+            await _db.SaveChangesAsync();
+        }
+
     }
 }
