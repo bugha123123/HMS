@@ -2,6 +2,7 @@
 using HMS.Interface;
 using HMS.Model;
 using HMS.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Controllers
@@ -17,17 +18,18 @@ namespace HMS.Controllers
             _patientService = patientService;
             _doctorService = doctorService;
         }
-
+        [Authorize]
         public IActionResult dashboard()
         {
             return View();
         }
-        
-      public async Task<IActionResult> appointmentdetails(int AppointmentId)
+        [Authorize]
+        public async Task<IActionResult> appointmentdetails(int AppointmentId)
         {
             var Appointment = await _adminService.GetAppointmentById(AppointmentId);
             return View(Appointment);
         }
+        [Authorize]
         public async Task<IActionResult> patients(string? query, int page = 1, int pageSize = 5)
         {
           
@@ -42,22 +44,26 @@ namespace HMS.Controllers
 
             return View(patients);
         }
+        [Authorize]
         public async Task<IActionResult> doctors(string? query, Department? department)
         {
-            // Call FilterDoctors to get the filtered list of doctors
-            var FilteredDoctors = await _doctorService.FilterDoctors(query, department);
-            var Doctors = await _doctorService.GetAllDoctors();
-
-            if (query is null || department is null) {
-                return View(Doctors);
+            // If no query or department is provided, fetch all doctors
+            if (string.IsNullOrEmpty(query) || department == null)
+            {
+                var doctors = await _doctorService.GetAllDoctors();
+                return View(doctors);
             }
-            return View(FilteredDoctors);
+
+            // Otherwise, fetch filtered doctors
+            var filteredDoctors = await _doctorService.FilterDoctors(query, department);
+            return View(filteredDoctors);
         }
+        [Authorize]
         public IActionResult requests()
         {
             return View();
         }
-
+        [Authorize]
         public async Task<IActionResult> appointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
         {
             // Get the filtered list of appointments from the service

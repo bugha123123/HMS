@@ -21,6 +21,7 @@ namespace HMS.Controllers
         {
           return View();
         }
+        [Authorize]
         public async Task<IActionResult> medicalrecords()
         {
             var MedicalRecords = await _patientService.GetMedicalHistoryAsync();
@@ -28,7 +29,7 @@ namespace HMS.Controllers
         }
 
 
-
+        [Authorize]
         public async Task<IActionResult> bookappointment()
         {
             return View();

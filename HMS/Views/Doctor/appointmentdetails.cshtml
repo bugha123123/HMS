@@ -1,0 +1,70 @@
+﻿@model Appointment
+@{
+    var URL_VALUE = Context.Request.Query["R"];
+    if (URL_VALUE == "P")
+    {
+        Layout = null;
+    }
+}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<main class="container mx-auto mt-8 p-4">
+    <h2 class="text-3xl font-semibold mb-6">Your Appointment Details</h2>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+            <h3 class="text-xl font-semibold mb-4">Appointment Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-gray-600">Date:</p>
+                    <p class="font-medium">@Model.AppointmentDate</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Time:</p>
+                    <p class="font-medium">@Model.AppointmentTime</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Doctor:</p>
+                    <p class="font-medium">@Model.Doctor.FullName</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Department:</p>
+                    <p class="font-medium">@Model.Doctor.Department.Name</p>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-gray-200">
+
+        <div class="p-6">
+            <h3 class="text-xl font-semibold mb-4">Preparation Instructions</h3>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                <li>Please arrive 15 minutes before your appointment time.</li>
+                <li>Bring a list of all current medications you are taking.</li>
+                <li>Wear comfortable clothing that allows easy access to your chest area.</li>
+                <li>If you have any previous ECG reports, please bring them with you.</li>
+                <li>Avoid caffeine for 24 hours before the appointment.</li>
+            </ul>
+        </div>
+
+        <hr class="border-gray-200">
+
+        <div class="p-6">
+            <p class="mb-2"><strong>Status:</strong> @Model.Status</p>
+            <p class="mb-2"><strong>Phone:</strong> @Model.Doctor.PhoneNumber</p>
+            <p><strong>Email:</strong> @Model.Doctor.DoctorApplication.Email</p>
+        </div>
+    </div>
+
+    <div class="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Reschedule Appointment
+        </button>
+        <form asp-action="Doctor_CancelAppointment" asp-controller="Doctor" method="post">
+            <input hidden value="@Model.Id" name="AppointmentId" />
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                Cancel Appointment
+            </button>
+        </form>
+        
+    </div>
+</main>

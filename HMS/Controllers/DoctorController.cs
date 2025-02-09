@@ -1,5 +1,7 @@
 ﻿using HMS.Interface;
 using HMS.Model;
+using HMS.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -8,15 +10,16 @@ namespace HMS.Controllers
     public class DoctorController : Controller
     {
         private readonly IDoctorService _docservice;
-
-        public DoctorController(IDoctorService docservice)
+        private readonly IAdminService _adminservice;
+        public DoctorController(IDoctorService docservice, IAdminService adminservice)
         {
             _docservice = docservice;
+            _adminservice = adminservice;
         }
-
-        public async Task<IActionResult> Index(DateTime? when, int page = 1, int pageSize = 3)
+        [Authorize]
+        public async Task<IActionResult> Index(DateTime? when, string? query, int page = 1, int pageSize = 3)
         {
-            var allAppointments = await _docservice.FilterAppointment(when);
+            var allAppointments = await _docservice.FilterAppointment(when, query);
 
             // Calculate the total number of pages
             var totalAppointments = allAppointments.Count();
@@ -35,13 +38,17 @@ namespace HMS.Controllers
 
             return View(allAppointments);
         }
-
+        [Authorize]
         public IActionResult doctorapplication()
         {
             return View();
         }
-
-
+        [Authorize]
+        public async Task<IActionResult> appointmentdetails(int appId)
+        {
+            var result = await _docservice.GetAppointmentById(appId);
+            return View(result);
+        }
 
         [HttpPost]
         public async Task<IActionResult> SaveDoctorApplication(DoctorApplication doctorApplication)
@@ -55,5 +62,27 @@ namespace HMS.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> Doctor_ScheduleAppointment(int appId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _docservice.Doctor_ScheduleAppointment(appId);
+                return RedirectToAction("Index", "Doctor");
+            }
+            return RedirectToAction("Index", "Doctor");
+        }
+
+        public async Task<IActionResult> Doctor_CancelAppointment(int AppointmentId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _adminservice.Admin_CancelAppointment(AppointmentId);
+                return RedirectToAction("signup", "Auth");
+            }
+            return RedirectToAction("appointmentdetails", "Doctor");
+
+        }
+        
     }
 }

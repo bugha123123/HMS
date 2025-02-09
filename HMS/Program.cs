@@ -49,7 +49,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
 {
     // Check if user is signed in
@@ -77,15 +76,44 @@ app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
         return;
     }
 
-    if (await userManager.IsInRoleAsync(loggedInUser, "Doctor"))
+    if (await userManager.IsInRoleAsync(loggedInUser, "DOCTOR"))
     {
-        // Redirect to Admin Dashboard
+        // Redirect to Doctor Index page
         context.Response.Redirect("/Doctor/Index");
         return;
     }
-    // Default redirection, if no role matched
+
+    // Default redirection if no role matched
     context.Response.Redirect("/Auth/signup");
 });
+
+app.MapGet("/Admin/", async (HttpContext context, UserManager<User> userManager) =>
+{
+    // Check if user is signed in
+    var loggedInUser = await userManager.GetUserAsync(context.User);
+
+    if (loggedInUser is null)
+    {
+        // If user is not logged in, redirect to signin page
+        context.Response.Redirect("/Auth/signin");
+        return;
+    }
+
+    // Check if the logged-in user has 'ADMIN' role
+    if (!await userManager.IsInRoleAsync(loggedInUser, "ADMIN"))
+    {
+        // Redirect to a non-admin path or signup
+        context.Response.Redirect("/Auth/signup");
+        return;
+    }
+
+    // Redirect to the admin dashboard
+    context.Response.Redirect("/Admin/dashboard");
+});
+
+
+
+
 
 using (var scope = app.Services.CreateScope())
 {

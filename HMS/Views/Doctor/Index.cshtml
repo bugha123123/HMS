@@ -8,131 +8,189 @@
     var currentPage = ViewBag.CurrentPage;
     var totalPages = ViewBag.TotalPages;
     var when = Context.Request.Query["when"];
+    var query = Context.Request.Query["query"];
 }
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Search and Filter -->
-    <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <form method="get" action="@Url.Action("Index", "Doctor")" class="flex space-x-4">
-            <!-- Date Picker -->
-            <input type="date" id="searchDate" name="when" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-            <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Search</button>
-        </form>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Doctor's Dashboard</h1>
+        <p class="text-sm text-gray-600 mt-1">Manage your appointments and schedule</p>
+    </div>
 
-        <div class="flex space-x-2">
-            <button id="todayBtn" class="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white">Today</button>
-            <button id="upcomingBtn" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100">Upcoming</button>
+    <div class="mb-8 p-6 bg-white rounded-xl shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+            <form method="get" action="@Url.Action("Index", "Doctor")" class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                <div class="relative">
+                    <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></i>
+                    <input type="date"
+                           id="searchDate"
+                           name="when"
+                           class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto" />
+                </div>
+
+                <div class="flex space-x-3">
+                    <input id="searchInput" type="text" name="query" placeholder="Search appointments..." class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200" />
+                </div>
+
+                <button type="submit" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200">
+                    <i data-lucide="search" class="h-4 w-4 mr-2"></i>
+                    Search
+                </button>
+            </form>
         </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <!-- Total Appointments -->
-        <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Total Appointments</h3>
-                <i data-lucide="calendar" class="h-6 w-6 text-blue-600"></i>
+                <div class="p-2 bg-blue-50 rounded-lg">
+                    <i data-lucide="calendar" class="h-6 w-6 text-blue-600"></i>
+                </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-                @appointments.Count()
-            </p>
-            <p class="text-sm text-gray-500 mt-1">All Appointments</p>
+            <p class="text-3xl font-bold text-gray-900 mt-4">@appointments.Count()</p>
+            <div class="flex items-center mt-2">
+                <p class="text-sm text-gray-500">All Appointments</p>
+            </div>
         </div>
 
         <!-- Pending Appointments -->
-        <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Pending</h3>
-                <i data-lucide="clock" class="h-6 w-6 text-yellow-600"></i>
+                <div class="p-2 bg-yellow-50 rounded-lg">
+                    <i data-lucide="clock" class="h-6 w-6 text-yellow-600"></i>
+                </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-                @appointments.Count(a => a.Status == AppointmentStatus.Pending)
-            </p>
-            <p class="text-sm text-gray-500 mt-1">Needs Attention</p>
+            <p class="text-3xl font-bold text-gray-900 mt-4">@appointments.Count(a => a.Status == AppointmentStatus.Pending)</p>
+            <div class="flex items-center mt-2">
+                <i data-lucide="alert-circle" class="h-4 w-4 text-yellow-600 mr-1"></i>
+                <p class="text-sm text-yellow-600">Needs Attention</p>
+            </div>
         </div>
 
         <!-- Accepted Appointments -->
-        <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Accepted</h3>
-                <i data-lucide="check-circle" class="h-6 w-6 text-green-600"></i>
+                <div class="p-2 bg-green-50 rounded-lg">
+                    <i data-lucide="check-circle" class="h-6 w-6 text-green-600"></i>
+                </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-                @appointments.Count(a => a.Status == AppointmentStatus.Scheduled)
-            </p>
-            <p class="text-sm text-gray-500 mt-1">Confirmed</p>
+            <p class="text-3xl font-bold text-gray-900 mt-4">@appointments.Count(a => a.Status == AppointmentStatus.Scheduled)</p>
+            <div class="flex items-center mt-2">
+                <i data-lucide="check" class="h-4 w-4 text-green-600 mr-1"></i>
+                <p class="text-sm text-green-600">Confirmed</p>
+            </div>
         </div>
 
         <!-- Completed Appointments -->
-        <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Completed</h3>
-                <i data-lucide="check-square" class="h-6 w-6 text-blue-600"></i>
+                <div class="p-2 bg-blue-50 rounded-lg">
+                    <i data-lucide="check-square" class="h-6 w-6 text-blue-600"></i>
+                </div>
             </div>
-            <p class="text-3xl font-bold text-gray-900 mt-2">
-                @appointments.Count(a => a.Status == AppointmentStatus.Completed)
-            </p>
-            <p class="text-sm text-gray-500 mt-1">Completed Appointments</p>
+            <p class="text-3xl font-bold text-gray-900 mt-4">@appointments.Count(a => a.Status == AppointmentStatus.Completed)</p>
+            <div class="flex items-center mt-2">
+                <i data-lucide="archive" class="h-4 w-4 text-blue-600 mr-1"></i>
+                <p class="text-sm text-blue-600">Completed Appointments</p>
+            </div>
         </div>
     </div>
 
-    <!-- Stats -->
-    <!-- (No changes required here) -->
     <!-- Appointments List -->
-    <div id="appointmentsList" class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200">
+    <div id="appointmentsList" class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
             <h2 class="text-lg font-semibold text-gray-900">Appointments</h2>
         </div>
         <div id="appointmentsContainer" class="divide-y divide-gray-200">
-            <!-- Default Today Appointments -->
             @if (Model == null || !Model.Any())
             {
-                <div class="p-6">
-                    <p class="text-center text-gray-500">No appointments for today.</p>
+                <div class="p-12 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                        <i data-lucide="calendar-x" class="h-8 w-8 text-gray-400"></i>
+                    </div>
+                    <p class="text-gray-500 text-lg">No appointments for today.</p>
+                    <p class="text-sm text-gray-400 mt-1">Check back later or select a different date.</p>
                 </div>
             }
-
             else
             {
                 @foreach (var appointment in Model)
                 {
-                    <div class="p-6 hover:bg-gray-50">
+                    <div class="p-6 hover:bg-gray-50 transition-colors duration-200">
                         <div class="flex items-center justify-between space-x-4">
                             <div class="flex items-center space-x-4">
-                                <div class="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center shadow-md">
-                                    <i data-lucide="user" class="h-6 w-6 text-gray-600"></i>
+                                <div class="h-12 w-12 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-md">
+                                    <i data-lucide="user" class="h-6 w-6 text-blue-600"></i>
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900 truncate max-w-[200px]">
                                         @(appointment.Patient?.Email ?? "No Email")
                                     </h3>
-                                    <div class="flex items-center space-x-2 text-sm text-gray-500">
-                                        <i data-lucide="calendar" class="h-4 w-4"></i>
-                                        <span>@appointment.AppointmentDate.ToString("MMM dd, yyyy")</span>
-                                        <i data-lucide="clock" class="h-4 w-4 ml-2"></i>
-                                        <span>@appointment.AppointmentTime</span>
+                                    <div class="flex items-center space-x-3 text-sm text-gray-500 mt-1">
+                                        <div class="flex items-center">
+                                            <i data-lucide="calendar" class="h-4 w-4 mr-1.5 text-gray-400"></i>
+                                            <span>@appointment.AppointmentDate.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <i data-lucide="clock" class="h-4 w-4 mr-1.5 text-gray-400"></i>
+                                            <span>@appointment.AppointmentTime</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800">
+                            <div class="flex items-center space-x-3">
+                                @{
+                                    var statusClass = appointment.Status switch
+                                    {
+                                        AppointmentStatus.Pending => "bg-yellow-100 text-yellow-800",
+                                        AppointmentStatus.Scheduled => "bg-green-100 text-green-800",
+                                        AppointmentStatus.Completed => "bg-blue-100 text-blue-800",
+                                        _ => "bg-gray-100 text-gray-800"
+                                    };
+                                }
+                                <span class="px-3 py-1 rounded-full text-sm font-semibold @statusClass">
                                     @appointment.Status
                                 </span>
                             </div>
                         </div>
-                        <div class="mt-4 space-y-2">
-                            <p class="text-sm text-gray-600">Reason: <span class="font-medium text-gray-800">@appointment.Reason</span></p>
-                            <!-- Schedule Appointment Button -->
-                            @if (appointment.Status == AppointmentStatus.Pending)
-                            {
-                                <form method="post" action="@Url.Action("ScheduleAppointment", "Doctor", new { appointmentId = appointment.Id })">
-                                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Schedule</button>
-                                </form>
-                            }
-                            @if (appointment.Status == AppointmentStatus.Scheduled)
-                            {
-                                <form method="get" action="@Url.Action("RescheduleAppointment", "Doctor", new { appointmentId = appointment.Id })">
-                                    <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg">Reschedule</button>
-                                </form>
-                            }
+                        <div class="mt-4 space-y-3">
+                            <div class="flex items-start">
+                                <i data-lucide="clipboard" class="h-5 w-5 text-gray-400 mr-2 mt-0.5"></i>
+                                <p class="text-sm text-gray-600">
+                                    Reason: <span class="font-medium text-gray-800">@appointment.Reason</span>
+                                </p>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex space-x-3 mt-4">
+                                @if (appointment.Status == AppointmentStatus.Pending)
+                                {
+                                    <input hidden value="@appointment.Id" name="appId" />
+                                    <form method="post" action="@Url.Action("Doctor_ScheduleAppointment", "Doctor", new { appId = appointment.Id })">
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                            <i data-lucide="check" class="h-4 w-4 mr-2"></i>
+                                            Schedule
+                                        </button>
+                                    </form>
+                                }
+                                @if (appointment.Status == AppointmentStatus.Scheduled)
+                                {
+                                    <form method="get" action="@Url.Action("Doctor_RescheduleAppointment", "Doctor", new { appId = appointment.Id })">
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors duration-200">
+                                            <i data-lucide="calendar-clock" class="h-4 w-4 mr-2"></i>
+                                            Reschedule
+                                        </button>
+                                    </form>
+                                }
+                            </div>
                         </div>
                     </div>
                 }
@@ -141,26 +199,32 @@
     </div>
 
     <!-- Pagination Controls -->
-    <div class="mt-6 flex justify-between items-center">
+    <div class="mt-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm">
         <div>
             <span class="text-sm text-gray-500">Page @currentPage of @totalPages</span>
         </div>
-        <div class="flex space-x-4">
+        <div class="flex space-x-3">
             @if (currentPage > 1)
             {
-                <a href="@Url.Action("Index", "Doctor", new { page = currentPage - 1, when = when })" class="px-4 py-2 bg-blue-600 text-dark rounded-lg">Previous</a>
+                <a href="@Url.Action("Index", "Doctor", new { page = currentPage - 1, when = when })"
+                   class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                    <i data-lucide="chevron-left" class="h-4 w-4 mr-1"></i>
+                    Previous
+                </a>
             }
 
             @if (currentPage < totalPages)
             {
-                <a href="@Url.Action("Index", "Doctor", new { page = currentPage + 1, when = when })" class="px-4 py-2 bg-blue-600 text-dark rounded-lg">Next</a>
+                <a href="@Url.Action("Index", "Doctor", new { page = currentPage + 1, when = when })"
+                   class="inline-flex items-center px-4 py-2 bg-blue-600 rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200">
+                    Next
+                    <i data-lucide="chevron-right" class="h-4 w-4 ml-1"></i>
+                </a>
             }
         </div>
     </div>
 </main>
 
-
 <script>
-  
     lucide.createIcons();
 </script>

@@ -34,30 +34,34 @@ namespace HMS.Service
             // Start with all appointments
             IQueryable<Appointment> queryable = _db.Appointments
                 .Include(a => a.Patient)  // Includes the related Patient
-                .Include(a => a.Doctor)  // Includes the related Doctor
-                .ThenInclude(d => d.Department);  // Includes the related Department for the Doctor
+                .Include(a => a.Doctor)   // Includes the related Doctor
+                .ThenInclude(d => d.Department); // Includes the related Department for the Doctor
 
-            // Filter by query if it's not empty
+            // Filter by query if it's not empty (case-insensitive search)
             if (!string.IsNullOrEmpty(query))
             {
-                queryable = queryable.Where(a => a.Patient.UserName.Contains(query) || a.Doctor.FullName.Contains(query));
+                queryable = queryable.Where(a =>
+                    a.Patient.UserName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                    a.Doctor.FullName.Contains(query, StringComparison.OrdinalIgnoreCase)
+                );
             }
 
             // Filter by DepartmentSpecialization if it's provided
             if (DepartmentSpecialization.HasValue)
             {
-                queryable = queryable.Where(a => a.Doctor.Department.Type == DepartmentSpecialization);
+                queryable = queryable.Where(a => a.Doctor.Department.Type == DepartmentSpecialization.Value);
             }
 
             // Filter by status if it's provided
             if (status.HasValue)
             {
-                queryable = queryable.Where(a => a.Status == status);
+                queryable = queryable.Where(a => a.Status == status.Value);
             }
 
             // Return the filtered list
             return await queryable.ToListAsync();
         }
+
 
 
 
