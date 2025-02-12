@@ -82,7 +82,7 @@ namespace HMS.Service
             {
                 doctors = doctors.Where(d => d.Department == department);
             }
-
+            
            
             if (!string.IsNullOrWhiteSpace(query))
             {

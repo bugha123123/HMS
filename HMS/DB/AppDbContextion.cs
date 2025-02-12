@@ -23,23 +23,20 @@ namespace HMS.DB
             base.OnModelCreating(modelBuilder);
             DBSeeder.DBSeeder.SeedData(modelBuilder);
 
-      
-
-           
-
-            
-
+            modelBuilder.Entity<Appointment>()
+                .HasMany(a => a.MedicalHistories) 
+                .WithOne(m => m.Appointment) 
+                .HasForeignKey(m => m.AppointmentId)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Doctor>()
-            .HasOne(d => d.User)  // A Doctor has one User
-            .WithOne(u => u.Doctor)  // A User has one Doctor (optional)
-            .HasForeignKey<Doctor>(d => d.UserId)  // Doctor holds the foreign key
-            .OnDelete(DeleteBehavior.SetNull);  // Optional: set to null if Doctor is deleted
-
-         
-
+                .HasOne(d => d.User) // A Doctor has one User
+                .WithOne(u => u.Doctor) // A User has one Doctor (optional)
+                .HasForeignKey<Doctor>(d => d.UserId) // Doctor holds the foreign key
+                .OnDelete(DeleteBehavior.SetNull); 
         }
 
-    
+
+
     }
 }

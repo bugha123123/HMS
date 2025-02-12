@@ -13,6 +13,8 @@ namespace HMS.Interface
         Task SendWelcomeEmailToUser(string email);
 
 
-        // for users that are trying to register as a DOCTOR
+        // verifies user after registering
+
+
     }
 }
