@@ -10,6 +10,27 @@
     var when = Context.Request.Query["when"];
     var query = Context.Request.Query["query"];
 }
+<style>
+    .notifications-panel {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .notifications-panel.show {
+            transform: translateX(0);
+        }
+
+    .overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+</style>
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50 min-h-screen">
     <!-- Header Section -->
@@ -227,8 +248,20 @@
    
 </main>
 
-<!-- JavaScript to Show Toast -->
+
+
+
 <script>
-   
+
+    const notificationToggle = document.getElementById('notificationToggle');
+       const notificationsPanel = document.getElementById('notificationsPanel');
+       const closePanel = document.getElementById('closePanel');
+       const overlay = document.getElementById('overlay');
+
+       function togglePanel() {
+         notificationsPanel.classList.toggle('show');
+         overlay.classList.toggle('show');
+       }
+
      lucide.createIcons();
 </script>

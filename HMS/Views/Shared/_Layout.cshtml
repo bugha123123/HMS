@@ -22,6 +22,30 @@
 </head>
 <body>
 
+  <style>
+        .notifications-panel {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+            .notifications-panel.show {
+                transform: translateX(0);
+            }
+
+        .overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+            .overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            
+  </style>
+
 @if (User.IsInRole("Admin"))
     {
         <nav class="bg-white shadow-md">
@@ -136,7 +160,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button class="p-2 rounded-full hover:bg-gray-100">
+                    <button class="p-2 rounded-full hover:bg-gray-100" onclick="toggleNotificationPanel()">
                         <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
                     </button>
                     <button class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100">
@@ -146,7 +170,102 @@
                 </div>
             </div>
         </header>
+        <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-25 z-40"></div>
+
+    <!-- Notifications Panel -->
+    <div id="notificationsPanel" class="notifications-panel fixed left-0 top-0 h-full w-96 bg-white shadow-lg z-50">
+        <!-- Header -->
+        <div class="bg-white border-b px-4 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-bold text-gray-900">Notifications</h1>
+                <div class="flex items-center space-x-4">
+                    <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">12 New</span>
+                        <button id="closePanel" class="text-gray-500 hover:text-gray-700" onclick="CloseNotificationTab()">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="px-4 py-3 border-b">
+            <div class="flex space-x-2">
+                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">All</button>
+                <button class="bg-white text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-50">Unread</button>
+                <button class="bg-white text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-50">Appointments</button>
+            </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="overflow-y-auto h-[calc(100%-8rem)]">
+            <div class="p-4 space-y-4">
+                <!-- Urgent Appointment Request -->
+                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-red-800">Urgent Appointment Request</p>
+                                <span class="text-xs text-red-700">5 min ago</span>
+                            </div>
+                            <p class="mt-1 text-sm text-red-700">Patient John Doe (ID: 12345) requests urgent consultation for chest pain.</p>
+                            <div class="mt-3 flex space-x-3">
+                                <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Review Now</button>
+                                <button class="text-red-700 hover:text-red-800 text-sm">Dismiss</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Results -->
+                <div class="bg-white p-4 rounded-lg shadow-sm hover:bg-gray-50">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-gray-900">Test Results Available</p>
+                                <span class="text-xs text-gray-500">1 hour ago</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Blood work results for patient Sarah Smith are ready for review.</p>
+                            <button class="mt-3 text-blue-600 hover:text-blue-700 text-sm">View Results</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Reminder -->
+                <div class="bg-white p-4 rounded-lg shadow-sm hover:bg-gray-50">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-gray-900">Upcoming Appointment</p>
+                                <span class="text-xs text-gray-500">2 hours ago</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Follow-up with Michael Johnson tomorrow at 10:00 AM.</p>
+                            <button class="mt-3 text-green-600 hover:text-green-700 text-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     }
+
+    
   
     <div class="container mx-auto">
         <main role="main" class="pb-3">
@@ -160,3 +279,20 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+      function toggleNotificationPanel() {
+        const notificationsPanel = document.getElementById('notificationsPanel');
+        const overlay = document.getElementById('overlay');
+        notificationsPanel.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    function CloseNotificationTab() {
+        const notificationsPanel = document.getElementById('notificationsPanel');
+        const overlay = document.getElementById('overlay');
+        notificationsPanel.classList.remove('show');  // Remove the 'show' class to hide the panel
+        overlay.classList.remove('show');  // Remove the 'show' class to hide the overlay
+    }
+
+</script>
