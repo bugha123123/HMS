@@ -22,5 +22,14 @@ namespace HMS.Model
         public Doctor? Doctor { get; set; }
 
         public string? SetPasswordToken { get; set; }
+
+        public UserStatus Status { get; set; } = UserStatus.Active;
+        public enum UserStatus
+        {
+            Active,
+            Discharged,
+            Critical
+        }
+
     }
 }

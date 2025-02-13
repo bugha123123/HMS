@@ -45,19 +45,22 @@ namespace HMS.Controllers
             return View(patients);
         }
         [Authorize]
-        public async Task<IActionResult> doctors(string? query, Department? department)
+        public async Task<IActionResult> doctors(string? query)
         {
-            // If no query or department is provided, fetch all doctors
-            if (string.IsNullOrEmpty(query) || department == null)
+            List<Doctor> doctors;
+
+            if (string.IsNullOrWhiteSpace(query))
             {
-                var doctors = await _doctorService.GetAllDoctors();
-                return View(doctors);
+                doctors = await _doctorService.GetAllDoctors();
+            }
+            else
+            {
+                doctors = await _doctorService.FilterDoctors(query);
             }
 
-            // Otherwise, fetch filtered doctors
-            var filteredDoctors = await _doctorService.FilterDoctors(query, department);
-            return View(filteredDoctors);
+            return View(doctors);
         }
+
         [Authorize]
         public IActionResult requests()
         {

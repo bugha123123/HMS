@@ -43,6 +43,13 @@ namespace HMS.Controllers
         {
             return View();
         }
+
+        [Authorize]
+        public async Task<IActionResult> reschedule(int appointmentId)
+        {
+            var result = await _docservice.GetAppointmentById(appointmentId);
+            return View(result);
+        }
         [Authorize]
         public async Task<IActionResult> appointmentdetails(int appId)
         {
@@ -70,6 +77,23 @@ namespace HMS.Controllers
                 await _docservice.Doctor_ScheduleAppointment(appId);
                 return RedirectToAction("Index", "Doctor");
             }
+            return RedirectToAction("Index", "Doctor");
+        }
+
+
+
+        public async Task<IActionResult> Doctor_ReScheduleAppointment(int AppointmentId, DateTime time, DateTime date, string reason)
+        {
+            if (ModelState.IsValid)
+            {
+                await _docservice.Doctor_ReScheduleAppointment(AppointmentId, time, date, reason);
+
+                // Set toast message to indicate successful rescheduling
+                ViewData["toast"] = "Appointment rescheduled successfully.";
+
+                return RedirectToAction("Index", "Doctor");
+            }
+
             return RedirectToAction("Index", "Doctor");
         }
 

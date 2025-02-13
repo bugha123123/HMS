@@ -28,13 +28,13 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Active Cases</h3>
             <p class="text-3xl font-bold text-green-600">
-                @Patients.Where(x => x.Appointments != null && x.Appointments.Any(a => a.Status == AppointmentStatus.Scheduled)).Count()
+                @Patients.Where(x => x.Status == HMS.Model.User.UserStatus.Active).Count()
 
             </p>
         </div>
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-lg font-semibold mb-2">Critical Cases</h3>
-            <p class="text-3xl font-bold text-red-600">23</p>
+            <p class="text-3xl font-bold text-red-600">@Patients.Where(x => x.Status == HMS.Model.User.UserStatus.Critical).Count()</p>
         </div>
     </div>
 

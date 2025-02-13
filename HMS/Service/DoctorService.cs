@@ -71,34 +71,18 @@ namespace HMS.Service
             await emailService.SendEmailAsync(doctorApplication.Email, subject, htmlBody);
         }
 
-        //TODO FIX THIS, SEARCH DOES NOT WORK
-        public async Task<List<Doctor>> FilterDoctors(string? query, Department? department)
+        public async Task<List<Doctor>> FilterDoctors(string? query)
         {
-            // Start with the queryable collection
-            var doctors = _db.Doctors.AsQueryable();
+            var doctors = _db.Doctors
+                .Include(x => x.DoctorApplication)
+                .Include(x => x.Appointments)
+                .Where(d => d.FullName.Contains(query) || d.Specialization.Contains(query))
+                .ToListAsync();
 
-            // Filter by department if specified
-            if (department != null)
-            {
-                doctors = doctors.Where(d => d.Department == department);
-            }
-            
-           
-            if (!string.IsNullOrWhiteSpace(query))
-            {
-                var queryLower = query.ToLower();
-
-                // Use EF.Functions.Like to do case-insensitive searches for the query
-                doctors = doctors.Where(d =>
-                    EF.Functions.Like(d.DoctorApplication.FirstName, $"%{queryLower}%") ||
-                    EF.Functions.Like(d.Specialization, $"%{department}%") ||
-                    EF.Functions.Like(d.DoctorApplication.LastName, $"%{queryLower}%")
-                );
-            }
-
-            // Execute and return the list of filtered doctors
-            return await doctors.ToListAsync();
+            return await doctors;
         }
+
+
 
         public async Task<List<Appointment>> FilterAppointment(DateTime? when, string? query)
         {
@@ -185,10 +169,39 @@ namespace HMS.Service
         {
             return await _db.Appointments.Include(x => x.Doctor).ThenInclude(x => x.Department).Include(x => x.Patient).Include(x => x.Doctor.DoctorApplication).FirstOrDefaultAsync(x => x.Id == AppointmentId);
         }
-        //TODO
-        public Task Doctor_ResScheduleAppointment(int AppointmentId)
+
+        public async Task Doctor_ReScheduleAppointment(int AppointmentId, DateTime time, DateTime date, string reason)
         {
-            throw new NotImplementedException();
+            var FoundAppointment = await GetAppointmentById(AppointmentId);
+            if (FoundAppointment is null)
+                return;
+
+            // Update the appointment details
+            FoundAppointment.AppointmentDate = date;
+            FoundAppointment.Reason = reason;
+            FoundAppointment.AppointmentTime = time;
+            FoundAppointment.Status = AppointmentStatus.Rescheduled;
+            FoundAppointment.DoctorNotes = reason;
+            // Save changes to the database
+            await _db.SaveChangesAsync();
+
+            // Create subject and body for the email
+            string subject = "Appointment Rescheduled";
+            string body = $@"
+        <h2>Appointment Rescheduled</h2>
+        <p>Dear {FoundAppointment.Patient.UserName},</p>
+        <p>Your appointment has been rescheduled to the following details:</p>
+        <p><strong>New Date:</strong> {FoundAppointment.AppointmentDate:dddd, MMMM dd, yyyy}</p>
+        <p><strong>New Time:</strong> {FoundAppointment.AppointmentTime:h:mm tt}</p>
+        <p><strong>Reason for Rescheduling:</strong> {reason}</p>
+        <p>If you have any questions, please feel free to contact us.</p>
+        <p>Thank you for your understanding.</p>
+        <p>Best regards, <br>Your Hospital Team</p>
+    ";
+
+            // Send the rescheduled appointment email to the patient
+            await emailService.SendEmailAsync(FoundAppointment.Patient.Email, subject, body);
         }
+
     }
 }

@@ -1,16 +1,22 @@
-﻿@model List<Doctor> 
+﻿@model List<Doctor>
 @{
     var query = Context.Request.Query["query"];
 }
+
 <form asp-action="doctors" asp-controller="Admin" method="get">
     <main class="container mx-auto px-4 py-8">
 
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Doctor Management</h1>
+
+            <!-- Filter Button -->
             <button type="submit" class="bg-[#0284c7] text-dark px-4 py-2 rounded-lg hover:bg-[#0ea5e9] transition-colors" style="border:1px solid black">
                 Filter Doctors
             </button>
+
+       
         </div>
+
         <!-- Doctor Search and Filter -->
         <div class="bg-white p-6 rounded-lg shadow-md mb-8">
             <div class="flex flex-wrap gap-4">
@@ -18,17 +24,9 @@
                 <div class="flex-1">
                     <input type="text" name="query" id="searchQuery" value="@query" placeholder="Search doctors..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]" />
                 </div>
-                <div class="flex gap-4">
-                    <!-- Department Dropdown -->
-                    <select name="department" id="departmentDropdown" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0284c7]">
-                        <option value="">All Departments</option>
-                        @foreach (var department in Enum.GetValues(typeof(DepartmentType)).Cast<DepartmentType>())
-                        {
-                            <option value="@department">@department</option>
-                        }
-                    </select>
-                </div>
 
+               
+               
             </div>
         </div>
 
@@ -58,7 +56,6 @@
                                 <p class="text-gray-600">Hospital</p>
                                 <p class="font-semibold">@doctor.HospitalId</p>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -66,8 +63,3 @@
         </div>
     </main>
 </form>
-
- 
-
-
-

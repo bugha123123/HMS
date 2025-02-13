@@ -15,14 +15,14 @@ namespace HMS.Interface
         Task SaveDoctorApplicationAsync(DoctorApplication doctorApplication);
 
         // New method to filter doctors by query, department, and specialization
-        Task<List<Doctor>> FilterDoctors(string? query, Department department);
+        Task<List<Doctor>> FilterDoctors(string? query);
 
         Task<List<Appointment>> FilterAppointment(DateTime? when,string? query);
 
         Task<List<Appointment>> GetAppointments();
 
         Task Doctor_ScheduleAppointment(int AppointmentId);
-        Task Doctor_ResScheduleAppointment(int AppointmentId);
+        Task Doctor_ReScheduleAppointment(int AppointmentId, DateTime time, DateTime date, string reason);
         Task<Appointment> GetAppointmentById(int AppointmentId);
 
 
