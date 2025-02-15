@@ -25,6 +25,8 @@ namespace HMS.Interface
         Task Doctor_ReScheduleAppointment(int AppointmentId, DateTime time, DateTime date, string reason);
         Task<Appointment> GetAppointmentById(int AppointmentId);
 
+        Task<List<DoctorNotification>> GetAllDoctorNotifications();
+
 
 
 

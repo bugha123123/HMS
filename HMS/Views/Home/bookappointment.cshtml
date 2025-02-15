@@ -110,11 +110,5 @@
         }
     });
 
-    document.getElementById('time').addEventListener('focus', function () {
-        var currentTime = new Date();
-        var currentHours = currentTime.getHours().toString().padStart(2, '0');
-        var currentMinutes = currentTime.getMinutes().toString().padStart(2, '0');
-        var currentTimeStr = currentHours + ':' + currentMinutes;
-        this.setAttribute('min', currentTimeStr);
-    });
+   
 </script>

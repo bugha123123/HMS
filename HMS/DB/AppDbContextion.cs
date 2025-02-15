@@ -18,6 +18,7 @@ namespace HMS.DB
 
         public DbSet<DoctorApplication> doctorApplications  { get; set; }
 
+        public DbSet<DoctorNotification> DoctorNotifications { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,7 +34,16 @@ namespace HMS.DB
                 .HasOne(d => d.User) // A Doctor has one User
                 .WithOne(u => u.Doctor) // A User has one Doctor (optional)
                 .HasForeignKey<Doctor>(d => d.UserId) // Doctor holds the foreign key
-                .OnDelete(DeleteBehavior.SetNull); 
+                .OnDelete(DeleteBehavior.SetNull);
+
+
+
+            modelBuilder.Entity<DoctorNotification>()
+    .HasOne(dn => dn.Appointment)
+    .WithMany() // If Appointment has a navigation property for notifications, specify it here
+    .HasForeignKey(dn => dn.AppointmentId)
+    .OnDelete(DeleteBehavior.Restrict);
+
         }
 
 

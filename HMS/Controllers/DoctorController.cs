@@ -1,4 +1,5 @@
-﻿using HMS.Interface;
+﻿using HMS.DB;
+using HMS.Interface;
 using HMS.Model;
 using HMS.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,14 @@ namespace HMS.Controllers
     {
         private readonly IDoctorService _docservice;
         private readonly IAdminService _adminservice;
-        public DoctorController(IDoctorService docservice, IAdminService adminservice)
+        private readonly INotificationService _notificationservice;
+        private readonly AppDbContextion _db;
+        public DoctorController(IDoctorService docservice, IAdminService adminservice, INotificationService notificationservice, AppDbContextion db)
         {
             _docservice = docservice;
             _adminservice = adminservice;
+            _notificationservice = notificationservice;
+            _db = db;
         }
         [Authorize]
         public async Task<IActionResult> Index(DateTime? when, string? query, int page = 1, int pageSize = 3)
@@ -43,7 +48,13 @@ namespace HMS.Controllers
         {
             return View();
         }
-
+        public async Task<IActionResult> Dreviewnotification(int NotificationId)
+        {
+            var result = await _notificationservice.Doctor_GetNotificationById(NotificationId);
+            result.IsRead = true;
+                await _db.SaveChangesAsync();
+            return View(result);
+        }
         [Authorize]
         public async Task<IActionResult> reschedule(int appointmentId)
         {

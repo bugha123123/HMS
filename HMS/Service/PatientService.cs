@@ -3,6 +3,7 @@ using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static HMS.Model.DoctorNotification;
 
 namespace HMS.Service
 {
@@ -14,8 +15,9 @@ namespace HMS.Service
         private readonly IHospitalService _hospitalService;
         private readonly IEmailService _emailService;
         private readonly UserManager<User> _userManager;
+        private readonly INotificationService _notificationService;
 
-        public PatientService(IAuthService authService, IDoctorService octorService, AppDbContextion db, IHospitalService hospitalService, IEmailService emailService, UserManager<User> userManager)
+        public PatientService(IAuthService authService, IDoctorService octorService, AppDbContextion db, IHospitalService hospitalService, IEmailService emailService, UserManager<User> userManager, INotificationService notificationService)
         {
             _authService = authService;
             _doctorService = octorService;
@@ -23,6 +25,7 @@ namespace HMS.Service
             _hospitalService = hospitalService;
             _emailService = emailService;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         public async Task BookAppointmentAsync(string DoctorFullName,DateTime AppointmentDate,DateTime Appointmenttime, string PhoneNumber, string HospitalName, string Reason)
@@ -69,7 +72,11 @@ namespace HMS.Service
                 
             };
 
-           await  _db.MedicalHistories.AddAsync(medicalHistory);
+            await _notificationService.Doctor_SaveNotificationAsync(FoundDoctor.Id,"Appointment", NotificationType.AppointmentReminder, LoggedInPatient.Id, LoggedInPatient,Appointment,Appointment.Id);
+
+            
+
+            await  _db.MedicalHistories.AddAsync(medicalHistory);
 
             // Save changes
             await _db.SaveChangesAsync();

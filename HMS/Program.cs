@@ -23,7 +23,7 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-
+builder.Services.AddScoped<INotificationService, NotificationService>();
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {

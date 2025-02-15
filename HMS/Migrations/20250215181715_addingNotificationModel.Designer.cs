@@ -4,6 +4,7 @@ using HMS.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Migrations
 {
     [DbContext(typeof(AppDbContextion))]
-    partial class AppDbContextionModelSnapshot : ModelSnapshot
+    [Migration("20250215181715_addingNotificationModel")]
+    partial class addingNotificationModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,9 +310,6 @@ namespace HMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppointmentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -323,18 +323,13 @@ namespace HMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PatientId")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("PatientId");
+                    b.HasIndex("DoctorId");
 
                     b.ToTable("DoctorNotifications");
                 });
@@ -875,20 +870,13 @@ namespace HMS.Migrations
 
             modelBuilder.Entity("HMS.Model.DoctorNotification", b =>
                 {
-                    b.HasOne("HMS.Model.Appointment", "Appointment")
+                    b.HasOne("HMS.Model.Doctor", "Doctor")
                         .WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("HMS.Model.User", "patient")
-                        .WithMany()
-                        .HasForeignKey("PatientId")
+                        .HasForeignKey("DoctorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Appointment");
-
-                    b.Navigation("patient");
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("HMS.Model.MedicalHistory", b =>

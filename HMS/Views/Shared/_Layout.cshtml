@@ -1,7 +1,7 @@
 ﻿@using HMS.Interface
 
 @inject IAuthService _authservice;
-
+@inject IDoctorService _doctorservice;
 @{
     var loggedInUser = await _authservice.GetLoggedInUserAsync();
 }
@@ -22,31 +22,31 @@
 </head>
 <body>
 
-  <style>
+    <style>
         .notifications-panel {
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
         }
 
-            .notifications-panel.show {
-                transform: translateX(0);
-            }
+        .notifications-panel.show {
+        transform: translateX(0);
+        }
 
         .overlay {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out;
         }
 
-            .overlay.show {
-                opacity: 1;
-                visibility: visible;
-            }
+        .overlay.show {
+        opacity: 1;
+        visibility: visible;
+        }
 
-            
-  </style>
 
-@if (User.IsInRole("Admin"))
+    </style>
+
+    @if (User.IsInRole("Admin"))
     {
         <nav class="bg-white shadow-md">
             <div class="container mx-auto px-4">
@@ -59,7 +59,7 @@
                         <a asp-action="patients" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Patients</a>
                         <a asp-action="appointments" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Appointments</a>
                         <a asp-action="doctors" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Doctors</a>
-                        
+
                         <a asp-action="requests" asp-controller="Admin" class="px-4 py-2 text-gray-700 hover:text-[#0284c7] transition-colors">Requests</a>
                     </div>
 
@@ -100,7 +100,7 @@
                         {
                             <li>
                                 <a asp-action="bookappointment" asp-controller="Home"
-                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
                                     <i data-lucide="calendar-plus" class="w-4 h-4"></i>
                                     <span>Book Appointment</span>
                                 </a>
@@ -110,7 +110,7 @@
                         {
                             <li>
                                 <a asp-action="signin" asp-controller="Auth"
-                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
                                     <i data-lucide="log-in" class="w-4 h-4"></i>
                                     <span>Sign In</span>
                                 </a>
@@ -118,7 +118,7 @@
                         }
                         <li>
                             <a asp-action="medicalrecords" asp-controller="Home"
-                               class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
                                 <i data-lucide="clipboard-list" class="w-4 h-4"></i>
                                 <span>Medical Records</span>
                             </a>
@@ -127,7 +127,7 @@
                         {
                             <li>
                                 <a asp-action="SignOutUser" asp-controller="Auth"
-                                   class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-500 transition-colors">
                                     <i data-lucide="log-out" class="w-4 h-4"></i>
                                     <span>Log out</span>
                                 </a>
@@ -137,7 +137,7 @@
                         {
                             <li>
                                 <a asp-action="signin" asp-controller="Auth"
-                                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition-colors">
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 rounded-lg hover:bg-blue-400 transition-colors">
                                     <i data-lucide="log-in" class="w-4 h-4"></i>
                                     <span>Sign in</span>
                                 </a>
@@ -152,13 +152,15 @@
     {
         <header class="bg-white shadow-sm">
             <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <i data-lucide="user" class="h-8 w-8 text-blue-600"></i>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Dr. @User.Identity.Name.Substring(0,7)</h1>
-                        <p class="text-sm text-gray-500">@loggedInUser.Doctor.Specialization</p>
+              <a asp-action="Index" asp-controller="Doctor" style="text-decoration:none;">
+                    <div class="flex items-center space-x-4">
+                        <i data-lucide="user" class="h-8 w-8 text-blue-600"></i>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">Dr. @User.Identity.Name.Substring(0, 7)</h1>
+                            <p class="text-sm text-gray-500">@loggedInUser.Doctor.Specialization</p>
+                        </div>
                     </div>
-                </div>
+              </a>
                 <div class="flex items-center space-x-4">
                     <button class="p-2 rounded-full hover:bg-gray-100" onclick="toggleNotificationPanel()">
                         <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
@@ -172,77 +174,79 @@
         </header>
         <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-25 z-40"></div>
 
-    <!-- Notifications Panel -->
-    <div id="notificationsPanel" class="notifications-panel fixed left-0 top-0 h-full w-96 bg-white shadow-lg z-50">
-        <!-- Header -->
-        <div class="bg-white border-b px-4 py-4">
-            <div class="flex items-center justify-between">
-                <h1 class="text-xl font-bold text-gray-900">Notifications</h1>
-                <div class="flex items-center space-x-4">
-                    <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">12 New</span>
-                        <button id="closePanel" class="text-gray-500 hover:text-gray-700" onclick="CloseNotificationTab()">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+        var docNotifications = await _doctorservice.GetAllDoctorNotifications();
+
+
+        var unreadNotifications = docNotifications.Where(n => !n.IsRead).ToList();
+
+
+<!-- Notifications Panel -->
+<div id="notificationsPanel" class="notifications-panel fixed left-0 top-0 h-full w-96 bg-white shadow-lg z-50">
+    <!-- Header -->
+    <div class="bg-white border-b px-4 py-4">
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-bold text-gray-900">Notifications</h1>
+            <div class="flex items-center space-x-4">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">@unreadNotifications.Count() new</span>
+                <button id="closePanel" class="text-gray-500 hover:text-gray-700" onclick="CloseNotificationTab()">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
         </div>
+    </div>
 
-        <!-- Filters -->
-        <div class="px-4 py-3 border-b">
-            <div class="flex space-x-2">
-                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">All</button>
-                <button class="bg-white text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-50">Unread</button>
-                <button class="bg-white text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-50">Appointments</button>
-            </div>
+    <!-- Filters -->
+    <div class="px-4 py-3 border-b">
+        <div class="flex space-x-2">
+            <button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm filter-btn active" data-filter="all">All</button>
+            <button class="bg-white text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-50 filter-btn" data-filter="unread">Unread</button>
         </div>
+    </div>
 
-        <!-- Notifications List -->
-        <div class="overflow-y-auto h-[calc(100%-8rem)]">
-            <div class="p-4 space-y-4">
-                <!-- Urgent Appointment Request -->
-                <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-medium text-red-800">Urgent Appointment Request</p>
-                                <span class="text-xs text-red-700">5 min ago</span>
+    <!-- Notifications List -->
+            <div class="overflow-y-auto h-[calc(100%-8rem)]">
+                <div class="p-4 space-y-4" id="notifications-container">
+                    @foreach (var notification in docNotifications)
+                    {
+                        <div class="p-4 rounded-lg border-l-4 notification-item
+                @(notification.IsRead ? "bg-blue-50 border-blue-500" : "bg-green-50 border-green-500")"
+                             data-read="@(notification.IsRead ? "read" : "unread")">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 @(notification.IsRead ? "text-blue-500" : "text-green-500")" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-red-800">@notification.Type</p>
+                                        <span class="text-xs text-red-700">@notification.CreatedAt</span>
+                                    </div>
+                                    <p class="mt-1 text-sm text-red-700">Patient @notification.patient.UserName, @notification.Message</p>
+                                    <div class="mt-3 flex space-x-3">
+                                        <a asp-action="Dreviewnotification" asp-controller="Doctor" asp-route-NotificationId="@notification.Id" style="text-decoration:none;">
+                                            <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Review Now</button>
+                                        </a>
+                                        <button class="text-red-700 hover:text-red-800 text-sm">Dismiss</button>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="mt-1 text-sm text-red-700">Patient John Doe (ID: 12345) requests urgent consultation for chest pain.</p>
-                            <div class="mt-3 flex space-x-3">
-                                <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Review Now</button>
-                                <button class="text-red-700 hover:text-red-800 text-sm">Dismiss</button>
-                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
+            </div>
 
-                <!-- Test Results -->
-                <div class="bg-white p-4 rounded-lg shadow-sm hover:bg-gray-50">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm font-medium text-gray-900">Test Results Available</p>
-                                <span class="text-xs text-gray-500">1 hour ago</span>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-600">Blood work results for patient Sarah Smith are ready for review.</p>
-                            <button class="mt-3 text-blue-600 hover:text-blue-700 text-sm">View Results</button>
-                        </div>
-                    </div>
-                </div>
+</div>
 
-                <!-- Appointment Reminder -->
+
+          
+
+@* 
+             
+
+                @* <!-- Appointment Reminder -->
                 <div class="bg-white p-4 rounded-lg shadow-sm hover:bg-gray-50">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
@@ -259,10 +263,8 @@
                             <button class="mt-3 text-green-600 hover:text-green-700 text-sm">View Details</button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </div> *@
+    
     }
 
     
@@ -294,5 +296,33 @@
         notificationsPanel.classList.remove('show');  // Remove the 'show' class to hide the panel
         overlay.classList.remove('show');  // Remove the 'show' class to hide the overlay
     }
+        document.addEventListener("DOMContentLoaded", function () {
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const notifications = document.querySelectorAll(".notification-item");
 
+        filterButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove("bg-blue-600", "text-white"));
+                filterButtons.forEach(btn => btn.classList.add("bg-white", "text-gray-700"));
+
+                // Add active class to the clicked button
+                this.classList.add("bg-blue-600", "text-white");
+
+                const filter = this.getAttribute("data-filter");
+
+                notifications.forEach(notification => {
+                    if (filter === "all") {
+                        notification.style.display = "block";
+                    } else if (filter === "unread") {
+                        notification.getAttribute("data-read") === "unread"
+                            ? (notification.style.display = "block")
+                            : (notification.style.display = "none");
+                    }
+                });
+            });
+        });
+    });
+
+           
 </script>

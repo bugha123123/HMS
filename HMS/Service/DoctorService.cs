@@ -203,5 +203,9 @@ namespace HMS.Service
             await emailService.SendEmailAsync(FoundAppointment.Patient.Email, subject, body);
         }
 
+        public async Task<List<DoctorNotification>> GetAllDoctorNotifications()
+        {
+            return await _db.DoctorNotifications.ToListAsync();
+        }
     }
 }
