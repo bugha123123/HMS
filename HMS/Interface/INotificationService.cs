@@ -7,5 +7,7 @@ namespace HMS.Interface
         Task Doctor_SaveNotificationAsync(int doctorId, string message, NotificationType type, string UserId, User user, Appointment appointment, int appointmentId);
 
         Task<DoctorNotification> Doctor_GetNotificationById(int NotId);
+
+        Task DismissNotification(int NotificationId);
     }
 }

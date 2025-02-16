@@ -118,8 +118,18 @@ namespace HMS.Service
                 return;
 
             FoundAppointment.Status = AppointmentStatus.Scheduled;
-          
-           await _db.SaveChangesAsync();
+
+
+
+            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
+
+            if (NotificationToDelete is not null)
+            {
+                _db.DoctorNotifications.Remove(NotificationToDelete);
+                await _db.SaveChangesAsync();
+            }
+
+            await _db.SaveChangesAsync();
             
             string subject = "Your Appointment Has Been Scheduled";
             string emailBody = $@"
@@ -167,7 +177,7 @@ namespace HMS.Service
 
         public async Task<Appointment> GetAppointmentById(int AppointmentId)
         {
-            return await _db.Appointments.Include(x => x.Doctor).ThenInclude(x => x.Department).Include(x => x.Patient).Include(x => x.Doctor.DoctorApplication).FirstOrDefaultAsync(x => x.Id == AppointmentId);
+            return await _db.Appointments.Include(x => x.Doctor).ThenInclude(x => x.Department).Include(x => x.Patient).ThenInclude(x => x.MedicalHistory).Include(x => x.Doctor.DoctorApplication).FirstOrDefaultAsync(x => x.Id == AppointmentId);
         }
 
         public async Task Doctor_ReScheduleAppointment(int AppointmentId, DateTime time, DateTime date, string reason)
@@ -182,6 +192,16 @@ namespace HMS.Service
             FoundAppointment.AppointmentTime = time;
             FoundAppointment.Status = AppointmentStatus.Rescheduled;
             FoundAppointment.DoctorNotes = reason;
+
+
+            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
+
+            if (NotificationToDelete is not null)
+            {
+                _db.DoctorNotifications.Remove(NotificationToDelete);
+                await _db.SaveChangesAsync();
+            }
+
             // Save changes to the database
             await _db.SaveChangesAsync();
 
@@ -206,6 +226,68 @@ namespace HMS.Service
         public async Task<List<DoctorNotification>> GetAllDoctorNotifications()
         {
             return await _db.DoctorNotifications.ToListAsync();
+        }
+
+        public async Task SaveDoctorNote(int AppointmentId, string DoctorNote)
+        {
+           var FoundAppointment = await GetAppointmentById(AppointmentId);
+
+            if (FoundAppointment is null)
+                return;
+
+            FoundAppointment.DoctorNotes = DoctorNote;
+
+            await _db.SaveChangesAsync();
+
+
+            //TODO Send notification to user that doctor added a note
+
+        }
+
+        public async Task CancelAppointment(int AppointmentId)
+        {
+            var AppointmentToDelete = await GetAppointmentById(AppointmentId);
+
+            if (AppointmentToDelete is null)
+                return;
+
+            // Set related MedicalHistories' AppointmentId to null (disassociate from the appointment)
+            foreach (var medicalHistory in AppointmentToDelete.MedicalHistories)
+            {
+                medicalHistory.AppointmentId = null;  // Disassociate by setting AppointmentId to null
+            }
+
+            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
+
+            if (NotificationToDelete is not null)
+            {
+                _db.DoctorNotifications.Remove(NotificationToDelete);
+                await _db.SaveChangesAsync();
+            }
+
+
+
+            // Remove the appointment itself
+            _db.Appointments.Remove(AppointmentToDelete);
+            await _db.SaveChangesAsync();
+
+            // Send cancellation email
+            await emailService.SendEmailAsync(
+                AppointmentToDelete.Patient.Email,
+                "Appointment Cancellation",
+                @$"
+        <body>
+            <div class='container'>
+                <h2>Appointment Cancellation</h2>
+                <p>Dear {AppointmentToDelete.Patient.UserName},</p>
+                <p>We regret to inform you that your appointment scheduled on <strong>{AppointmentToDelete.AppointmentDate}</strong> has been cancelled.</p>
+                <p>If you have any questions, please contact our support team.</p>
+                <p>Thank you for understanding.</p>
+                <div class='footer'>Best Regards, <br> Your Clinic Team</div>
+            </div>
+        </body>
+    "
+            );
         }
     }
 }

@@ -27,6 +27,10 @@ namespace HMS.Interface
 
         Task<List<DoctorNotification>> GetAllDoctorNotifications();
 
+        Task SaveDoctorNote(int AppointmentId,string DoctorNote);
+
+        Task CancelAppointment(int AppointmentId);
+
 
 
 

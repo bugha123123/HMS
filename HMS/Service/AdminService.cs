@@ -188,7 +188,7 @@ namespace HMS.Service
         {
             var AppointmentToDelete = await _db.Appointments
                                                 .Include(u => u.Patient)
-                                                .Include(a => a.MedicalHistories) // Include related MedicalHistories
+                                                .Include(a => a.MedicalHistories)
                                                 .FirstOrDefaultAsync(a => a.Id == AppointmentId);
 
             if (AppointmentToDelete is null)
@@ -200,8 +200,15 @@ namespace HMS.Service
                 medicalHistory.AppointmentId = null;  // Disassociate by setting AppointmentId to null
             }
 
-            // Save changes for MedicalHistories
-            await _db.SaveChangesAsync();
+            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
+
+            if (NotificationToDelete is not null)
+            {
+                 _db.DoctorNotifications.Remove(NotificationToDelete);
+                await _db.SaveChangesAsync();
+            }
+
+          
 
             // Remove the appointment itself
             _db.Appointments.Remove(AppointmentToDelete);

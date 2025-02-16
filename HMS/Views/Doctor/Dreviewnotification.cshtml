@@ -24,11 +24,11 @@
                  
                     <div>
                         <p class="text-sm text-gray-600">Patient ID:</p>
-                        <p class="font-medium">@Model.patient.Id.Substring(0,7)</p>
+                        <p class="font-medium">@Model.patient.Id.Substring(0,7)...</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Contact:</p>
-                        <p class="font-medium">Model.patient.ContactNumber </p>
+                        <p class="font-medium">@Model.patient.ContactNumber </p>
                     </div>
                 </div>
             </div>
@@ -38,6 +38,10 @@
                 <div class="space-y-2">
                     <p><span class="font-medium">Reason:</span> @Model.Appointment.Reason</p>
                     <p><span class="font-medium">Location:</span> @Model.Appointment.HospitalName</p>
+                    @if (Model.Appointment.DoctorNotes is not null)
+                    {
+                        <p><span class="font-medium">Doctor Note:</span> @Model.Appointment.DoctorNotes</p>
+                    }
                 </div>
             </div>
             <div class="mb-8 bg-white p-4 rounded-lg shadow-md">
@@ -72,20 +76,14 @@
             <div class="flex flex-wrap justify-between items-center">
                 <div class="space-x-2 mb-4 sm:mb-0 flex">
                     <form asp-action="Doctor_ScheduleAppointment" asp-controller="Doctor" method="post">
-                        <input hidden value="@Model.AppointmentId" name="appId" />
+                        <input hidden value="@Model.AppointmentId" name="AppointmentId" />
                         <button type="submit" class="px-6 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50 transition duration-150 ease-in-out">
                             <i class="fas fa-check mr-2"></i>Confirm Appointment
                         </button>
                     </form>
-                    <form asp-action="Doctor_ReScheduleAppointment" asp-controller="Doctor" method="post">
-                        <input hidden value="@Model.AppointmentId" name="appId" />
-
-                        <button type="submit" class="px-6 py-2 bg-yellow-500 text-white font-medium rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 transition duration-150 ease-in-out">
-                        <i class="fas fa-clock mr-2"></i>Reschedule
-                    </button>
-                    </form>
-                      <form asp-action="Doctor_ReScheduleAppointment" asp-controller="Doctor" method="post">
-                        <input hidden value="@Model.AppointmentId" name="appId" />
+               
+                    <form asp-action="Doctor_CancelAppointment" asp-controller="Doctor" method="post">
+                        <input hidden value="@Model.AppointmentId" name="AppointmentId" />
 
                     <button type="submit" class="px-6 py-2 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 transition duration-150 ease-in-out">
                         <i class="fas fa-times mr-2"></i>Cancel Appointment
@@ -93,15 +91,52 @@
                     </form>
                 </div>
 
-              @*   TODO *@
-                <button class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-150 ease-in-out">
-                    <i class="fas fa-notes-medical mr-2"></i>Add Notes
+          
+                <button id="openPopup" class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-150 ease-in-out">
+                    <i class="fas fa-notes-medical mr-2" ></i>Add Notes
                 </button>
             </div>
         </div>
     </div>
 </main>
 
+<div id="notePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center hidden">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+        <h2 class="text-xl font-bold mb-4" >Add Note</h2>
+        <form asp-action="Doctor_SaveNote" asp-controller="Doctor" method="post">
+
+        <textarea id="noteContent" name="DoctorNote" class="w-full h-32 p-2 border rounded mb-4" placeholder="Enter your note here..."></textarea>
+        <div class="flex justify-end">
+            <button id="cancelNote" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded mr-2">
+                Cancel
+            </button>
+                <input hidden value="@Model.Id" name="NotificationId" />
+                <input hidden value="@Model.Appointment.Id" name="AppointmentId" />
+                <button type="submit" id="saveNote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Save Note
+                </button>
+          </form>
+        </div>
+    </div>
+</div>
+
                         <script>
+                              const openPopup = document.getElementById('openPopup');
+        const notePopup = document.getElementById('notePopup');
+        const cancelNote = document.getElementById('cancelNote');
+        
+
+        openPopup.addEventListener('click', () => {
+            notePopup.classList.remove('hidden');
+            notePopup.classList.add('flex');
+        });
+
+        cancelNote.addEventListener('click', () => {
+            notePopup.classList.add('hidden');
+            notePopup.classList.remove('flex');
+            noteContent.value = '';
+        });
+
+
     lucide.createIcons();
                         </script>

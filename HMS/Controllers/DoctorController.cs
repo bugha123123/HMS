@@ -112,12 +112,24 @@ namespace HMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _adminservice.Admin_CancelAppointment(AppointmentId);
-                return RedirectToAction("signup", "Auth");
+                await _docservice.CancelAppointment(AppointmentId);
+                return RedirectToAction("Index", "Doctor");
             }
-            return RedirectToAction("appointmentdetails", "Doctor");
+            return RedirectToAction("Dreviewnotification", "Doctor");
 
         }
-        
+        public async Task<IActionResult> Doctor_SaveNote(int AppointmentId, string DoctorNote, int NotificationId)
+        {
+          
+                await _docservice.SaveDoctorNote(AppointmentId, DoctorNote);
+
+            
+
+                return RedirectToAction("Dreviewnotification", "Doctor", new { NotificationId });
+          
+
+            //return RedirectToAction("Dreviewnotification", "Doctor", new { NotificationId });
+        }
+
     }
 }

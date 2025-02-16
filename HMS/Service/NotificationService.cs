@@ -14,6 +14,12 @@ public class NotificationService : INotificationService
         _db = db;
     }
 
+    //TODO
+    public Task DismissNotification(int NotificationId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<DoctorNotification> Doctor_GetNotificationById(int NotId)
     {
         return await _db.DoctorNotifications.Include(x => x.Appointment).ThenInclude(x => x.MedicalHistories).Include(x => x.patient).FirstOrDefaultAsync(x => x.Id == NotId);
