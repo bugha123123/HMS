@@ -41,7 +41,7 @@ namespace HMS.Controllers
             ViewBag.TotalPages = totalPages;
            
 
-            return View(allAppointments);
+            return View(appointmentsToDisplay);
         }
         [Authorize]
         public IActionResult doctorapplication()
