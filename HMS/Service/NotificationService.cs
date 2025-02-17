@@ -24,7 +24,7 @@ public class NotificationService : INotificationService
     {
         return await _db.DoctorNotifications.Include(x => x.Appointment).ThenInclude(x => x.MedicalHistories).Include(x => x.patient).FirstOrDefaultAsync(x => x.Id == NotId);
     }
-
+    
     // Method to save notification for any user (doctor, patient, admin, etc.)
     public async Task Doctor_SaveNotificationAsync(int doctorId, string message, NotificationType type, string UserId, User user,Appointment appointment, int appointmentId)
     {
