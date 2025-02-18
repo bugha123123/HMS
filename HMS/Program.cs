@@ -24,6 +24,7 @@ builder.Services.AddScoped<IHospitalService, HospitalService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
@@ -51,65 +52,80 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
 {
-    // Check if user is signed in
     var loggedInUser = await userManager.GetUserAsync(context.User);
 
     if (loggedInUser is null)
     {
-        // If user is not logged in, redirect to signin page
         context.Response.Redirect("/Auth/signin");
         return;
     }
 
-    // Redirect based on the user's role
     if (await userManager.IsInRoleAsync(loggedInUser, "PATIENT"))
     {
-        // Redirect to Patient Index page
         context.Response.Redirect("/Home/Index");
         return;
     }
 
     if (await userManager.IsInRoleAsync(loggedInUser, "ADMIN"))
     {
-        // Redirect to Admin Dashboard
         context.Response.Redirect("/Admin/dashboard");
         return;
     }
 
     if (await userManager.IsInRoleAsync(loggedInUser, "DOCTOR"))
     {
-        // Redirect to Doctor Index page
         context.Response.Redirect("/Doctor/Index");
         return;
     }
 
-    // Default redirection if no role matched
     context.Response.Redirect("/Auth/signup");
 });
 
 app.MapGet("/Admin/", async (HttpContext context, UserManager<User> userManager) =>
 {
-    // Check if user is signed in
     var loggedInUser = await userManager.GetUserAsync(context.User);
 
     if (loggedInUser is null)
     {
-        // If user is not logged in, redirect to signin page
         context.Response.Redirect("/Auth/signin");
         return;
     }
 
-    // Check if the logged-in user has 'ADMIN' role
     if (!await userManager.IsInRoleAsync(loggedInUser, "ADMIN"))
     {
-        // Redirect to a non-admin path or signup
         context.Response.Redirect("/Auth/signup");
         return;
     }
 
-    // Redirect to the admin dashboard
     context.Response.Redirect("/Admin/dashboard");
 });
+
+// Restrict Access to Chat (Only Doctors & Patients)
+app.MapGet("/Chat/", async (HttpContext context, UserManager<User> userManager) =>
+{
+    var loggedInUser = await userManager.GetUserAsync(context.User);
+
+    if (loggedInUser is null)
+    {
+        context.Response.Redirect("/Auth/signin");
+        return;
+    }
+
+    // Allow access only if the user is a Doctor or Patient
+    bool isDoctor = await userManager.IsInRoleAsync(loggedInUser, "DOCTOR");
+    bool isPatient = await userManager.IsInRoleAsync(loggedInUser, "PATIENT");
+
+    if (!isDoctor && !isPatient)
+    {
+        // If user is not a doctor or patient, redirect them out
+        context.Response.Redirect("/Auth/signup");
+        return;
+    }
+
+    // If the user is authorized, allow them to access the chat
+    await context.Response.WriteAsync("Welcome to the chat!");
+});
+
 
 
 

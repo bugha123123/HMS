@@ -26,14 +26,14 @@ namespace HMS.Controllers
         {
             var allAppointments = await _docservice.FilterAppointment(when, query);
 
-            // Calculate the total number of pages
+        
             var totalAppointments = allAppointments.Count();
             var totalPages = (int)Math.Ceiling(totalAppointments / (double)pageSize);
 
-            // Get the appointments for the current page
+            
             var appointmentsToDisplay = allAppointments
-                .Skip((page - 1) * pageSize)  // Skip the appointments for the previous pages
-                .Take(pageSize)               // Take only the specified number of appointments
+                .Skip((page - 1) * pageSize)  
+                .Take(pageSize)               
                 .ToList();
 
             // Pass the appointments and paging info to the view
@@ -48,6 +48,8 @@ namespace HMS.Controllers
         {
             return View();
         }
+
+
         public async Task<IActionResult> Dreviewnotification(int NotificationId)
         {
             var result = await _notificationservice.Doctor_GetNotificationById(NotificationId);
@@ -120,15 +122,29 @@ namespace HMS.Controllers
         }
         public async Task<IActionResult> Doctor_SaveNote(int AppointmentId, string DoctorNote, int NotificationId)
         {
-          
-                await _docservice.SaveDoctorNote(AppointmentId, DoctorNote);
+
+            // not using ModelState.IsValid because DoctorNote can be saved as a null
+
+            await _docservice.SaveDoctorNote(AppointmentId, DoctorNote);
+
+                return RedirectToAction("Dreviewnotification", "Doctor", new { NotificationId });
 
             
 
-                return RedirectToAction("Dreviewnotification", "Doctor", new { NotificationId });
+        
           
 
-            //return RedirectToAction("Dreviewnotification", "Doctor", new { NotificationId });
+        }
+
+        public async Task<IActionResult> DismissNotification(int AppointmentId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _notificationservice.DismissNotification(AppointmentId);
+                return RedirectToAction("Index", "Doctor");
+            }
+            return RedirectToAction("Index", "Doctor");
+
         }
 
     }

@@ -32,6 +32,7 @@
         }
 </style>
 
+
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50 min-h-screen">
     <!-- Header Section -->
     <div class="mb-8">
@@ -151,6 +152,7 @@
                                     <i data-lucide="user" class="h-6 w-6 text-blue-600"></i>
                                 </div>
                                 <div>
+                                 
                                     <h3 class="text-lg font-semibold text-gray-900 truncate max-w-[200px]">
                                         @(appointment.Patient?.Email ?? "No Email")
                                     </h3>
@@ -209,6 +211,20 @@
                                     </a>
 
                                 }
+
+                                @if (appointment.Status == AppointmentStatus.Scheduled)
+                                {
+                                    <a asp-action="chat" asp-controller="Chat" asp-route-appointmentId="@appointment.Id" asp-route-userType="@UserType.Doctor">
+                                        <button id="openChatBtn-@appointment.Id"
+                                                class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                            <span class="font-semibold">Start Chat</span>
+                                        
+                                        </button>
+                                    </a>
+                                 
+                                }
+
+                               
                             </div>
                         </div>
                     </div>

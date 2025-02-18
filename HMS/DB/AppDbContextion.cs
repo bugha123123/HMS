@@ -18,7 +18,10 @@ namespace HMS.DB
 
         public DbSet<DoctorApplication> doctorApplications  { get; set; }
 
-        public DbSet<DoctorNotification> DoctorNotifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -38,7 +41,7 @@ namespace HMS.DB
 
 
 
-            modelBuilder.Entity<DoctorNotification>()
+            modelBuilder.Entity<Notification>()
     .HasOne(dn => dn.Appointment)
     .WithMany() // If Appointment has a navigation property for notifications, specify it here
     .HasForeignKey(dn => dn.AppointmentId)

@@ -10,10 +10,11 @@ namespace HMS.Controllers
     public class HomeController : Controller
     {
       private readonly IPatientService _patientService;
-
-        public HomeController(IPatientService petientService)
+        private readonly IDoctorService _docservice;
+        public HomeController(IPatientService petientService, IDoctorService docservice)
         {
             _patientService = petientService;
+            _docservice = docservice;
         }
 
         [Authorize]
@@ -52,6 +53,19 @@ namespace HMS.Controllers
                 return RedirectToAction("AppointmentBookingSuccess", "Home");
             }
             return RedirectToAction("AppointmentBookingFailure", "Home");
+
+        }
+
+        
+
+               public async Task<IActionResult> Patient_CancelAppointment(int AppointmentId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _docservice.CancelAppointment(AppointmentId);
+                return RedirectToAction("signup", "Auth");
+            }
+            return RedirectToAction("appointmentdetails", "Doctor");
 
         }
     }

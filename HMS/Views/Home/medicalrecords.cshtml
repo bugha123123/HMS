@@ -1,7 +1,7 @@
 ﻿@model List<MedicalHistory>
 <script src="https://unpkg.com/lucide@latest"></script>
-<div class="container mx-auto px-4 py-8 mt-5">
 
+<div class="container mx-auto px-4 py-8 mt-5">
     @if (Model != null && Model.Any())
     {
         <table class="table-auto w-full text-left border-collapse">
@@ -12,17 +12,33 @@
                     <th class="border-b px-4 py-2">Treatment</th>
                     <th class="border-b px-4 py-2">Doctor</th>
                     <th class="border-b px-4 py-2">Reason</th>
+                   
                 </tr>
             </thead>
             <tbody>
                 @foreach (var medicalHistory in Model)
                 {
+                    var appointmentDate = medicalHistory.Appointment?.AppointmentDate;
+                    var today = DateTime.Now.Date;
+
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="px-6 py-4">@medicalHistory.Appointment?.AppointmentDate.ToString("dd MMM yyyy")</td>
+                        <td class="px-6 py-4">@appointmentDate?.ToString("dd MMM yyyy")</td>
                         <td class="px-6 py-4">@(!string.IsNullOrEmpty(medicalHistory.Diagnosis) ? medicalHistory.Diagnosis : "N/A")</td>
                         <td class="px-6 py-4">@(!string.IsNullOrEmpty(medicalHistory.Treatment) ? medicalHistory.Treatment : "N/A")</td>
                         <td class="px-6 py-4">@medicalHistory.Appointment?.Doctor?.FullName</td>
                         <td class="px-6 py-4">@medicalHistory.Appointment?.Reason</td>
+                     
+                     
+                        <td class="px-6 py-4 text-center">
+                            @if (medicalHistory.Appointment.AppointmentDate == today)
+                            {
+                                  <a asp-action="chat" asp-controller="Chat" asp-route-appointmentId="@medicalHistory.Appointment.Id" asp-route-userType="@UserType.Patient"
+                               class="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out">
+                                <span>Join Chat</span>
+                            </a>
+                            }
+                          
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -33,27 +49,49 @@
         <p class="text-center">No medical records available.</p>
     }
 
-    <!-- Notes Section Below the Table -->
+    <!-- Notes Section with Accordion -->
     <div class="mt-8">
-       @if (Model.Any())
+        @if (Model.Any())
         {
             <h3 class="text-xl font-semibold text-blue-600 mb-4">Notes</h3>
         }
 
-        <!-- Loop through MedicalHistories to display the notes for each record -->
         @foreach (var medicalHistory in Model)
         {
-            <div class="mb-6">
-                <h4 class="text-lg font-medium text-gray-700">Notes for Appointment on @medicalHistory.Appointment?.AppointmentDate.ToString("dd MMM yyyy")</h4>
+            var notesId = "notes-" + medicalHistory.Id; // Unique ID for each notes section
 
-                <!-- Notes Text Area -->
-                <textarea name="notes" disabled
-                          class="w-full h-40 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder="Enter your notes here...">@(!string.IsNullOrEmpty(medicalHistory.Notes) ? medicalHistory.Notes : "No notes available.")</textarea>
+            <div class="mb-6 border border-gray-300 rounded-lg">
+                <button class="w-full flex justify-between items-center p-4 bg-gray-100 hover:bg-gray-200 transition"
+                        onclick="toggleNotes('@notesId')">
+                    <h4 class="text-lg font-medium text-gray-700">
+                        Notes for @medicalHistory.Appointment?.AppointmentDate.ToString("dd MMM yyyy")
+                    </h4>
+                    <i data-lucide="chevron-down" class="transition-transform" id="icon-@notesId"></i>
+                </button>
+
+                <div id="@notesId" class="hidden p-4">
+                    <textarea name="notes" disabled
+                              class="w-full h-40 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter your notes here...">@(!string.IsNullOrEmpty(medicalHistory.Notes) ? medicalHistory.Notes : "No notes available.")</textarea>
+                </div>
             </div>
         }
     </div>
 </div>
-   <script>
+
+<script>
+    function toggleNotes(id) {
+        var notesSection = document.getElementById(id);
+        var icon = document.getElementById("icon-" + id);
+
+        if (notesSection.classList.contains("hidden")) {
+            notesSection.classList.remove("hidden");
+            icon.classList.add("rotate-180");
+        } else {
+            notesSection.classList.add("hidden");
+            icon.classList.remove("rotate-180");
+        }
+    }
+
     lucide.createIcons();
-   </script>
+</script>

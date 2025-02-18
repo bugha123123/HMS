@@ -3,7 +3,7 @@ using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static HMS.Model.DoctorNotification;
+using static HMS.Model.Notification;
 
 namespace HMS.Service
 {
@@ -72,7 +72,7 @@ namespace HMS.Service
                 
             };
 
-            await _notificationService.Doctor_SaveNotificationAsync(FoundDoctor.Id,"Appointment", NotificationType.AppointmentReminder, LoggedInPatient.Id, LoggedInPatient,Appointment,Appointment.Id);
+            await _notificationService.SaveNotificationAsync(FoundDoctor.Id,"Appointment", NotificationType.AppointmentReminder, LoggedInPatient.Id, LoggedInPatient,Appointment,Appointment.Id,RecipientRole.Doctor);
 
             
 
@@ -163,7 +163,12 @@ namespace HMS.Service
                 return new List<MedicalHistory>();
 
 
-            return await _db.MedicalHistories.Include(x => x.Patient).Include(x => x.Appointment).ThenInclude(x => x.Doctor).Where(m => m.Patient.Id == LoggedInPatient.Id).ToListAsync();
+            return await _db.MedicalHistories
+                .Include(x => x.Patient)
+                .Include(x => x.Appointment)
+                .ThenInclude(x => x.Doctor)
+                .Where(m => m.Patient.Id == LoggedInPatient.Id && m.Appointment.Status == AppointmentStatus.Scheduled || m.AppointmentId != null)
+                .ToListAsync();
         }
 
       

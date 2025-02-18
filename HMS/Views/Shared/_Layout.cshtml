@@ -2,9 +2,6 @@
 
 @inject IAuthService _authservice;
 @inject IDoctorService _doctorservice;
-@{
-    var loggedInUser = await _authservice.GetLoggedInUserAsync();
-}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -48,6 +45,10 @@
 
     @if (User.IsInRole("Admin"))
     {
+        
+    var loggedInUser = await _authservice.GetLoggedInUserAsync();
+
+
         <nav class="bg-white shadow-md">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between items-center h-16">
@@ -155,6 +156,9 @@
 
         var unreadNotifications = docNotifications.Where(n => !n.IsRead).ToList();
 
+      
+    var loggedInUser = await _authservice.GetLoggedInUserAsync();
+
 
 
 
@@ -249,7 +253,10 @@
                                             <a asp-action="Dreviewnotification" asp-controller="Doctor" asp-route-NotificationId="@notification.Id" style="text-decoration:none;">
                                                 <button class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Review Now</button>
                                             </a>
-                                            <button class="text-red-700 hover:text-red-800 text-sm">Dismiss</button>
+                                            <form asp-action="DismissNotification" asp-controller="Doctor" method="post">
+                                                <input hidden value="@notification.Id" name="AppointmentId" />
+                                                <button type="submit" class="text-red-700 hover:text-red-800 text-sm">Dismiss</button>
+                                           </form>
                                         </div>
                                     </div>
                                 </div>

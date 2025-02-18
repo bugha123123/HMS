@@ -200,11 +200,11 @@ namespace HMS.Service
                 medicalHistory.AppointmentId = null;  // Disassociate by setting AppointmentId to null
             }
 
-            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
+            var NotificationToDelete = await _db.Notifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
 
             if (NotificationToDelete is not null)
             {
-                 _db.DoctorNotifications.Remove(NotificationToDelete);
+                 _db.Notifications.Remove(NotificationToDelete);
                 await _db.SaveChangesAsync();
             }
 

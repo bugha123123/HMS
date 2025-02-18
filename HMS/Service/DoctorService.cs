@@ -121,11 +121,11 @@ namespace HMS.Service
 
 
 
-            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
+            var NotificationToDelete = await _db.Notifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
 
             if (NotificationToDelete is not null)
             {
-                _db.DoctorNotifications.Remove(NotificationToDelete);
+                _db.Notifications.Remove(NotificationToDelete);
                 await _db.SaveChangesAsync();
             }
 
@@ -194,11 +194,11 @@ namespace HMS.Service
             FoundAppointment.DoctorNotes = reason;
 
 
-            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
+            var NotificationToDelete = await _db.Notifications.FirstOrDefaultAsync(x => x.AppointmentId == FoundAppointment.Id);
 
             if (NotificationToDelete is not null)
             {
-                _db.DoctorNotifications.Remove(NotificationToDelete);
+                _db.Notifications.Remove(NotificationToDelete);
                 await _db.SaveChangesAsync();
             }
 
@@ -223,9 +223,9 @@ namespace HMS.Service
             await emailService.SendEmailAsync(FoundAppointment.Patient.Email, subject, body);
         }
 
-        public async Task<List<DoctorNotification>> GetAllDoctorNotifications()
+        public async Task<List<Notification>> GetAllDoctorNotifications()
         {
-            return await _db.DoctorNotifications.ToListAsync();
+            return await _db.Notifications.Where(d => d.Role == RecipientRole.Doctor).ToListAsync();
         }
 
         public async Task SaveDoctorNote(int AppointmentId, string DoctorNote)
@@ -257,11 +257,11 @@ namespace HMS.Service
                 medicalHistory.AppointmentId = null;  // Disassociate by setting AppointmentId to null
             }
 
-            var NotificationToDelete = await _db.DoctorNotifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
+            var NotificationToDelete = await _db.Notifications.FirstOrDefaultAsync(x => x.AppointmentId == AppointmentToDelete.Id);
 
             if (NotificationToDelete is not null)
             {
-                _db.DoctorNotifications.Remove(NotificationToDelete);
+                _db.Notifications.Remove(NotificationToDelete);
                 await _db.SaveChangesAsync();
             }
 

@@ -9,7 +9,14 @@
         Other
     }
 
-    public class DoctorNotification
+    public enum RecipientRole
+    {
+        Doctor,
+        Patient,
+        Admin
+    }
+
+    public class Notification
     {
         public int Id { get; set; }
         public int DoctorId { get; set; }
@@ -25,5 +32,7 @@
         public Appointment? Appointment { get; set; }
 
         public int? AppointmentId { get; set; }
+
+        public RecipientRole Role { get; set; } // New property to distinguish recipients
     }
 }

@@ -15,20 +15,31 @@ public class NotificationService : INotificationService
     }
 
     //TODO
-    public Task DismissNotification(int NotificationId)
+
+    public async Task<Notification> Doctor_GetNotificationById(int NotId)
     {
-        throw new NotImplementedException();
+        return await _db.Notifications.
+            Include(x => x.Appointment).
+            ThenInclude(x => x.MedicalHistories).
+            Include(x => x.patient).
+            Where(d => d.Role == RecipientRole.Doctor).
+            FirstOrDefaultAsync(x => x.Id == NotId);
+    }
+    public async Task DismissNotification(int NotificationId)
+    {
+        var FoundNotification = await Doctor_GetNotificationById(NotificationId);
+
+        if (FoundNotification is null)
+            return;
+
+        _db.Notifications.Remove(FoundNotification);
+        await _db.SaveChangesAsync();
     }
 
-    public async Task<DoctorNotification> Doctor_GetNotificationById(int NotId)
-    {
-        return await _db.DoctorNotifications.Include(x => x.Appointment).ThenInclude(x => x.MedicalHistories).Include(x => x.patient).FirstOrDefaultAsync(x => x.Id == NotId);
-    }
-    
     // Method to save notification for any user (doctor, patient, admin, etc.)
-    public async Task Doctor_SaveNotificationAsync(int doctorId, string message, NotificationType type, string UserId, User user,Appointment appointment, int appointmentId)
+    public async Task SaveNotificationAsync(int doctorId, string message, NotificationType type, string UserId, User user,Appointment appointment, int appointmentId,RecipientRole role)
     {
-        var notification = new DoctorNotification
+        var notification = new Notification
         {
             Message = message,
             Type = type, 
@@ -38,13 +49,18 @@ public class NotificationService : INotificationService
             patient = user,
             PatientId = UserId,
             Appointment = appointment,
-            AppointmentId = appointmentId
+            AppointmentId = appointmentId,
+            Role = role
+            
+            
+            
+
 
 
         };
 
         // Add the notification to the database
-       await  _db.DoctorNotifications.AddAsync(notification);
+       await  _db.Notifications.AddAsync(notification);
         await _db.SaveChangesAsync(); 
     }
 
