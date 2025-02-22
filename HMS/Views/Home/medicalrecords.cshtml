@@ -1,5 +1,8 @@
-﻿@model List<MedicalHistory>
+﻿@using HMS.Interface
+@model List<MedicalHistory>
 <script src="https://unpkg.com/lucide@latest"></script>
+
+@inject IChatService _chatservice;
 
 <div class="container mx-auto px-4 py-8 mt-5">
     @if (Model != null && Model.Any())
@@ -12,7 +15,7 @@
                     <th class="border-b px-4 py-2">Treatment</th>
                     <th class="border-b px-4 py-2">Doctor</th>
                     <th class="border-b px-4 py-2">Reason</th>
-                   
+
                 </tr>
             </thead>
             <tbody>
@@ -27,16 +30,27 @@
                         <td class="px-6 py-4">@(!string.IsNullOrEmpty(medicalHistory.Treatment) ? medicalHistory.Treatment : "N/A")</td>
                         <td class="px-6 py-4">@medicalHistory.Appointment?.Doctor?.FullName</td>
                         <td class="px-6 py-4">@medicalHistory.Appointment?.Reason</td>
-                     
-                     
+
+
                         <td class="px-6 py-4 text-center">
-                            @if (medicalHistory.Appointment.AppointmentDate == today)
-                            {
-                                  <a asp-action="chat" asp-controller="Chat" asp-route-appointmentId="@medicalHistory.Appointment.Id" asp-route-userType="@UserType.Patient"
-                               class="inline-flex items-center justify-center bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300 ease-in-out">
-                                <span>Join Chat</span>
-                            </a>
-                            }
+                            @* @if (medicalHistory.Appointment.AppointmentDate == today)
+                            { *@
+                            <form asp-action="CreateChat" asp-controller="Chat" method="post">
+                                @if (await _chatservice.IsChatOpen(medicalHistory.Appointment.Id))
+                                {
+                                    <input hidden name="source" value="@medicalHistory.Appointment.Id" />
+                                <input hidden name="userType" value="@UserType.Patient" />
+                               
+                                    <button id="openChatBtn-@medicalHistory.Appointment.Id"
+                                    class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                        <span class="font-semibold">Join Chat</span>
+
+                                    </button>
+                                }
+                                
+                               
+                            </form>
+                            @* } *@
                           
                         </td>
                     </tr>

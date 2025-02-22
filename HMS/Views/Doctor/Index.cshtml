@@ -1,6 +1,7 @@
 ﻿@using HMS.Interface
 @model List<Appointment>
 @inject IDoctorService _docservice;
+@inject IChatService _chatService;
 <script src="https://unpkg.com/lucide@latest"></script>
 
 @{
@@ -12,24 +13,24 @@
 }
 <style>
     .notifications-panel {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
     }
 
-        .notifications-panel.show {
-            transform: translateX(0);
-        }
+    .notifications-panel.show {
+    transform: translateX(0);
+    }
 
     .overlay {
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
     }
 
-        .overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+    .overlay.show {
+    opacity: 1;
+    visibility: visible;
+    }
 </style>
 
 
@@ -46,9 +47,9 @@
                 <div class="relative">
                     <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></i>
                     <input type="date"
-                           id="searchDate"
-                           name="when"
-                           class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto" />
+                    id="searchDate"
+                    name="when"
+                    class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto" />
                 </div>
 
                 <div class="flex space-x-3">
@@ -152,7 +153,7 @@
                                     <i data-lucide="user" class="h-6 w-6 text-blue-600"></i>
                                 </div>
                                 <div>
-                                 
+
                                     <h3 class="text-lg font-semibold text-gray-900 truncate max-w-[200px]">
                                         @(appointment.Patient?.Email ?? "No Email")
                                     </h3>
@@ -212,17 +213,42 @@
 
                                 }
 
-                                @if (appointment.Status == AppointmentStatus.Scheduled)
+                                @if (appointment.Status == AppointmentStatus.Scheduled || appointment.Status == AppointmentStatus.Rescheduled)
                                 {
-                                    <a asp-action="chat" asp-controller="Chat" asp-route-appointmentId="@appointment.Id" asp-route-userType="@UserType.Doctor">
-                                        <button id="openChatBtn-@appointment.Id"
-                                                class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                                            <span class="font-semibold">Start Chat</span>
-                                        
-                                        </button>
-                                    </a>
+                                    @*   @if (appointment.AppointmentDate == DateTime.Today)
+                                    { *@
+                                    <form asp-action="CreateChat" asp-controller="Chat" method="post">
+                                        @if (await _chatService.IsChatAlreadyCreated(appointment.Id) == null)
+                                        {
+
+                                            <input hidden name="source" value="@appointment.Id" />
+                                            <input hidden name="userType" value="Doctor" />
+
+                                            <button id="openChatBtn-@appointment.Id"
+                                            class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                                <span class="font-semibold">Start Chat</span>
+
+                                            </button>
+
+
+                                        }
+                                        else
+                                        {
+                                            <input hidden name="source" value="@appointment.Id" />
+                                            <input hidden name="userType" value="Doctor" />
+
+                                            <button id="openChatBtn-@appointment.Id"
+                                                    class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                                <span class="font-semibold">Join Chat</span>
+
+                                            </button>
+                                        }
+
+                                    </form>
                                  
+
                                 }
+
 
                                
                             </div>
