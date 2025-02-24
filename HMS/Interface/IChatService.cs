@@ -13,6 +13,12 @@ namespace HMS.Interface
 
         Task<bool> IsChatOpen(int AppointmentId);
 
+        Task<int> SendMessage(int ChatId, string Sender,string messageInput, int AppointmentId);
+
+        Task<List<ChatMessage>> GetSameChatMessages(int chatId);
+
+        Task EndChat(int ChatId);
+
 
 
     }

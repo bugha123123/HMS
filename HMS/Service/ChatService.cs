@@ -2,6 +2,7 @@
 using HMS.Interface;
 using HMS.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace HMS.Service
 {
@@ -30,16 +31,19 @@ namespace HMS.Service
 
             if (existingChat != null)
             {
-                // If an existing chat is found, return the existing chat's ID
+                if (userType == UserType.Patient)
+                {
                 existingChat.PatientJoined = true;
                 await _db.SaveChangesAsync();
+                }
+      
                 return existingChat.ChatId;
 
                 
             }
 
             // If no existing chat is found, create a new one
-            var chatToCreate = new Chat()
+            var chatToCreate = new Chat()  
             {
                 CreatedAt = DateTime.Now,
                 Status = ChatStatus.Pending,
@@ -64,12 +68,21 @@ namespace HMS.Service
             return chatToCreate.ChatId; // Return the newly created chat's ID
         }
 
-
+      
 
         public async Task<Chat> GetChatById(int ChatId)
         {
-            return await _db.Chats.Include(x => x.appointment).ThenInclude(x => x.Patient).FirstOrDefaultAsync(x => x.ChatId == ChatId);
+            return await _db.Chats.Include(x => x.appointment).ThenInclude(x => x.Patient).Include(x => x.appointment.Doctor).FirstOrDefaultAsync(x => x.ChatId == ChatId);
         }
+
+        public async Task<List<ChatMessage>> GetSameChatMessages(int chatId)
+        {
+            return await _db.ChatMessages
+                .Where(m => m.ChatId == chatId)
+                .OrderBy(m => m.SentAt) 
+                .ToListAsync();
+        }
+
 
         public async Task<Chat> IsChatAlreadyCreated(int appId)
         {
@@ -87,6 +100,59 @@ namespace HMS.Service
 
            
             return result != null;
+        }
+
+        public async Task<int> SendMessage(int ChatId, string Sender, string messageInput, int AppointmentId)
+        {
+
+
+            if (ChatId <= 0 || string.IsNullOrWhiteSpace(Sender) || string.IsNullOrWhiteSpace(messageInput) || AppointmentId < 0)
+            {
+                return 0;
+            }
+
+            var FoundChat = await GetChatById(ChatId);
+
+            var FoundAppointment = await _adminservice.GetAppointmentById(AppointmentId);
+
+            if (FoundChat is null || FoundAppointment is null)
+                return 0 ;
+
+
+            var MessageToSend = new ChatMessage()
+            {
+                ChatId = FoundChat.ChatId,
+                Chat = FoundChat,
+                Sender = Sender,
+                SentAt = DateTime.Now,
+                Message = messageInput,
+                Recipient = FoundAppointment.PatientId
+
+            };
+
+            AppointmentId = FoundChat.AppointmentId;
+
+            await _db.ChatMessages.AddAsync(MessageToSend);
+            await _db.SaveChangesAsync();
+
+            return AppointmentId;
+
+            
+
+        }
+
+
+        public async Task EndChat(int ChatId)
+        {
+            var FoundChat = await GetChatById(ChatId);
+
+            if (FoundChat is null)
+                return;
+
+            FoundChat.Status = ChatStatus.Closed;
+            FoundChat.appointment.Status = AppointmentStatus.Completed;
+
+            await _db.SaveChangesAsync();
         }
 
     }

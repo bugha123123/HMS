@@ -215,37 +215,39 @@
 
                                 @if (appointment.Status == AppointmentStatus.Scheduled || appointment.Status == AppointmentStatus.Rescheduled)
                                 {
-                                    @*   @if (appointment.AppointmentDate == DateTime.Today)
-                                    { *@
-                                    <form asp-action="CreateChat" asp-controller="Chat" method="post">
-                                        @if (await _chatService.IsChatAlreadyCreated(appointment.Id) == null)
-                                        {
+                                    @if (appointment.AppointmentDate == DateTime.Today)
+                                    {
+                                        <form asp-action="CreateChat" asp-controller="Chat" method="post">
+                                            @if (await _chatService.IsChatAlreadyCreated(appointment.Id) == null)
+                                            {
+                                                
+<input hidden name="source" value="@appointment.Id" />
+                                                <input hidden name="userType" value="Doctor" />
 
-                                            <input hidden name="source" value="@appointment.Id" />
-                                            <input hidden name="userType" value="Doctor" />
+                                                <button id="openChatBtn-@appointment.Id"
+                                                class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                                    <span class="font-semibold">Start Chat</span>
 
-                                            <button id="openChatBtn-@appointment.Id"
-                                            class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                                                <span class="font-semibold">Start Chat</span>
-
-                                            </button>
+                                                </button>
 
 
-                                        }
-                                        else
-                                        {
-                                            <input hidden name="source" value="@appointment.Id" />
-                                            <input hidden name="userType" value="Doctor" />
+                                            }
+                                            else
+                                            {
+                                                <input hidden name="source" value="@appointment.Id" />
+                                                <input hidden name="userType" value="Doctor" />
 
-                                            <button id="openChatBtn-@appointment.Id"
-                                                    class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
-                                                <span class="font-semibold">Join Chat</span>
+                                                <button id="openChatBtn-@appointment.Id"
+                                                class="bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                                                    <span class="font-semibold">Join Chat</span>
 
-                                            </button>
-                                        }
+                                                </button>
+                                            }
 
-                                    </form>
-                                 
+                                        </form>
+
+
+                                    }
 
                                 }
 

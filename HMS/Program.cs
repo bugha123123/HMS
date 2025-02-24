@@ -25,6 +25,14 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+// Register services
+
+//host services
+
+builder.Services.AddHostedService<AppointmentCleanupService>();
+
+//host services
+
 // Configure Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {

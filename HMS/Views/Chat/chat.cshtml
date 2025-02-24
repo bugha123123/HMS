@@ -1,5 +1,9 @@
-﻿@model Chat;
-
+﻿@using HMS.Interface
+@using Microsoft.AspNetCore.Identity
+@model Chat;
+@inject IAuthService _authService;
+@inject IChatService _chatService;
+@inject UserManager<User> UserManager
 @{
     Layout = null;
 }
@@ -8,8 +12,17 @@
 @{
     // Doctor/Patient
     var userType = Context.Request.Query["userType"];
+    var AppointmentId = Context.Request.Query["appointmentId"];
+    var ChatId = Context.Request.Query["source"];
 
+    var ConvertedChatId = Convert.ToInt32(ChatId);
 
+    var LoggedInUser = await _authService.GetLoggedInUserAsync();
+
+    var CurrentChatMessages = await _chatService.GetSameChatMessages(ConvertedChatId);
+
+    var isDoctor = User.IsInRole("Doctor");
+    var isPatient = User.IsInRole("Patient");
 }
 @if (userType == "Patient")
 {
@@ -18,10 +31,10 @@
         <div class="p-4 bg-blue-600 rounded-t-xl">
             <div class="flex justify-between items-center">
                 <div class="text-white">
-                    <h3 class="font-semibold text-lg">Dr. Sarah Johnson</h3>
+                    <h3 class="font-semibold text-lg">@Model.appointment.Doctor.FullName</h3>
                     <div class="flex items-center space-x-2">
                         <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span class="text-sm">Primary Care Physician • Available</span>
+                        <span class="text-sm">@Model.appointment.Doctor.Specialization</span>
                     </div>
                 </div>
                 <button id="closeChatBtn" class="text-white hover:text-gray-200">
@@ -36,14 +49,12 @@
         <div class="bg-gray-50 p-3 border-b">
             <div class="flex justify-between text-sm text-gray-600">
                 <div>Your Appointment: Today</div>
-                <div>10:00 AM - 10:30 AM</div>
+                <div>@Model.appointment.AppointmentDate</div>
             </div>
             <div class="text-sm text-gray-600 mt-1">
-                Reason: Follow-up for medication review
+                Reason: @Model.appointment.Reason
             </div>
         </div>
-
-        <!-- Chat Messages -->
         <div class="h-80 overflow-y-auto p-4 space-y-4" id="chatMessages">
             @if (Model.DoctorJoined == true)
             {
@@ -58,34 +69,50 @@
                 </div>
             }
 
-    
+            @foreach (var message in CurrentChatMessages)
+            {
+                // Determine if the logged-in user is the sender of this message
+                bool isCurrentUser = (isDoctor && message.Sender == "Doctor") || (isPatient && message.Sender == "Patient");
 
-        
+                <div class="flex @((isCurrentUser) ? "justify-end" : "justify-start")">
+                    <div class="max-w-xs px-4 py-2 rounded-lg shadow
+                        @((isCurrentUser) ? "bg-blue-500 text-white self-end" : "bg-gray-200 text-gray-700 self-start")">
+                        <p class="text-sm">@message.Message</p>
+                        <span class="text-xs opacity-75">@message.SentAt.ToString("hh:mm tt")</span>
+                    </div>
+                </div>
+            }
         </div>
 
-        <!-- Quick Actions -->
+
+        @* <!-- Quick Actions -->
         <div class="p-2 border-t border-b bg-gray-50">
             <div class="flex space-x-2 overflow-x-auto">
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">Request Prescription Refill</button>
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">Share Symptoms</button>
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">Upload Photo</button>
             </div>
-        </div>
+        </div> *@
 
-        <!-- Message Input -->
-        <div class="p-4">
-            <div class="flex space-x-2">
-                <textarea id="messageInput"
-                          class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                          placeholder="Describe your symptoms or concerns..."
-                          rows="1"></textarea>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                </button>
+        <form asp-action="SendMessageAction" asp-controller="Chat" method="post">
+            <input hidden value="@AppointmentId" name="AppointmentId" />
+            <input hidden value="@ChatId" name="ChatId" />
+            <input hidden value="@userType" name="Sender" />
+
+            <div class="p-4">
+                <div class="flex space-x-2">
+                    <textarea name="messageInput"
+                              class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                              placeholder="Type your medical advice..."
+                              rows="1" required></textarea>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
 }
@@ -123,9 +150,7 @@ else if (userType == "Doctor")
             </div>
         </div>
 
-        <!-- Chat Messages -->
         <div class="h-80 overflow-y-auto p-4 space-y-4" id="chatMessages">
-            <!-- Doctor Joined Message -->
             @if (Model.DoctorJoined == true)
             {
                 <div class="flex justify-center text-sm text-blue-600 bg-blue-100 p-2 rounded-lg mb-4">
@@ -138,41 +163,99 @@ else if (userType == "Doctor")
                     <span>Patient has joined the chat</span>
                 </div>
             }
-            <!-- Chat messages will go here -->
+
+            @foreach (var message in CurrentChatMessages)
+            {
+                // Determine if the logged-in user is the sender of this message
+                bool isCurrentUser = (isDoctor && message.Sender == "Doctor") || (isPatient && message.Sender == "Patient");
+
+                <div class="flex @((isCurrentUser) ? "justify-end" : "justify-start")">
+                    <div class="max-w-xs px-4 py-2 rounded-lg shadow
+                        @((isCurrentUser) ? "bg-blue-500 text-white self-end" : "bg-gray-200 text-gray-700 self-start")">
+                        <p class="text-sm">@message.Message</p>
+                        <span class="text-xs opacity-75">@message.SentAt.ToString("hh:mm tt")</span>
+                    </div>
+                </div>
+            }
         </div>
 
-        <!-- Quick Actions -->
+
+        @* <!-- Quick Actions -->
         <div class="p-2 border-t border-b bg-gray-50">
             <div class="flex space-x-2 overflow-x-auto">
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">Update Prescription</button>
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">View History</button>
                 <button class="text-sm bg-white px-3 py-1 rounded border hover:bg-gray-50 whitespace-nowrap">Schedule Follow-up</button>
             </div>
-        </div>
+        </div> *@
 
-        <!-- Message Input -->
-        <div class="p-4">
-            <div class="flex space-x-2">
-                <textarea id="messageInput"
-                          class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
-                          placeholder="Type your medical advice..."
-                          rows="1"></textarea>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                </button>
+        <form asp-action="SendMessageAction" asp-controller="Chat" method="post">
+            <input hidden value="@AppointmentId" name="AppointmentId" />
+            <input hidden value="@ChatId" name="ChatId" />
+            <input hidden value="@userType" name="Sender" />
+
+            <div class="p-4">
+                <div class="flex space-x-2">
+                    <textarea name="messageInput"
+                              class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"
+                              placeholder="Type your medical advice..."
+                              rows="1" required></textarea>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
+        </form>
+       
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 shadow-lg w-80">
+            <h2 class="text-lg font-semibold mb-4">End Chat</h2>
+            <p class="text-gray-600">Are you sure you want to end the chat?</p>
+            <form asp-action="EndChat" asp-controller="Chat" method="post">
+                <input hidden name="ChatId" value="@ChatId" />
+                <div class="mt-4 flex justify-end space-x-2">
+                    <button type="button" id="cancelEndChat" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" id="confirmEndChat" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        End Chat
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
 
 
 }
 
 
 
+
+
+
                       <script>
+
+
+                           const closeChatBtn = document.getElementById("closeChatBtn");
+    const chatPopup = document.getElementById("chatPopup");
+    const confirmModal = document.getElementById("confirmModal");
+    const cancelEndChatBtn = document.getElementById("cancelEndChat");
+
+    if (closeChatBtn) {
+        closeChatBtn.addEventListener("click", function () {
+            confirmModal.classList.remove("hidden");
+        });
+    }
+
+    cancelEndChatBtn.addEventListener("click", function () {
+        confirmModal.classList.add("hidden");
+    });
 
                           // responsive
                         function handleResize() {

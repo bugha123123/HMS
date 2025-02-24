@@ -39,6 +39,34 @@ namespace HMS.Controllers
         }
 
 
+        public async Task<IActionResult> SendMessageAction(int ChatId, string Sender, string messageInput, int AppointmentId)
+        {
+          
+                var result = await _chatService.SendMessage(ChatId, Sender, messageInput, AppointmentId);
+
+                if (result == 0)
+                {
+                   
+                    TempData["ErrorMessage"] = "Failed to send the message.";
+                    return RedirectToAction("Chat", new { source = ChatId, appointmentId = AppointmentId, userType = Sender });
+                }
+
+                //  everything is successful
+                return RedirectToAction("Chat", new { source = ChatId, appointmentId = AppointmentId, userType = Sender });
+        
+
+
+            //return RedirectToAction("Chat", new { source = ChatId, appointmentId = AppointmentId, userType = Sender });
+        }
+
+        public async Task<IActionResult> EndChat(int ChatId)
+        {
+
+            await _chatService.EndChat(ChatId);
+            return RedirectToAction("Index", "Doctor");
+
+
+        }
 
     }
 }
