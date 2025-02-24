@@ -345,7 +345,7 @@ namespace HMS.Service
 
         public async Task<Appointment> GetAppointmentById(int AppointmentId)
         {
-            return await _db.Appointments.FirstOrDefaultAsync(a => a.Id == AppointmentId);
+            return await _db.Appointments.Include(x => x.Patient).Include(x => x.Doctor).FirstOrDefaultAsync(a => a.Id == AppointmentId);
         }
         public async Task<IdentityResult> AddNewPatient(string email, string contactNumber, int age, string gender)
         {

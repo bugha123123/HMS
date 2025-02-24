@@ -11,13 +11,16 @@ namespace HMS.Service
         private readonly IAuthService _authservice;
         private readonly AppDbContextion _db;
         private readonly IAdminService _adminservice;
+        private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-
-        public ChatService(IAuthService authservice, AppDbContextion db, IAdminService adminservice)
+        public ChatService(IAuthService authservice, AppDbContextion db, IAdminService adminservice, IEmailService emailService, INotificationService notificationService)
         {
             _authservice = authservice;
             _db = db;
             _adminservice = adminservice;
+            _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         public async Task<int> CreateChat(UserType userType, int appId)
@@ -33,42 +36,61 @@ namespace HMS.Service
             {
                 if (userType == UserType.Patient)
                 {
-                existingChat.PatientJoined = true;
-                await _db.SaveChangesAsync();
+                    existingChat.PatientJoined = true;
+                    await _db.SaveChangesAsync();
                 }
-      
-                return existingChat.ChatId;
 
-                
+                return existingChat.ChatId;
             }
 
             // If no existing chat is found, create a new one
-            var chatToCreate = new Chat()  
+            var chatToCreate = new Chat()
             {
                 CreatedAt = DateTime.Now,
                 Status = ChatStatus.Pending,
                 UserType = userType,
                 AppointmentId = appId,
-                
-
             };
 
             if (userType == UserType.Doctor)
             {
                 chatToCreate.DoctorJoined = true;
             }
-          
-          
 
-                await _db.Chats.AddAsync(chatToCreate);
+        
+
+            // Construct email content
+            string subject = "New Chat Session Started for Your Appointment";
+            string body = $@"
+        <p>Dear {foundAppointment.Patient.UserName},</p>
+        <p>A new chat session has been created for your appointment with Dr. {foundAppointment.Doctor.FullName}.</p>
+        <p>You can join the chat and communicate with your doctor using the link below:</p>
+        
+        <p>Best regards,<br>HMS</p>";
+
+            // Send email
+            await _emailService.SendEmailAsync(foundAppointment.Patient.Email, subject, body);
+
+            // Send notification
+            await _notificationService.SaveNotificationAsync(
+                foundAppointment.DoctorId,
+                "Chat started!",
+                NotificationType.Other,
+                foundAppointment.PatientId,
+                foundAppointment.Patient,
+                foundAppointment,
+                foundAppointment.Id,
+                RecipientRole.Patient
+            );
+
+
+            await _db.Chats.AddAsync(chatToCreate);
             await _db.SaveChangesAsync();
 
-            // TODO: Add notifications & email logic here
-
-            return chatToCreate.ChatId; // Return the newly created chat's ID
+            return chatToCreate.ChatId; 
         }
 
-      
+
 
         public async Task<Chat> GetChatById(int ChatId)
         {
