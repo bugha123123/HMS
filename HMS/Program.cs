@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContextion>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("HSMCS")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HSMCS")), ServiceLifetime.Scoped);
 
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();

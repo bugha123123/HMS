@@ -64,5 +64,18 @@ public class NotificationService : INotificationService
         await _db.SaveChangesAsync(); 
     }
 
- 
+    public async Task<List<Notification>> GetAllPatientNotifications()
+    {
+        return await _db.Notifications.Include(x => x.patient).Include(x => x.Appointment).ThenInclude(x => x.Doctor).ToListAsync();
+    }
+
+    public async Task<Notification> Patient_GetNotificationById(int NotId)
+    {
+        return await _db.Notifications.
+         Include(x => x.Appointment).
+         ThenInclude(x => x.MedicalHistories).
+         Include(x => x.patient).
+         Where(d => d.Role == RecipientRole.Patient).
+         FirstOrDefaultAsync(x => x.Id == NotId);
+    }
 }

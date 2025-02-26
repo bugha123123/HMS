@@ -6,6 +6,9 @@
         NewPatient,
         TestResult,
         SystemAlert,
+        Chat,
+        Reschedule,
+        Schedule,
         Other
     }
 

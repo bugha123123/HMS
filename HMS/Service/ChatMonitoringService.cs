@@ -44,6 +44,7 @@ public class ChatMonitoringService : BackgroundService
                 foreach (var chat in chatsToCheck)
                 {
                     chat.Status = ChatStatus.Closed;
+                    chat.appointment.Status = AppointmentStatus.Completed;
                     dbContext.Chats.Update(chat);
                 }
 

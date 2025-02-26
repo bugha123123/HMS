@@ -12,11 +12,12 @@ namespace HMS.Service
     {
         private readonly AppDbContextion _db;
         private readonly IEmailService emailService;
-
-        public DoctorService(AppDbContextion db, IEmailService emailService)
+        private readonly INotificationService _notificationService;
+        public DoctorService(AppDbContextion db, IEmailService emailService, INotificationService notificationService)
         {
             _db = db;
             this.emailService = emailService;
+            _notificationService = notificationService;
         }
 
         public async Task<List<Doctor>> GetAllDoctors()
@@ -173,6 +174,17 @@ namespace HMS.Service
 
             // Send the email
             await emailService.SendEmailAsync(FoundAppointment.Patient.Email, subject, emailBody);
+
+            await _notificationService.SaveNotificationAsync(
+              FoundAppointment.DoctorId,
+              "Appointment Rescheduled",
+              NotificationType.Schedule,
+              FoundAppointment.PatientId,
+              FoundAppointment.Patient,
+              FoundAppointment,
+              FoundAppointment.Id,
+              RecipientRole.Patient
+          );
         }
 
         public async Task<Appointment> GetAppointmentById(int AppointmentId)
@@ -221,6 +233,18 @@ namespace HMS.Service
 
             // Send the rescheduled appointment email to the patient
             await emailService.SendEmailAsync(FoundAppointment.Patient.Email, subject, body);
+
+            await _notificationService.SaveNotificationAsync(
+           FoundAppointment.DoctorId,
+           "Appointment Rescheduled",
+           NotificationType.Reschedule,
+           FoundAppointment.PatientId,
+           FoundAppointment.Patient,
+           FoundAppointment,
+           FoundAppointment.Id,
+           RecipientRole.Patient
+       );
+
         }
 
         public async Task<List<Notification>> GetAllDoctorNotifications()

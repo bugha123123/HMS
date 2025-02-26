@@ -8,6 +8,10 @@ namespace HMS.Interface
 
         Task<Notification> Doctor_GetNotificationById(int NotId);
 
+        Task<Notification> Patient_GetNotificationById(int NotId);
+
         Task DismissNotification(int NotificationId);
+
+        Task<List<Notification>> GetAllPatientNotifications();
     }
 }

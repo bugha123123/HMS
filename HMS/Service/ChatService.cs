@@ -74,8 +74,8 @@ namespace HMS.Service
             // Send notification
             await _notificationService.SaveNotificationAsync(
                 foundAppointment.DoctorId,
-                "Chat started!",
-                NotificationType.Other,
+                "Chat Created",
+                NotificationType.Chat,
                 foundAppointment.PatientId,
                 foundAppointment.Patient,
                 foundAppointment,

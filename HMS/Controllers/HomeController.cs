@@ -11,6 +11,7 @@ namespace HMS.Controllers
     {
       private readonly IPatientService _patientService;
         private readonly IDoctorService _docservice;
+
         public HomeController(IPatientService petientService, IDoctorService docservice)
         {
             _patientService = petientService;
@@ -35,7 +36,14 @@ namespace HMS.Controllers
         {
             return View();
         }
-        
+
+
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> AppointmentBookingSuccess()
         {
             return View();
@@ -66,6 +74,17 @@ namespace HMS.Controllers
                 return RedirectToAction("signup", "Auth");
             }
             return RedirectToAction("appointmentdetails", "Doctor");
+
+        }
+
+        public async Task<IActionResult> Patient_MarkNotificationAsRead(int NotificationId)
+        {
+            if (ModelState.IsValid)
+            {
+                await _patientService.MarkNotificationAsRead(NotificationId);
+                return RedirectToAction("Index", "Home");
+            }
+            return RedirectToAction("Index", "Home");
 
         }
     }

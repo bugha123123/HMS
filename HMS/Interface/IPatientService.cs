@@ -14,5 +14,7 @@ namespace HMS.Interface
         Task<List<User>> FilterUsers(string query, int page = 1, int pageSize = 5);
 
         Task<IdentityResult> SetPassword(string email,string newPassword);
+
+        Task MarkNotificationAsRead(int notificationId);
     }
 }

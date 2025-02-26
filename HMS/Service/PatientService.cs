@@ -72,7 +72,7 @@ namespace HMS.Service
                 
             };
 
-            await _notificationService.SaveNotificationAsync(FoundDoctor.Id,"Appointment", NotificationType.AppointmentReminder, LoggedInPatient.Id, LoggedInPatient,Appointment,Appointment.Id,RecipientRole.Doctor);
+await _notificationService.SaveNotificationAsync(FoundDoctor.Id,"Appointment", NotificationType.AppointmentReminder, LoggedInPatient.Id, LoggedInPatient,Appointment,Appointment.Id,RecipientRole.Doctor);
 
             
 
@@ -190,6 +190,8 @@ namespace HMS.Service
                 return filteredUsers;
             }
 
+     
+
         public async Task<IdentityResult> SetPassword(string email, string newPassword)
         {
             // Find the user by email
@@ -208,6 +210,20 @@ namespace HMS.Service
             }
 
             return result; 
+        }
+
+
+        public async Task MarkNotificationAsRead(int notificationId)
+        {
+            var FoundNotification = await _notificationService.Patient_GetNotificationById(notificationId);
+
+            if (FoundNotification is null)
+                return;
+
+            FoundNotification.IsRead = true;
+
+            await _db.SaveChangesAsync();
+
         }
 
     }
