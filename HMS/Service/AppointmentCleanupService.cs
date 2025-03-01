@@ -30,17 +30,16 @@ public class AppointmentCleanupService : BackgroundService
         using (var scope = _serviceProvider.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextion>();
-            var yesterday = DateTime.UtcNow.Date.AddDays(-1);
+
+            var twoDaysAgo = DateTime.UtcNow.AddDays(-2); // Set threshold for outdated appointments
 
             // Find outdated appointments
             var appointmentsToDelete = await dbContext.Appointments
+                .Where(a => a.AppointmentDate < twoDaysAgo) // Compare only the date part, ignoring time
                 .ToListAsync();
 
             foreach (var appointment in appointmentsToDelete)
             {
-                if (appointment.AppointmentDate >= yesterday)
-                    continue; // Skip if it's not outdated
-
                 // Delete related notifications first
                 var notificationsToDelete = await dbContext.Notifications
                     .Where(n => n.AppointmentId == appointment.Id)
@@ -59,5 +58,6 @@ public class AppointmentCleanupService : BackgroundService
             await dbContext.SaveChangesAsync();
         }
     }
+
 
 }

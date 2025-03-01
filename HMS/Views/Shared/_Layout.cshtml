@@ -184,39 +184,43 @@
                 <!-- Notifications List -->
                 <div class="flex-1 overflow-y-auto">
                     <div class="divide-y divide-gray-200">
-                        @foreach (var item in await _notificationservice.GetAllPatientNotifications())
+                        @{var notifications = await _notificationservice.GetAllPatientNotifications();}
+                        @if (notifications.Any())
                         {
-                            <div class="notification bg-blue-50 px-4 py-3 hover:bg-blue-100 cursor-pointer">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1">
-                                        <div class="flex items-center justify-between">
-                                            <p class="text-sm font-medium text-blue-800">Appointment Reminder</p>
-                                            @if (!item.IsRead)
-                                            {
-                                                <span class="unread-badge ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">New</span>
-                                            }
-                                            
+                            foreach (var item in notifications)
+                            {
+                                <div class="notification bg-blue-50 px-4 py-3 hover:bg-blue-100 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm font-medium text-blue-800">Appointment Reminder</p>
+                                                @if (!item.IsRead)
+                                                {
+                                                    <span class="unread-badge ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">New</span>
+                                                }
+                                            </div>
+                                            <p class="mt-1 text-sm text-gray-600">Your appointment with @item.Appointment.Doctor.FullName is At @item.Appointment.AppointmentDate</p>
+                                            <p class="mt-1 text-xs text-gray-500">@item.Appointment.AppointmentTime</p>
                                         </div>
-                                        <p class="mt-1 text-sm text-gray-600">Your appointment with @item.Appointment.Doctor.FullName is At @item.Appointment.AppointmentDate</p>
-                                        <p class="mt-1 text-xs text-gray-500">@item.Appointment.AppointmentTime</p>
+                                    </div>
+                                    <div class="mt-2 flex justify-end">
+                                        <form asp-action="Patient_MarkNotificationAsRead" asp-controller="Home" method="post">
+                                            <input hidden name="NotificationId" value="@item.Id" />
+                                            @if (item.IsRead == false)
+                                            {
+                                                <button type="submit" class="mark-as-read text-xs text-blue-600 hover:text-blue-800">Mark as read</button>
+                                            }
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="mt-2 flex justify-end">
-                                    <form asp-action="Patient_MarkNotificationAsRead" asp-controller="Home" method="post">
-                                        <input hidden name="NotificationId" value="@item.Id" />
-                                        @if (item.IsRead == false)
-                                    {
-                                            
-                                        <button type="submit" class="mark-as-read text-xs text-blue-600 hover:text-blue-800">Mark as read</button>
-                                    }
-                                        
-
-                                    </form>
-                                    
-                                </div>
-                            </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center text-gray-500 py-4">No notifications available.</div>
                         }
                     </div>
+
                 </div>
             </div>
         </div>

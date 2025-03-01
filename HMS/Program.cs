@@ -30,8 +30,8 @@ builder.Services.AddScoped<IChatService, ChatService>();
 //host services
 
 builder.Services.AddHostedService<AppointmentCleanupService>();
-
 builder.Services.AddHostedService<ChatMonitoringService>();
+builder.Services.AddHostedService<NotificationCleanupService>();
 //host services
 
 // Configure Identity
