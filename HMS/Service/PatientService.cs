@@ -1,8 +1,10 @@
 ﻿using HMS.DB;
+using HMS.DTO;
 using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using static HMS.Model.Notification;
 
 namespace HMS.Service
@@ -226,6 +228,51 @@ await _notificationService.SaveNotificationAsync(FoundDoctor.Id,"Appointment", N
 
         }
 
+        public async Task EditProfile(IFormFile profilePicture)
+        {
+            var LoggedInUser = await _authService.GetLoggedInUserAsync();
+            if (LoggedInUser is null)
+                return;
+
+            if (profilePicture != null && profilePicture.Length > 0)
+            {
+                using var memoryStream = new MemoryStream();
+                await profilePicture.CopyToAsync(memoryStream);
+                LoggedInUser.ProfilePicture = memoryStream.ToArray();
+            }
+
+            _db.Update(LoggedInUser);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task<IdentityResult> ChangePassword(string oldPassword, string newPassword)
+        {
+            // Ensure the user is logged in
+            var user = await _authService.GetLoggedInUserAsync();
+            if (user is null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            // Verify the current password
+            var passwordCheckResult = await _userManager.CheckPasswordAsync(user, oldPassword);
+            if (!passwordCheckResult)
+            {
+                throw new UnauthorizedAccessException("Current password is incorrect.");
+            }
+
+            // Change the password
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+
+            if (result.Succeeded)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Failed to change password: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+        }
     }
 
 }

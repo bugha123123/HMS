@@ -1,5 +1,7 @@
-﻿using HMS.Model;
+﻿using HMS.DTO;
+using HMS.Model;
 using Microsoft.AspNetCore.Identity;
+using System.Net.NetworkInformation;
 
 namespace HMS.Interface
 {
@@ -16,5 +18,10 @@ namespace HMS.Interface
         Task<IdentityResult> SetPassword(string email,string newPassword);
 
         Task MarkNotificationAsRead(int notificationId);
+
+
+        Task EditProfile(IFormFile profilePicture);
+
+        Task<IdentityResult> ChangePassword(string oldPassword, string newPassword);
     }
 }

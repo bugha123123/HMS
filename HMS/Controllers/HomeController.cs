@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using HMS.DTO;
 using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Authorization;
@@ -87,5 +88,51 @@ namespace HMS.Controllers
             return RedirectToAction("Index", "Home");
 
         }
+
+        public async Task<IActionResult> EditProfile(IFormFile ProfilePicture)
+        {
+            if (ProfilePicture == null || ProfilePicture.Length == 0)
+            {
+                TempData["ErrorMessage"] = "No file uploaded."; 
+                return RedirectToAction("Profile", "Home"); 
+            }
+
+            await _patientService.EditProfile(ProfilePicture);
+            return RedirectToAction("Profile", "Home");
+        }
+        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Set an error message to TempData
+                TempData["ErrorMessage"] = "Please correct the errors in the form.";
+                return RedirectToAction("Profile", "Home");
+            }
+
+            try
+            {
+                await _patientService.ChangePassword(oldPassword, newPassword);
+
+                // Set a success message to TempData
+                TempData["Success"] = "Password changed successfully.";
+                return RedirectToAction("Profile", "Home"); 
+            }
+            catch (UnauthorizedAccessException)
+            {
+                TempData["ErrorMessage"] = "The current password is incorrect.";
+                return RedirectToAction("Profile", "Home");
+            }
+            catch (Exception ex)
+            {
+                // Set a general error message
+                TempData["ErrorMessage"] = "An error occurred while changing the password: " + ex.Message;
+                return RedirectToAction("Profile", "Home"); 
+            }
+        }
+
+
+
+
+
     }
 }
