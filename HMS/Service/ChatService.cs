@@ -27,8 +27,13 @@ namespace HMS.Service
         {
             var foundAppointment = await _adminservice.GetAppointmentById(appId);
 
-            if (foundAppointment is null)
+            var loggedInUser = await _authservice.GetLoggedInUserAsync();
+
+
+            if (foundAppointment is null || loggedInUser is null)
                 return 0; // If the appointment is not found, return 0
+
+
 
             var existingChat = await IsChatAlreadyCreated(appId);
 
@@ -37,11 +42,26 @@ namespace HMS.Service
                 if (userType == UserType.Patient)
                 {
                     existingChat.PatientJoined = true;
+
+
+                    // patient side
+                    var chatMember = new ChatMember()
+                    {
+                        Chat = existingChat,
+                        ChatId = existingChat.ChatId,
+
+                        UserId = loggedInUser.Id
+                    };
+
+                    await _db.ChatMembers.AddAsync(chatMember);
                     await _db.SaveChangesAsync();
                 }
 
                 return existingChat.ChatId;
             }
+
+
+
 
             // If no existing chat is found, create a new one
             var chatToCreate = new Chat()
@@ -50,6 +70,15 @@ namespace HMS.Service
                 Status = ChatStatus.Pending,
                 UserType = userType,
                 AppointmentId = appId,
+            };
+
+            // doctor side
+            var chatMembers = new ChatMember()
+            {
+                Chat = chatToCreate,
+                ChatId = chatToCreate.ChatId,
+
+                UserId = loggedInUser.Id
             };
 
             if (userType == UserType.Doctor)
@@ -85,6 +114,7 @@ namespace HMS.Service
 
 
             await _db.Chats.AddAsync(chatToCreate);
+            await _db.ChatMembers.AddAsync(chatMembers);
             await _db.SaveChangesAsync();
 
             return chatToCreate.ChatId; 
@@ -94,6 +124,7 @@ namespace HMS.Service
 
         public async Task<Chat> GetChatById(int ChatId)
         {
+            
             return await _db.Chats.Include(x => x.appointment).ThenInclude(x => x.Patient).Include(x => x.appointment.Doctor).FirstOrDefaultAsync(x => x.ChatId == ChatId);
         }
 
@@ -175,6 +206,19 @@ namespace HMS.Service
             FoundChat.appointment.Status = AppointmentStatus.Completed;
 
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<List<ChatMember>> GetChatMembers(int ChatId)
+        {
+       return  await _db.ChatMembers.Where(x => x.ChatId == ChatId).ToListAsync();
+
+        }
+
+        public async Task<bool> IsParticipant(int chatId, string userId)
+        {
+
+            // if true user is authorized
+            return await _db.ChatMembers.AnyAsync(cm => cm.ChatId == chatId && cm.UserId == userId);
         }
 
     }

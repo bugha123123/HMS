@@ -1,6 +1,7 @@
 ﻿using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HMS.Controllers
@@ -16,9 +17,21 @@ namespace HMS.Controllers
 
         public async Task<IActionResult> chat(int source)
         {
-            var CurrentChat = await _chatService.GetChatById(source);
-            return View(CurrentChat);
+            var currentChat = await _chatService.GetChatById(source);
+            var chatMembers = await _chatService.GetChatMembers(source);
+
+            // Get the logged-in user's ID
+            string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            // Check if the user is in the chat
+            bool isParticipant = await _chatService.IsParticipant(source, userId);
+
+            if (!isParticipant)
+                return Forbid(); // 403 Forbidden 
+
+            return View(currentChat);
         }
+
 
         public async Task<IActionResult> CreateChat(int source, UserType userType)
         {

@@ -24,7 +24,7 @@ namespace HMS.Model
         public string? SetPasswordToken { get; set; }
 
 
-        public byte[] ProfilePicture { get; set; }
+        public byte[]? ProfilePicture { get; set; }
 
         public UserStatus Status { get; set; } = UserStatus.Active;
         public enum UserStatus

@@ -19,6 +19,10 @@ namespace HMS.Interface
 
         Task EndChat(int ChatId);
 
+        Task<List<ChatMember>> GetChatMembers(int ChatId);
+
+        Task<bool> IsParticipant(int ChatId, string UserId);
+
 
 
     }

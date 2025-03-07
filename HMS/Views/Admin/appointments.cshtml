@@ -134,10 +134,21 @@
                                         <button class="text-blue-600 hover:text-blue-800 mr-2">View</button>
 
                                     </a>
-                                    <form asp-action="Admin_CancelAppointment" asp-controller="Admin" method="post">
-                                        <input hidden value="@appointment.Id" name="AppointmentId" />
-                                        <button class="text-red-600 hover:text-red-800" type="submit">Cancel</button>
-                                    </form>
+                                    @if (!(appointment.Status == AppointmentStatus.Completed))
+                                    {
+                                        <form asp-action="Admin_CancelAppointment" asp-controller="Admin" method="post">
+                                            <input hidden value="@appointment.Id" name="AppointmentId" />
+                                            <button class="text-red-600 hover:text-red-800" type="submit">Cancel</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Admin_CancelAppointment" asp-controller="Admin" method="post">
+                                            <input hidden value="@appointment.Id" name="AppointmentId" />
+                                            <button class="text-red-600 hover:text-red-800" type="submit">Delete</button>
+                                        </form>
+                                    }
+
                                 </td>
                             </tr>
                         }

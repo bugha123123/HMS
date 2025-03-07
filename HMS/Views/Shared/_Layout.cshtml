@@ -3,7 +3,14 @@
 @inject IAuthService _authservice;
 @inject IDoctorService _doctorservice;
 @inject INotificationService _notificationservice;
+@{
+    var loggedInUser = await _authservice.GetLoggedInUserAsync();
 
+ 
+
+ 
+  
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +58,7 @@
     @if (User.IsInRole("Admin"))
     {
         
-    var loggedInUser = await _authservice.GetLoggedInUserAsync();
+    
 
 
         <nav class="bg-white shadow-md">
@@ -125,7 +132,14 @@
                             <!-- Bootstrap Profile Dropdown -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 px-3 py-2 rounded-lg" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" >
-                                    <img src="/images/profile-placeholder.png" class="w-8 h-8 rounded-circle border" alt="Profile">
+                              
+                                    @if (loggedInUser?.ProfilePicture is not null)
+                                    {
+                                        var ProfilePictureBase64 = Convert.ToBase64String(loggedInUser.ProfilePicture);
+                                        <img src="data:image/png;base64,@ProfilePictureBase64" class="w-8 h-8 rounded-circle border" alt="Profile">
+                                    }
+                                  
+
                                     
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
@@ -238,7 +252,7 @@
         var unreadNotifications = docNotifications.Where(n => !n.IsRead).ToList();
 
       
-    var loggedInUser = await _authservice.GetLoggedInUserAsync();
+
 
 
 
