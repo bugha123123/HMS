@@ -13,7 +13,9 @@ namespace HMS.Interface
         Task SendWelcomeEmailToUser(string email);
 
 
-        // verifies user after registering
+        Task SendForgetPasswordEmail(string gmail);
+
+        Task ResetPassword(string gmail, string newPassword,string confirmNewPassword, string token);
 
 
     }

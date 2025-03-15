@@ -61,7 +61,7 @@ namespace HMS.Model
 
 
 
-        public ApplicationStatus? Status { get; set; } = null;
+        public ApplicationStatus? Status { get; set; } = ApplicationStatus.Pending;
 
         public enum ApplicationStatus
         {

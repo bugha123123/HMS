@@ -46,14 +46,14 @@ namespace HMS.Service
             if (doctorApplication is null)
                 return;
 
-            // Set status to 0 (pending) by default
+            
             doctorApplication.Status = DoctorApplication.ApplicationStatus.Pending;  
 
             // Check if the email already exists in the database
             var existingApplication = await _db.doctorApplications
                                                  .FirstOrDefaultAsync(d => d.Email == doctorApplication.Email);
 
-            if (existingApplication is not null)
+            if (existingApplication is  null)
             {
                 return;
             }

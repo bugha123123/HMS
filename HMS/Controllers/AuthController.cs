@@ -22,7 +22,15 @@ namespace HMS.Controllers
         {
             return View();
         }
-   
+        public IActionResult forgotpassword()
+        {
+            return View();
+        }
+        public IActionResult resetpassword()
+        {
+            return View();
+        }
+
 
         public async Task<IActionResult> SigninUser(LogInDTO logInViewModel)
         {
@@ -54,6 +62,39 @@ namespace HMS.Controllers
 
 
         }
+
+        public async Task<IActionResult> SendForgotPasswordGmail(string email)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("forgotpassword","Auth");
+            }
+
+            await _authService.SendForgetPasswordEmail(email);
+            TempData["Success"] = "Check your inbox";
+            return RedirectToAction("forgotpassword", "Auth");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string email, string newPassword, string confirmNewPassword, string token)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Something went wrong!";
+                return RedirectToAction("resetpassword", "Auth");
+            }
+
+            
+            await _authService.ResetPassword(email, newPassword, confirmNewPassword, token);
+
+           
+            
+                TempData["Success"] = "Password reset successful. You can now log in.";
+                return RedirectToAction("signin", "Auth");
+          
+         
+        }
+
 
     }
 }

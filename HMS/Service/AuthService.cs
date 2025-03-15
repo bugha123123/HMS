@@ -182,5 +182,78 @@ namespace HMS.Service
 
             await emailService.SendEmailAsync(email, "Welcome to HMS!", htmlBody);
         }
+        public async Task SendForgetPasswordEmail(string gmail)
+        {
+            // Validate input
+            if (string.IsNullOrWhiteSpace(gmail))
+                throw new ArgumentException("Email cannot be null or empty", nameof(gmail));
+
+            // Generate a unique reset token (you need a method for this)
+            string resetToken = await GenerateResetTokenAsync(gmail);
+
+            // Create the password reset link
+            var ResetPasswordLink = $"https://localhost:7253/Auth/resetpassword?token={resetToken}&email={gmail}";
+
+            // Create the email body
+            string body = $@"
+        <p>Hello,</p>
+        <p>You requested to reset your password. Click the link below:</p>
+        <p><a href='{ResetPasswordLink}'>Reset Password</a></p>
+        <p>If you did not request this, please ignore this email.</p>
+        <p>Best regards,<br>HMS</p>
+    ";
+
+            var resetPasswordToken = new ResetPasswordToken()
+            {
+                Expiration = DateTime.UtcNow.AddMinutes(10), 
+                Token = resetToken,
+                UserGmail = gmail,
+            };
+
+
+            await _db.ResetPasswordTokens.AddAsync(resetPasswordToken);
+            await _db.SaveChangesAsync();
+
+            // Send the email
+            await emailService.SendEmailAsync(gmail, "Reset Password", body);
+        }
+
+        private async Task<string> GenerateResetTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null) return null; 
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task ResetPassword(string gmail, string newPassword, string confirmNewPassword, string token)
+        {
+            // Find the token stored for the user
+            var foundUserToken = await _db.ResetPasswordTokens.FirstOrDefaultAsync(t => t.UserGmail == gmail);
+
+            // Validate token, check expiration, and ensure passwords match
+            if (foundUserToken is null || foundUserToken.Token != token || newPassword != confirmNewPassword)
+                return; 
+
+            
+            if (foundUserToken.Expiration < DateTime.UtcNow)
+            {
+                
+                return; 
+            }
+
+            var user = await _userManager.FindByEmailAsync(gmail);
+            if (user == null)
+                return; 
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            if (result.Succeeded)
+            {
+                _db.ResetPasswordTokens.Remove(foundUserToken); 
+                await _db.SaveChangesAsync();
+            }
+        }
+
+
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContextion>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HSMCS")), ServiceLifetime.Scoped);
-
+var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -61,6 +62,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapGet("/", async (HttpContext context, UserManager<User> userManager) =>
 {
+
+    logger.LogInformation("Main page accessed at {Time}", DateTime.Now);
+   
     var loggedInUser = await userManager.GetUserAsync(context.User);
 
     if (loggedInUser is null)

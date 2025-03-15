@@ -24,6 +24,8 @@ namespace HMS.DB
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
         public DbSet<ChatMember> ChatMembers { get; set; }
+
+        public DbSet<ResetPasswordToken> ResetPasswordTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

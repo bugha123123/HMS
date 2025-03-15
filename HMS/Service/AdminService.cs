@@ -33,11 +33,11 @@ namespace HMS.Service
         {
             // Start with all appointments
             IQueryable<Appointment> queryable = _db.Appointments
-                .Include(a => a.Patient)  // Includes the related Patient
-                .Include(a => a.Doctor)   // Includes the related Doctor
-                .ThenInclude(d => d.Department); // Includes the related Department for the Doctor
+                .Include(a => a.Patient)  
+                .Include(a => a.Doctor)   
+                .ThenInclude(d => d.Department); 
 
-            // Filter by query if it's not empty (case-insensitive search)
+           
             if (!string.IsNullOrEmpty(query))
             {
                 queryable = queryable.Where(a =>
