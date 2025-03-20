@@ -245,13 +245,12 @@ namespace HMS.Service
             if (user == null)
                 return; 
 
-            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+           await _userManager.ResetPasswordAsync(user, token, newPassword);
 
-            if (result.Succeeded)
-            {
-                _db.ResetPasswordTokens.Remove(foundUserToken); 
+         
+                _db.ResetPasswordTokens.RemoveRange(foundUserToken); 
                 await _db.SaveChangesAsync();
-            }
+            
         }
 
 

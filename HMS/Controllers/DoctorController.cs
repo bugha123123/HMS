@@ -5,6 +5,7 @@ using HMS.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace HMS.Controllers
 {
@@ -43,13 +44,25 @@ namespace HMS.Controllers
 
             return View(appointmentsToDisplay);
         }
+
+        [Authorize]
+        public async Task<IActionResult> PatientMedicalRecords(string source)
+        {
+            var result = await _docservice.GetPatientMedicalRecord(source);
+            return View(result);
+        }
+
         [Authorize]
         public IActionResult doctorapplication()
         {
             return View();
         }
-
-
+        [Authorize]
+        public async Task<IActionResult> Patients()
+        {
+            var results = await _docservice.GetAllPatients();
+            return View(results);
+        }
         public async Task<IActionResult> Dreviewnotification(int NotificationId)
         {
             var result = await _notificationservice.Doctor_GetNotificationById(NotificationId);

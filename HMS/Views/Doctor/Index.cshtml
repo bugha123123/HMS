@@ -47,9 +47,9 @@
                 <div class="relative">
                     <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></i>
                     <input type="date"
-                    id="searchDate"
-                    name="when"
-                    class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto" />
+                           id="searchDate"
+                           name="when"
+                           class="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto" />
                 </div>
 
                 <div class="flex space-x-3">
@@ -61,8 +61,16 @@
                     Search
                 </button>
             </form>
+
+            <!-- See All Patients Button -->
+            <a asp-action="Patients" asp-controller="Doctor"
+               class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700 transition-colors duration-200">
+                <i data-lucide="users" class="h-4 w-4 mr-2"></i>
+                See All Patients
+            </a>
         </div>
     </div>
+
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

@@ -1,6 +1,7 @@
 ﻿using HMS.DB;
 using HMS.Interface;
 using HMS.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,18 @@ using System.Threading.Tasks;
 namespace HMS.Service
 {
     public class DoctorService : IDoctorService
+
     {
         private readonly AppDbContextion _db;
         private readonly IEmailService emailService;
         private readonly INotificationService _notificationService;
-        public DoctorService(AppDbContextion db, IEmailService emailService, INotificationService notificationService)
+        private readonly UserManager<User> _UserManager;
+        public DoctorService(AppDbContextion db, IEmailService emailService, INotificationService notificationService, UserManager<User> userManager)
         {
             _db = db;
             this.emailService = emailService;
             _notificationService = notificationService;
+            _UserManager = userManager;
         }
 
         public async Task<List<Doctor>> GetAllDoctors()
@@ -312,6 +316,29 @@ namespace HMS.Service
         </body>
     "
             );
+        }
+
+        public async Task<List<User>> GetAllPatients()
+        {
+            var allUsers = await _db.Users.ToListAsync();
+            var patients = new List<User>();
+
+            foreach (var user in allUsers)
+            {
+                var roles = await _UserManager.GetRolesAsync(user);
+
+                if (!roles.Contains("Doctor") && !roles.Contains("Admin"))
+                {
+                    patients.Add(user);
+                }
+            }
+
+            return patients;
+        }
+
+        public async Task<List<MedicalHistory>> GetPatientMedicalRecord(string PatientId)
+        {
+            return await _db.MedicalHistories.Include(x => x.Patient).Where(x => x.PatientId == PatientId).ToListAsync();
         }
     }
 }

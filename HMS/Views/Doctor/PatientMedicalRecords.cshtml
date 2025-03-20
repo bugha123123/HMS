@@ -1,0 +1,56 @@
+﻿@model List<MedicalHistory>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<div class="min-h-screen p-8">
+
+
+    <!-- Search Bar -->
+    
+    @if (Model != null && Model.Any())
+    {
+        <!-- Patient Info Card (taking patient info from the first record) -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-900">@Model.First().Patient.UserName</h2>
+                    <div class="mt-2 space-y-1 text-gray-600">
+                        <p>Patient ID: P-@Model.First().PatientId.Substring(0, 8)</p>
+                        <p>Age: @Model.First().Patient.Age</p>
+                        <p>Gender: @Model.First().Patient.Gender</p>
+                    </div>
+                </div>
+                <div class="bg-blue-100 text-blue-800 px-4 py-1 rounded-full">
+                    Active Patient
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Records -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold mb-4">Medical History</h3>
+
+            @foreach (var record in Model)
+            {
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-medium text-gray-900">@record.Diagnosis</h4>
+                    </div>
+                    <div class="space-y-2 text-gray-600">
+                        <p><span class="font-medium">Diagnosis:</span> @record.Diagnosis</p>
+                        <p><span class="font-medium">Notes:</span> @record.Notes</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-500">No medical history available for this patient.</p>
+    }
+</div>
+
+
+                        <script>
+    lucide.createIcons();
+                        </script>

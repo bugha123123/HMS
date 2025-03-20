@@ -31,6 +31,10 @@ namespace HMS.Interface
 
         Task CancelAppointment(int AppointmentId);
 
+        Task<List<User>> GetAllPatients();
+
+        Task<List<MedicalHistory>> GetPatientMedicalRecord(string PatientId);
+
 
 
 
