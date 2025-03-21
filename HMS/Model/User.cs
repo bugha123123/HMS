@@ -27,12 +27,23 @@ namespace HMS.Model
         public byte[]? ProfilePicture { get; set; }
 
         public UserStatus Status { get; set; } = UserStatus.Active;
+
+        // allows doctor to access his medical data
+
+        public MedicalAccessStatus AllowMedicalAccess { get; set; } = MedicalAccessStatus.Granted;
         public enum UserStatus
         {
             Active,
             Discharged,
             Critical
         }
+
+        public enum MedicalAccessStatus
+        {
+            Denied = 0,
+            Granted = 1
+        }
+
 
     }
 }

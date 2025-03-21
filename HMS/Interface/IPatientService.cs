@@ -2,6 +2,7 @@
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
 using System.Net.NetworkInformation;
+using static HMS.Model.User;
 
 namespace HMS.Interface
 {
@@ -23,5 +24,7 @@ namespace HMS.Interface
         Task EditProfile(IFormFile profilePicture);
 
         Task<IdentityResult> ChangePassword(string oldPassword, string newPassword);
+
+        Task ToggleMedicalRecordsAccess(MedicalAccessStatus accessStatus);
     }
 }

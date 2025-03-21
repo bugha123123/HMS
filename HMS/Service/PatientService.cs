@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Net.NetworkInformation;
 using static HMS.Model.Notification;
+using static HMS.Model.User;
 
 namespace HMS.Service
 {
@@ -271,6 +272,17 @@ await _notificationService.SaveNotificationAsync(FoundDoctor.Id,"Appointment", N
             else
             {
                 throw new Exception("Failed to change password: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+        }
+
+        public async Task ToggleMedicalRecordsAccess(MedicalAccessStatus accessStatus)
+        {
+            var loggedInUser = await _authService.GetLoggedInUserAsync();
+
+            if (loggedInUser != null)
+            {
+                loggedInUser.AllowMedicalAccess = accessStatus;
+                await _db.SaveChangesAsync();
             }
         }
     }

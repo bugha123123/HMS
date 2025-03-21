@@ -5,6 +5,7 @@ using HMS.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static HMS.Model.User;
 
 namespace HMS.Controllers
 {
@@ -130,6 +131,12 @@ namespace HMS.Controllers
             }
         }
 
+
+        public async Task<IActionResult> ToggleMedicalAccess(MedicalAccessStatus accessStatus)
+        {
+            await _patientService.ToggleMedicalRecordsAccess(accessStatus);
+            return RedirectToAction("Profile", "Home");
+        }
 
 
 
