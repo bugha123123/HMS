@@ -80,20 +80,24 @@ namespace HMS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "Something went wrong!";
-                return RedirectToAction("resetpassword", "Auth");
+                TempData["Error"] = "Something went wrong! Please try again.";
+                return RedirectToAction("ResetPassword", "Auth");
             }
 
-            
-            await _authService.ResetPassword(email, newPassword, confirmNewPassword, token);
+            try
+            {
+                await _authService.ResetPassword(email, newPassword, confirmNewPassword, token);
 
-           
-            
                 TempData["Success"] = "Password reset successful. You can now log in.";
                 return RedirectToAction("signin", "Auth");
-          
-         
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("resetpassword", "Auth");
+            }
         }
+
 
 
     }

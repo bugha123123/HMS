@@ -4,6 +4,9 @@ using HMS.Interface;
 using HMS.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
+using System.Web;
 
 
 namespace HMS.Service
@@ -184,75 +187,94 @@ namespace HMS.Service
         }
         public async Task SendForgetPasswordEmail(string gmail)
         {
-            // Validate input
             if (string.IsNullOrWhiteSpace(gmail))
                 throw new ArgumentException("Email cannot be null or empty", nameof(gmail));
 
-            // Generate a unique reset token (you need a method for this)
-            string resetToken = await GenerateResetTokenAsync(gmail);
+            var user = await _userManager.FindByEmailAsync(gmail);
+            if (user == null)
+                throw new InvalidOperationException("User not found");
 
-            // Create the password reset link
-            var ResetPasswordLink = $"https://localhost:7253/Auth/resetpassword?token={resetToken}&email={gmail}";
+            // Generate the reset password token
+            string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Create the email body
+            // Create the reset password link (Do not encode the token here, store raw)
+            var resetPasswordLink = $"https://localhost:7253/Auth/resetpassword?email={HttpUtility.UrlEncode(gmail)}&token={resetToken}";
+
             string body = $@"
         <p>Hello,</p>
         <p>You requested to reset your password. Click the link below:</p>
-        <p><a href='{ResetPasswordLink}'>Reset Password</a></p>
+        <p><a href='{resetPasswordLink}'>Reset Password</a></p>
         <p>If you did not request this, please ignore this email.</p>
         <p>Best regards,<br>HMS</p>
     ";
 
-            var resetPasswordToken = new ResetPasswordToken()
+            // Store the token in the DB (store raw token)
+            var tokenEntry = new ResetPasswordToken
             {
-                Expiration = DateTime.UtcNow.AddMinutes(10), 
-                Token = resetToken,
                 UserGmail = gmail,
+                Token = resetToken,  
+                Expiration = DateTime.UtcNow.AddMinutes(30)  // Set expiration
             };
 
-
-            await _db.ResetPasswordTokens.AddAsync(resetPasswordToken);
+            await _db.ResetPasswordTokens.AddAsync(tokenEntry);
             await _db.SaveChangesAsync();
 
             // Send the email
             await emailService.SendEmailAsync(gmail, "Reset Password", body);
         }
 
-        private async Task<string> GenerateResetTokenAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return null; 
-            return await _userManager.GeneratePasswordResetTokenAsync(user);
-        }
+
+
 
         public async Task ResetPassword(string gmail, string newPassword, string confirmNewPassword, string token)
         {
-            // Find the token stored for the user
-            var foundUserToken = await _db.ResetPasswordTokens.FirstOrDefaultAsync(t => t.UserGmail == gmail);
-
-            // Validate token, check expiration, and ensure passwords match
-            if (foundUserToken is null || foundUserToken.Token != token || newPassword != confirmNewPassword)
-                return; 
-
             
-            if (foundUserToken.Expiration < DateTime.UtcNow)
-            {
-                
-                return; 
-            }
+            if (string.IsNullOrWhiteSpace(gmail) || string.IsNullOrWhiteSpace(token))
+                throw new ArgumentException("Invalid email or token");
+
+            if (newPassword != confirmNewPassword)
+                throw new InvalidOperationException("Passwords do not match");
 
             var user = await _userManager.FindByEmailAsync(gmail);
             if (user == null)
-                return; 
+                throw new InvalidOperationException("User not found");
 
-           await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-         
-                _db.ResetPasswordTokens.RemoveRange(foundUserToken); 
-                await _db.SaveChangesAsync();
+            // Decode the token from the URL (in case it was URL-encoded)
             
+
+            // Get the token entry from the DB (raw token stored here)
+            var tokenEntry = await _db.ResetPasswordTokens
+                .FirstOrDefaultAsync(t => t.UserGmail.ToLower() == gmail.ToLower().Trim());
+
+            if (tokenEntry == null || tokenEntry.Expiration < DateTime.UtcNow)
+                throw new InvalidOperationException("Reset request expired or not found");
+
+            // Compare the decoded token with the one stored in the DB
+            if (tokenEntry.Token.Trim() != tokenEntry.Token.Trim())
+                throw new InvalidOperationException("Invalid token");
+
+            // Use the raw token directly (no need for decoding)
+            var hashedPassword = _userManager.PasswordHasher.HashPassword(user, newPassword);
+            user.PasswordHash = hashedPassword;
+
+            // Save the changes to the user
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new InvalidOperationException($"Password reset failed. Reason(s): {errors}");
+            }
+
+            // Step 4: Remove the token from the database after successful password reset
+            _db.ResetPasswordTokens.Remove(tokenEntry);
+            await _db.SaveChangesAsync();
         }
+
+
 
 
     }
 }
+
+
+
