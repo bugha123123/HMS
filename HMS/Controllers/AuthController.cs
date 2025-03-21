@@ -81,7 +81,7 @@ namespace HMS.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Something went wrong! Please try again.";
-                return RedirectToAction("ResetPassword", "Auth");
+                return RedirectToAction("ResetPassword", "Auth", new { email = email, token = token });
             }
 
             try
@@ -94,9 +94,10 @@ namespace HMS.Controllers
             catch (InvalidOperationException ex)
             {
                 TempData["Error"] = ex.Message;
-                return RedirectToAction("resetpassword", "Auth");
+                return RedirectToAction("resetpassword", "Auth", new { email = email, token = token });
             }
         }
+
 
 
 
