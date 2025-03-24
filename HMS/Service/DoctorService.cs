@@ -268,7 +268,9 @@ namespace HMS.Service
             await _db.SaveChangesAsync();
 
 
-            //TODO Send notification to user that doctor added a note
+            
+ await _notificationService.SaveNotificationAsync(FoundAppointment.DoctorId, DoctorNote,NotificationType.Other,FoundAppointment.PatientId,FoundAppointment.Patient,FoundAppointment,FoundAppointment.Id,RecipientRole.Patient);
+        
 
         }
 
