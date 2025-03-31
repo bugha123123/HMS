@@ -57,7 +57,7 @@ namespace HMS.Service
             var existingApplication = await _db.doctorApplications
                                                  .FirstOrDefaultAsync(d => d.Email == doctorApplication.Email);
 
-            if (existingApplication is  null)
+            if (existingApplication is not  null)
             {
                 return;
             }

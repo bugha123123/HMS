@@ -310,11 +310,11 @@ namespace HMS.Service
                 User = user,
                 UserId = user.Id
             };
-
+            FoundApplication.Status = DoctorApplication.ApplicationStatus.Approved;
             await _db.Doctors.AddAsync(DoctorToApprove);
 
             // Update the application status to Approved
-            FoundApplication.Status = DoctorApplication.ApplicationStatus.Approved;
+            
 
             // Assign "Doctor" role to the user in Identity
 

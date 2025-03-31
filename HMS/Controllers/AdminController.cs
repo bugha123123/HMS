@@ -4,6 +4,7 @@ using HMS.Model;
 using HMS.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HMS.Controllers
 {
@@ -62,9 +63,10 @@ namespace HMS.Controllers
         }
 
         [Authorize]
-        public IActionResult requests()
+        public async Task<IActionResult> requests()
         {
-            return View();
+            var result = await _adminService.Admin_GetDoctorApplications();
+            return View(result);
         }
         [Authorize]
         public async Task<IActionResult> appointments(string? query, DepartmentType? DepartmentSpecialization, AppointmentStatus? status)
@@ -113,12 +115,12 @@ namespace HMS.Controllers
 
         public async Task<IActionResult> Admin_ApproveDoctorApplication(int ApplicationId)
         {
-            if (ModelState.IsValid)
-            {
+        
+            
                 await _adminService.ApproveApplication(ApplicationId);
                 return RedirectToAction("requests", "Admin");
-            }
-            return RedirectToAction("requests", "Admin");
+            
+            //return RedirectToAction("requests", "Admin");
 
         }
         public async Task<IActionResult> Admin_RejectDoctorApplication(int ApplicationId)

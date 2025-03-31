@@ -43,5 +43,7 @@ namespace HMS.Interface
 
         Task DeletePatient(string PatientId);
 
+        
+
     }
 }
