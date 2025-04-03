@@ -14,7 +14,7 @@ public class NotificationService : INotificationService
         _db = db;
     }
 
-    //TODO
+
 
     public async Task<Notification> Doctor_GetNotificationById(int NotId)
     {
@@ -51,12 +51,6 @@ public class NotificationService : INotificationService
             Appointment = appointment,
             AppointmentId = appointmentId,
             Role = role
-            
-            
-            
-
-
-
         };
 
         // Add the notification to the database
